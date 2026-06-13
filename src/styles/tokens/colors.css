@@ -1,0 +1,74 @@
+/* KitapGecesi — Color tokens
+   Source of truth: "Simple Guide" brand sheet.
+   The product UI is light, calm and paper-warm; the green is the single
+   saturated accent. The brand/marketing world is the moody "Book Night"
+   palette (deep forest + sage), used on hero / pre-registration surfaces. */
+
+:root {
+  /* ── Base palette ─────────────────────────────────────────────── */
+  --kg-white:        #FFFFFF;
+  --kg-paper:        #FAFAF8;  /* post / feed surface */
+  --kg-paper-warm:   #F7F6F4;  /* book-image backdrop */
+  --kg-sand:         #F7F5F1;  /* secondary / menu fills */
+  --kg-ink:          #000000;  /* primary text */
+  --kg-ink-900:      #18181B;
+  --kg-ink-800:      #27272A;  /* secondary button (near-black) */
+  --kg-slate:        #7C7E80;  /* secondary text */
+  --kg-line:         #ECECEC;  /* hairline borders */
+
+  /* Green — the brand accent */
+  --kg-green:        #5B913B;
+  --kg-green-600:    #517F35;  /* hover (darker) */
+  --kg-green-700:    #456B2D;  /* active */
+  --kg-green-100:    #EAF1E3;  /* tint surface */
+  --kg-green-050:    #F3F7EF;
+
+  /* Star / rating gold */
+  --kg-gold:         #FFC925;
+
+  /* Moody "Book Night" brand world (hero, pre-register, marketing) */
+  --kg-night:        #1C2B28;  /* deep forest-teal ground */
+  --kg-night-700:    #243733;
+  --kg-night-900:    #131E1B;
+  --kg-sage:         #C2CCA3;  /* sage wordmark on night */
+  --kg-sage-soft:    #DBE2C6;
+
+  /* Status */
+  --kg-danger:       #C0432F;
+  --kg-warn:         #C8881F;
+
+  /* Shadow ink (compose with the elevation tokens) */
+  --kg-shadow-rgb:   0 0 0;
+
+  /* ── Semantic aliases ─────────────────────────────────────────── */
+  --bg-page:         var(--kg-white);
+  --bg-feed:         var(--kg-paper);
+  --bg-post:         var(--kg-paper);
+  --bg-book-image:   var(--kg-paper-warm);
+  --surface-card:    var(--kg-white);
+  --surface-sunken:  var(--kg-sand);
+  --surface-tint:    var(--kg-green-050);
+
+  --text-primary:    var(--kg-ink);
+  --text-secondary:  var(--kg-slate);
+  --text-on-accent:  var(--kg-white);
+  --text-link:       var(--kg-green-700);
+
+  --border-default:  var(--kg-line);
+  --border-strong:   #DADAD8;
+
+  /* Kullanıcı tarafından seçilebilen tema vurgu rengi; varsayılan marka yeşili. */
+  --theme-accent:    var(--kg-green);
+
+  --accent:          var(--theme-accent);
+  --accent-hover:    color-mix(in srgb, var(--theme-accent) 85%, black);
+  --accent-active:   color-mix(in srgb, var(--theme-accent) 70%, black);
+  --accent-tint:     color-mix(in srgb, var(--theme-accent) 12%, white);
+
+  --btn-primary-bg:  var(--theme-accent);
+  --btn-secondary-bg:var(--kg-ink-800);
+  --btn-menu-bg:     var(--kg-sand);
+
+  --rating-star:     var(--kg-gold);
+  --focus-ring:      color-mix(in srgb, var(--theme-accent) 55%, transparent);
+}

@@ -1,0 +1,45 @@
+/* KitapGecesi — Base layer
+   Minimal, non-opinionated resets + the document defaults that every
+   surface inherits. Component visuals live in the components themselves;
+   this only sets the stage. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body-1);
+  line-height: var(--lh-body-1);
+  color: var(--text-primary);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv05" 1, "ss01" 1;
+}
+
+h1, h2, h3, h4, p, figure { margin: 0; }
+
+a { color: inherit; text-decoration: none; }
+
+img { display: block; max-width: 100%; }
+
+button, input, textarea, select { font: inherit; color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+::selection { background: var(--accent-tint); }
+
+/* Editorial helpers used across cards & kits */
+.kg-serif { font-family: var(--font-serif); }
+.kg-eyebrow {
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: var(--fw-medium);
+}
