@@ -16,9 +16,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   if (isLoading || !user) return null;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-page)" }}>
-      <Sidebar />
-      <main style={{ flex: 1, minWidth: 0 }}>{children}</main>
+    <div style={{ minHeight: "100vh", background: "var(--bg-page)" }}>
+      <div style={{ display: "flex", maxWidth: "var(--shell-max)", margin: "0 auto" }}>
+        <Sidebar />
+        <main style={{ flex: 1, minWidth: 0 }}>{children}</main>
+      </div>
     </div>
   );
 }
