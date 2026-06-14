@@ -75,14 +75,17 @@ const en: Record<keyof typeof tr, string> = {
   "composer.pageNumberPlaceholder": "Page number",
 
   // Books page
-  "kitaplar.tab.turler": "Genres",
-  "kitaplar.tab.konular": "Topics",
   "kitaplar.sort.yeni": "Newest",
+  "kitaplar.sort.populer": "Popular",
   "kitaplar.sort.puan": "Most Liked",
   "kitaplar.sort.alfabetik": "A-Z",
   "kitaplar.mostRead": "Most Read",
   "kitaplar.mostLiked": "Most Liked Books",
   "kitaplar.showMore": "Show More",
+  "kitaplar.searchPlaceholder": "Search books or authors...",
+  "kitaplar.clearFilters": "Clear",
+  "kitaplar.hideRead": "Hide Read Books",
+  "kitaplar.empty": "No books match your search.",
 
   // Book detail page
   "kitap.notFound": "Book not found.",

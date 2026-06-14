@@ -73,14 +73,17 @@ const tr = {
   "composer.pageNumberPlaceholder": "Sayfa no",
 
   // Kitaplar sayfası
-  "kitaplar.tab.turler": "Kitap Türleri",
-  "kitaplar.tab.konular": "Konular",
   "kitaplar.sort.yeni": "En Yeni",
+  "kitaplar.sort.populer": "Popüler",
   "kitaplar.sort.puan": "En Beğenilenler",
   "kitaplar.sort.alfabetik": "A-Z",
   "kitaplar.mostRead": "En Çok Okunanlar",
   "kitaplar.mostLiked": "En Beğenilen Kitaplar",
   "kitaplar.showMore": "Daha Fazla Göster",
+  "kitaplar.searchPlaceholder": "Kitap veya yazar ara...",
+  "kitaplar.clearFilters": "Temizle",
+  "kitaplar.hideRead": "Okuduklarımı Gizle",
+  "kitaplar.empty": "Aramanla eşleşen kitap bulunamadı.",
 
   // Kitap detay sayfası
   "kitap.notFound": "Kitap bulunamadı.",
