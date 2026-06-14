@@ -20,6 +20,7 @@ export default defineSchema({
     bio: v.optional(v.string()),
     themeColor: v.optional(v.string()),
     locale: v.optional(v.union(v.literal("tr"), v.literal("en"))),
+    readingGoal: v.optional(v.number()),
     createdAt: v.number(),
   })
     .index("by_username", ["username"])
@@ -37,6 +38,7 @@ export default defineSchema({
     name: v.string(),
     bio: v.optional(v.string()),
     photoUrl: v.optional(v.string()),
+    viewCount: v.optional(v.number()),
     createdAt: v.number(),
   }).index("by_name", ["name"]),
 
@@ -51,6 +53,7 @@ export default defineSchema({
     isbn: v.optional(v.string()),
     isVerified: v.boolean(),
     externalId: v.optional(v.string()),
+    viewCount: v.optional(v.number()),
     createdAt: v.number(),
   })
     .index("by_isbn", ["isbn"])

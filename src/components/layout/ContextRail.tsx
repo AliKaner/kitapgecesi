@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import { Card } from "../ui/Card";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { BookCover } from "../book/BookCover";
 import { StarRating } from "../ui/StarRating";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
 
 /* Right context rail — search, book of the month, reading-goal widget. */
@@ -16,8 +19,6 @@ const BOOK_OF_MONTH = {
   rating: 5.0,
   cover: undefined,
 };
-
-const GOAL = { target: 48, done: 12, year: 2025, pages: "6.456", reviews: 78, quotes: 46, pct: 25 };
 
 function GoalRing({ pct }: { pct: number }) {
   const r = 26;
@@ -56,26 +57,30 @@ function Stat({ n, l }: { n: string | number; l: string }) {
 
 function ReadingGoal() {
   const { t } = useT();
-  const g = GOAL;
+  const { user } = useAuth();
+  const goal = useQuery(api.users.getReadingGoalStats, user ? { userId: user._id } : "skip");
+
+  if (!user || !goal) return null;
+
   return (
     <Card padding={20}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
         <div>
           <div style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em" }}>{t("contextRail.yearlyGoal")}</div>
           <div style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 2 }}>
-            {t("contextRail.goalSubtitle", { year: g.year, target: g.target })}
+            {t("contextRail.goalSubtitle", { year: goal.year, target: goal.target })}
           </div>
         </div>
-        <GoalRing pct={g.pct} />
+        <GoalRing pct={goal.pct} />
       </div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 6, margin: "4px 0 16px" }}>
-        <span style={{ fontFamily: "var(--font-serif)", fontSize: 34, lineHeight: 1 }}>{g.done}</span>
-        <span style={{ fontSize: 15, color: "var(--text-secondary)" }}>{t("contextRail.ofTarget", { target: g.target })}</span>
+        <span style={{ fontFamily: "var(--font-serif)", fontSize: 34, lineHeight: 1 }}>{goal.done}</span>
+        <span style={{ fontSize: 15, color: "var(--text-secondary)" }}>{t("contextRail.ofTarget", { target: goal.target })}</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, paddingTop: 16, borderTop: "1px solid var(--border-default)" }}>
-        <Stat n={g.pages} l={t("contextRail.pages")} />
-        <Stat n={g.reviews} l={t("contextRail.reviews")} />
-        <Stat n={g.quotes} l={t("contextRail.quotes")} />
+        <Stat n={goal.pages.toLocaleString("tr-TR")} l={t("contextRail.pages")} />
+        <Stat n={goal.reviews} l={t("contextRail.reviews")} />
+        <Stat n={goal.quotes} l={t("contextRail.quotes")} />
       </div>
     </Card>
   );

@@ -177,7 +177,7 @@ export default function ProfilPage() {
       />
       <div style={{ display: "flex", alignItems: "flex-end", gap: 16, marginTop: -44, marginBottom: 12, padding: "0 4px" }}>
         <Avatar src={user?.profileImageUrl || undefined} name={user?.name} size="xl" ring />
-        <Button variant="menu" icon="pencil" style={{ marginLeft: "auto" }}>
+        <Button variant="menu" icon="pencil" style={{ marginLeft: "auto" }} onClick={() => router.push("/ayarlar?tab=profil")}>
           {t("common.edit")}
         </Button>
       </div>

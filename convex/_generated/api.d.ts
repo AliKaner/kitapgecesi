@@ -19,6 +19,7 @@ import type * as follows from "../follows.js";
 import type * as invites from "../invites.js";
 import type * as journal from "../journal.js";
 import type * as library from "../library.js";
+import type * as likes from "../likes.js";
 import type * as lists from "../lists.js";
 import type * as notifications from "../notifications.js";
 import type * as passwordUtils from "../passwordUtils.js";
@@ -45,6 +46,7 @@ declare const fullApi: ApiFromModules<{
   invites: typeof invites;
   journal: typeof journal;
   library: typeof library;
+  likes: typeof likes;
   lists: typeof lists;
   notifications: typeof notifications;
   passwordUtils: typeof passwordUtils;

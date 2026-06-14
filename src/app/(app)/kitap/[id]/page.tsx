@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { SectionHead } from "@/components/layout/Screen";
 import { Card } from "@/components/ui/Card";
+import { DetailStat } from "@/components/ui/DetailStat";
 import { Icon } from "@/components/ui/Icon";
+import { IconButton } from "@/components/ui/IconButton";
 import { StarRating } from "@/components/ui/StarRating";
 import { Tabs } from "@/components/ui/Tabs";
 import { Tag } from "@/components/ui/Tag";
@@ -15,15 +17,6 @@ import { BookCover } from "@/components/book/BookCover";
 import { BookCard } from "@/components/book/BookCard";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
-
-function DetailStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={{ flex: 1, textAlign: "center" }}>
-      <div style={{ fontFamily: "var(--font-serif)", fontSize: 28 }}>{value}</div>
-      <div style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)", marginTop: 2 }}>{label}</div>
-    </div>
-  );
-}
 
 export default function KitapDetayPage() {
   const { t } = useT();
@@ -35,15 +28,24 @@ export default function KitapDetayPage() {
 
   const book = useQuery(api.books.getBook, { bookId });
   const allBooks = useQuery(api.books.searchLocalBooks, { query: "" });
+  const stats = useQuery(api.books.getBookStats, { bookId });
   const ratingSummary = useQuery(api.books.getRatingSummary, { targetType: "book", targetId: bookId });
   const userRating = useQuery(
     api.books.getUserRating,
     user ? { userId: user._id, targetType: "book", targetId: bookId } : "skip"
   );
   const userBook = useQuery(api.library.getUserBook, user ? { userId: user._id, bookId } : "skip");
+  const likeInfo = useQuery(api.likes.getLikeInfo, { targetType: "book", targetId: bookId, userId: user?._id });
 
   const rateTarget = useMutation(api.books.rateTarget);
   const setStatus = useMutation(api.library.setStatus);
+  const incrementViews = useMutation(api.books.incrementBookViews);
+  const toggleLike = useMutation(api.likes.toggleLike);
+
+  useEffect(() => {
+    incrementViews({ bookId });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookId]);
 
   if (book === undefined) return null;
   if (book === null) {
@@ -90,12 +92,20 @@ export default function KitapDetayPage() {
               ))}
             </div>
           )}
-          <div style={{ marginBottom: 18 }}>
+          <div style={{ marginBottom: 18, display: "flex", alignItems: "center", gap: 10 }}>
             <StarRating
               value={userRating ?? ratingSummary?.avg ?? 0}
               count={ratingSummary?.count}
               compact={false}
               onRate={user ? (v) => rateTarget({ userId: user._id, targetType: "book", targetId: bookId, value: v }) : undefined}
+            />
+            <IconButton
+              icon="heart"
+              label={t("kitap.like")}
+              active={likeInfo?.likedByMe}
+              count={likeInfo?.count ?? 0}
+              onClick={() => user && toggleLike({ userId: user._id, targetType: "book", targetId: bookId })}
+              disabled={!user}
             />
           </div>
           <Tabs
@@ -117,12 +127,13 @@ export default function KitapDetayPage() {
 
       <Card tone="sunken" style={{ marginBottom: 32 }}>
         <div style={{ display: "flex" }}>
-          <DetailStat label={t("kitap.stat.views")} value="8.364" />
+          <DetailStat label={t("kitap.stat.views")} value={(stats?.viewCount ?? 0).toLocaleString("tr-TR")} />
           <DetailStat
             label={t("kitap.stat.rating")}
             value={`${(ratingSummary?.avg ?? 0).toFixed(1).replace(".", ",")} / ${ratingSummary?.count ?? 0}`}
           />
-          <DetailStat label={t("kitap.stat.reads")} value="2.657" />
+          <DetailStat label={t("kitap.stat.reads")} value={(stats?.readCount ?? 0).toLocaleString("tr-TR")} />
+          <DetailStat label={t("kitap.stat.likes")} value={(stats?.likeCount ?? 0).toLocaleString("tr-TR")} />
         </div>
       </Card>
 

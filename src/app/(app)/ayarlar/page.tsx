@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { ScreenTitle } from "@/components/layout/Screen";
@@ -31,13 +31,17 @@ function Row({ label, hint, children }: { label: string; hint?: string; children
 
 export default function AyarlarPage() {
   const router = useRouter();
-  const [tab, setTab] = useState("genel");
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get("tab");
+  const [tab, setTab] = useState(initialTab === "profil" || initialTab === "tema" ? initialTab : "genel");
   const { user, logout } = useAuth();
   const { t, locale, setLocale } = useT();
   const { accent, setAccent } = useTheme();
   const updateProfileImages = useMutation(api.users.updateProfileImages);
+  const setReadingGoal = useMutation(api.users.setReadingGoal);
   const profileImageRef = useRef<HTMLInputElement>(null);
   const bannerRef = useRef<HTMLInputElement>(null);
+  const readingGoalRef = useRef<HTMLInputElement>(null);
 
   const saveProfileImages = async () => {
     if (!user) return;
@@ -46,6 +50,13 @@ export default function AyarlarPage() {
       profileImageUrl: profileImageRef.current?.value ?? "",
       bannerUrl: bannerRef.current?.value ?? "",
     });
+  };
+
+  const saveReadingGoal = async () => {
+    if (!user) return;
+    const raw = readingGoalRef.current?.value ?? "";
+    const value = raw === "" ? undefined : Number(raw);
+    await setReadingGoal({ userId: user._id, readingGoal: value && value > 0 ? value : undefined });
   };
 
   return (
@@ -76,6 +87,22 @@ export default function AyarlarPage() {
           </Row>
           <Row label={t("ayarlar.okumaHatirlaticilari.label")} hint={t("ayarlar.okumaHatirlaticilari.hint")}>
             <Switch defaultChecked />
+          </Row>
+          <Row label={t("ayarlar.yillikHedef.label")} hint={t("ayarlar.yillikHedef.hint")}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <Input
+                ref={readingGoalRef}
+                type="number"
+                min={1}
+                fullWidth={false}
+                style={{ width: 80 }}
+                defaultValue={user?.readingGoal ?? ""}
+                placeholder="48"
+              />
+              <Button variant="menu" size="sm" onClick={saveReadingGoal}>
+                {t("common.save")}
+              </Button>
+            </div>
           </Row>
           <Row label={t("nav.language")}>
             <Tabs

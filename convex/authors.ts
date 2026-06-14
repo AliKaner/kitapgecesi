@@ -71,6 +71,46 @@ export const getAuthorBooks = query({
   },
 });
 
+export const incrementAuthorViews = mutation({
+  args: { authorId: v.id("authors") },
+  handler: async (ctx, { authorId }) => {
+    const author = await ctx.db.get(authorId);
+    if (!author) return;
+    await ctx.db.patch(authorId, { viewCount: (author.viewCount ?? 0) + 1 });
+  },
+});
+
+export const getAuthorStats = query({
+  args: { authorId: v.id("authors") },
+  handler: async (ctx, { authorId }) => {
+    const author = await ctx.db.get(authorId);
+
+    const books = await ctx.db
+      .query("books")
+      .withIndex("by_authorId", (q) => q.eq("authorId", authorId))
+      .collect();
+    const bookIds = new Set(books.map((b) => b._id));
+
+    const readCount = await ctx.db
+      .query("userBooks")
+      .filter((q) => q.eq(q.field("status"), "read"))
+      .collect()
+      .then((rows) => rows.filter((r) => bookIds.has(r.bookId)).length);
+
+    const likeCount = await ctx.db
+      .query("likes")
+      .withIndex("by_target", (q) => q.eq("targetType", "author").eq("targetId", authorId))
+      .collect()
+      .then((rows) => rows.length);
+
+    return {
+      viewCount: author?.viewCount ?? 0,
+      readCount,
+      likeCount,
+    };
+  },
+});
+
 export const getOrCreateAuthor = mutation({
   args: { name: v.string() },
   handler: async (ctx, { name }): Promise<Id<"authors">> => {

@@ -125,6 +125,61 @@ export const addXpAndYaprak = mutation({
   },
 });
 
+export const setReadingGoal = mutation({
+  args: {
+    userId: v.id("users"),
+    readingGoal: v.optional(v.number()),
+  },
+  handler: async (ctx, { userId, readingGoal }) => {
+    await ctx.db.patch(userId, { readingGoal });
+  },
+});
+
+export const getReadingGoalStats = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    const user = await ctx.db.get(userId);
+    if (!user || !user.readingGoal) return null;
+
+    const yearStart = new Date(new Date().getFullYear(), 0, 1).getTime();
+
+    const userBooks = await ctx.db
+      .query("userBooks")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+    const done = userBooks.filter((b) => b.status === "read" && (b.finishedAt ?? 0) >= yearStart).length;
+
+    const journalEntries = await ctx.db
+      .query("journalEntries")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+    const pages = journalEntries
+      .filter((e) => e.createdAt >= yearStart)
+      .reduce((sum, e) => sum + (e.pagesRead ?? 0), 0);
+
+    const posts = await ctx.db
+      .query("posts")
+      .withIndex("by_author", (q) => q.eq("authorId", userId))
+      .collect();
+    const yearPosts = posts.filter((p) => p.createdAt >= yearStart);
+    const reviews = yearPosts.filter((p) => p.type === "okuma").length;
+    const quotes = yearPosts.filter((p) => p.type === "alinti").length;
+
+    const target = user.readingGoal;
+    const pct = Math.min(100, Math.round((done / target) * 100));
+
+    return {
+      target,
+      done,
+      pages,
+      reviews,
+      quotes,
+      pct,
+      year: new Date().getFullYear(),
+    };
+  },
+});
+
 export const getInviteQuotaInfo = query({
   args: { userId: v.id("users") },
   handler: async (ctx, { userId }) => {

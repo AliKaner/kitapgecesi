@@ -55,6 +55,40 @@ export const getBook = query({
   },
 });
 
+export const incrementBookViews = mutation({
+  args: { bookId: v.id("books") },
+  handler: async (ctx, { bookId }) => {
+    const book = await ctx.db.get(bookId);
+    if (!book) return;
+    await ctx.db.patch(bookId, { viewCount: (book.viewCount ?? 0) + 1 });
+  },
+});
+
+export const getBookStats = query({
+  args: { bookId: v.id("books") },
+  handler: async (ctx, { bookId }) => {
+    const book = await ctx.db.get(bookId);
+
+    const readCount = await ctx.db
+      .query("userBooks")
+      .filter((q) => q.and(q.eq(q.field("bookId"), bookId), q.eq(q.field("status"), "read")))
+      .collect()
+      .then((rows) => rows.length);
+
+    const likeCount = await ctx.db
+      .query("likes")
+      .withIndex("by_target", (q) => q.eq("targetType", "book").eq("targetId", bookId))
+      .collect()
+      .then((rows) => rows.length);
+
+    return {
+      viewCount: book?.viewCount ?? 0,
+      readCount,
+      likeCount,
+    };
+  },
+});
+
 export const searchExternalBooks = action({
   args: { query: v.string() },
   handler: async (_ctx, { query: q }) => {

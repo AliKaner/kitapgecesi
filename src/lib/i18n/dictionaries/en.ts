@@ -43,6 +43,8 @@ const en: Record<keyof typeof tr, string> = {
   "ayarlar.gizliHesap.hint": "Only your followers can see your profile",
   "ayarlar.okumaHatirlaticilari.label": "Reading Reminders",
   "ayarlar.okumaHatirlaticilari.hint": "Reminders for your daily reading goal",
+  "ayarlar.yillikHedef.label": "Yearly Reading Goal",
+  "ayarlar.yillikHedef.hint": "Number of books you plan to read this year",
   "ayarlar.cikisYap": "Log Out",
   "ayarlar.vurguRengi": "Accent Color",
   "ayarlar.koyuMod.label": "Dark Mode",
@@ -84,6 +86,8 @@ const en: Record<keyof typeof tr, string> = {
   "kitap.stat.views": "views",
   "kitap.stat.rating": "rating",
   "kitap.stat.reads": "reads",
+  "kitap.stat.likes": "likes",
+  "kitap.like": "Like",
   "kitap.tab.overview": "Overview",
   "kitap.tab.reviews": "Reviews",
   "kitap.tab.quotes": "Quotes",
@@ -96,6 +100,8 @@ const en: Record<keyof typeof tr, string> = {
   "yazarlar.bookCount": "{count} books",
   "yazar.notFound": "Author not found.",
   "yazar.books": "Books",
+  "yazar.stat.views": "views",
+  "yazar.stat.reads": "reads",
 
   // Lists
   "common.like": "Like",

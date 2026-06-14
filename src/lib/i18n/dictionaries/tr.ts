@@ -41,6 +41,8 @@ const tr = {
   "ayarlar.gizliHesap.hint": "Profilini sadece takipçilerin görsün",
   "ayarlar.okumaHatirlaticilari.label": "Okuma Hatırlatıcıları",
   "ayarlar.okumaHatirlaticilari.hint": "Günlük okuma hedefin için hatırlatma",
+  "ayarlar.yillikHedef.label": "Yıllık Kitap Hedefi",
+  "ayarlar.yillikHedef.hint": "Bu yıl okumayı planladığın kitap sayısı",
   "ayarlar.cikisYap": "Çıkış Yap",
   "ayarlar.vurguRengi": "Vurgu Rengi",
   "ayarlar.koyuMod.label": "Koyu Mod",
@@ -82,6 +84,8 @@ const tr = {
   "kitap.stat.views": "görüntüleme",
   "kitap.stat.rating": "değerlendirme",
   "kitap.stat.reads": "okuma",
+  "kitap.stat.likes": "beğeni",
+  "kitap.like": "Beğen",
   "kitap.tab.overview": "Genel Bakış",
   "kitap.tab.reviews": "İncelemeler",
   "kitap.tab.quotes": "Alıntılar",
@@ -94,6 +98,8 @@ const tr = {
   "yazarlar.bookCount": "{count} kitap",
   "yazar.notFound": "Yazar bulunamadı.",
   "yazar.books": "Kitapları",
+  "yazar.stat.views": "görüntüleme",
+  "yazar.stat.reads": "okuma",
 
   // Listeler
   "common.like": "Beğen",
