@@ -10,8 +10,10 @@ import { Icon } from "@/components/ui/Icon";
 import { StarRating } from "@/components/ui/StarRating";
 import { BookCard } from "@/components/book/BookCard";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 export default function YazarDetayPage() {
+  const { t } = useT();
   const params = useParams();
   const router = useRouter();
   const authorId = params.id as Id<"authors">;
@@ -27,7 +29,7 @@ export default function YazarDetayPage() {
 
   if (author === undefined) return null;
   if (author === null) {
-    return <p>Yazar bulunamadı.</p>;
+    return <p>{t("yazar.notFound")}</p>;
   }
 
   return (
@@ -49,7 +51,7 @@ export default function YazarDetayPage() {
         }}
       >
         <Icon name="arrow-left" size={16} />
-        Yazarlar
+        {t("nav.yazarlar")}
       </button>
 
       <div style={{ display: "flex", gap: 24, alignItems: "center", marginBottom: 28 }}>
@@ -68,7 +70,7 @@ export default function YazarDetayPage() {
       {author.bio && <p style={{ color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 36 }}>{author.bio}</p>}
 
       <section>
-        <SectionHead title="Kitapları" />
+        <SectionHead title={t("yazar.books")} />
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
           {books?.map((b) => (
             <BookCard key={b._id} cover={b.coverUrl || undefined} title={b.title} author={b.author} width={124} onClick={() => router.push(`/kitap/${b._id}`)} />

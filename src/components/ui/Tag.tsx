@@ -1,5 +1,8 @@
+"use client";
+
 import { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { Icon, IconName } from "./Icon";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 /* Genre / topic chip — the small pills under a book ("Psikoloji", "Eğitici").
    `tone`: default (sand), tint (green), outline. Optional leading icon and
@@ -20,6 +23,7 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 export function Tag({ children, tone = "default", icon, onRemove, size = "md", style, ...rest }: TagProps) {
+  const { t: translate } = useT();
   const t = TONES[tone] || TONES.default;
   const h = size === "sm" ? 24 : 28;
   return (
@@ -46,7 +50,7 @@ export function Tag({ children, tone = "default", icon, onRemove, size = "md", s
       {onRemove && (
         <button
           onClick={onRemove}
-          aria-label="Kaldır"
+          aria-label={translate("common.remove")}
           style={{
             display: "inline-flex",
             border: "none",

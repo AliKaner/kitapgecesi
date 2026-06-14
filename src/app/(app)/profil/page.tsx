@@ -15,6 +15,7 @@ import { Icon } from "@/components/ui/Icon";
 import { BookCard } from "@/components/book/BookCard";
 import { FeedPost } from "@/components/feed/FeedPost";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
@@ -25,20 +26,14 @@ function StatTile({ label, value }: { label: string; value: string }) {
   );
 }
 
-const LIBRARY_GROUPS: { status: "reading" | "want" | "read"; label: string }[] = [
-  { status: "reading", label: "Okuyorum" },
-  { status: "want", label: "Okumak İstiyorum" },
-  { status: "read", label: "Okudum" },
-];
-
-const JOURNAL_RANGES = [
-  { value: "day", label: "Gün" },
-  { value: "week", label: "Hafta" },
-  { value: "month", label: "Ay" },
-  { value: "year", label: "Yıl" },
+const LIBRARY_GROUPS: { status: "reading" | "want" | "read"; labelKey: "kitap.status.reading" | "kitap.status.want" | "kitap.status.read" }[] = [
+  { status: "reading", labelKey: "kitap.status.reading" },
+  { status: "want", labelKey: "kitap.status.want" },
+  { status: "read", labelKey: "kitap.status.read" },
 ];
 
 function JournalTab({ userId }: { userId: import("../../../../convex/_generated/dataModel").Id<"users"> }) {
+  const { t } = useT();
   const [range, setRange] = useState("week");
   const [content, setContent] = useState("");
   const [pages, setPages] = useState("");
@@ -60,15 +55,15 @@ function JournalTab({ userId }: { userId: import("../../../../convex/_generated/
     <div>
       <Card style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 22 }}>
         <Input
-          label="Bugün ne okudun?"
-          placeholder="Bir şeyler yaz..."
+          label={t("profil.journal.prompt")}
+          placeholder={t("profil.journal.placeholder")}
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
         <div style={{ display: "flex", gap: 12, alignItems: "flex-end" }}>
           <div style={{ maxWidth: 160 }}>
             <Input
-              label="Sayfa sayısı"
+              label={t("profil.journal.pages")}
               type="number"
               placeholder="0"
               value={pages}
@@ -76,13 +71,24 @@ function JournalTab({ userId }: { userId: import("../../../../convex/_generated/
             />
           </div>
           <Button variant="primary" onClick={submit} disabled={!content.trim()}>
-            Ekle
+            {t("profil.journal.add")}
           </Button>
         </div>
       </Card>
 
       <div style={{ marginBottom: 18 }}>
-        <Tabs items={JOURNAL_RANGES} value={range} onChange={setRange} variant="segmented" size="sm" />
+        <Tabs
+          items={[
+            { value: "day", label: t("profil.range.day") },
+            { value: "week", label: t("profil.range.week") },
+            { value: "month", label: t("profil.range.month") },
+            { value: "year", label: t("profil.range.year") },
+          ]}
+          value={range}
+          onChange={setRange}
+          variant="segmented"
+          size="sm"
+        />
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -90,7 +96,7 @@ function JournalTab({ userId }: { userId: import("../../../../convex/_generated/
           <Card key={e._id} tone="sunken" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             <div style={{ display: "flex", justifyContent: "space-between", color: "var(--text-secondary)", fontSize: "var(--fs-body-3)" }}>
               <span>{new Date(e.createdAt).toLocaleString("tr-TR")}</span>
-              {e.pagesRead != null && <span>{e.pagesRead} sayfa</span>}
+              {e.pagesRead != null && <span>{t("kitap.pages", { count: e.pagesRead })}</span>}
             </div>
             <p style={{ fontSize: "var(--fs-body-2)" }}>{e.content}</p>
             {e.book && (
@@ -100,13 +106,14 @@ function JournalTab({ userId }: { userId: import("../../../../convex/_generated/
             )}
           </Card>
         ))}
-        {entries && entries.length === 0 && <p style={{ color: "var(--text-secondary)" }}>Bu aralıkta günlük girişi yok.</p>}
+        {entries && entries.length === 0 && <p style={{ color: "var(--text-secondary)" }}>{t("profil.journal.empty")}</p>}
       </div>
     </div>
   );
 }
 
 export default function ProfilPage() {
+  const { t } = useT();
   const router = useRouter();
   const [tab, setTab] = useState("Profil");
   const { user } = useAuth();
@@ -132,41 +139,51 @@ export default function ProfilPage() {
       <div style={{ display: "flex", alignItems: "flex-end", gap: 16, marginTop: -44, marginBottom: 12, padding: "0 4px" }}>
         <Avatar src={user?.profileImageUrl || undefined} name={user?.name} size="xl" ring />
         <Button variant="menu" icon="pencil" style={{ marginLeft: "auto" }}>
-          Düzenle
+          {t("common.edit")}
         </Button>
       </div>
       <div style={{ marginBottom: 28, padding: "0 4px" }}>
         <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 32, lineHeight: 1.1 }}>{user?.name}</h1>
-        <p style={{ color: "var(--text-secondary)", marginTop: 4 }}>@{user?.username} · Okur</p>
+        <p style={{ color: "var(--text-secondary)", marginTop: 4 }}>@{user?.username} · {t("profil.reader")}</p>
         <div style={{ display: "flex", gap: 18, marginTop: 10 }}>
           <span style={{ fontSize: "var(--fs-body-2)" }}>
             <strong>{profile?.followingCount ?? 0}</strong>{" "}
-            <span style={{ color: "var(--text-secondary)" }}>Takip Edilen</span>
+            <span style={{ color: "var(--text-secondary)" }}>{t("profil.following")}</span>
           </span>
           <span style={{ fontSize: "var(--fs-body-2)" }}>
             <strong>{profile?.followerCount ?? 0}</strong>{" "}
-            <span style={{ color: "var(--text-secondary)" }}>Takipçi</span>
+            <span style={{ color: "var(--text-secondary)" }}>{t("profil.followers")}</span>
           </span>
         </div>
       </div>
 
       <div style={{ marginBottom: 24 }}>
-        <Tabs items={["Profil", "Aktivite", "Kitaplık", "Günlük", "Rozetler"]} value={tab} onChange={setTab} />
+        <Tabs
+          items={[
+            { value: "Profil", label: t("profil.tab.profile") },
+            { value: "Aktivite", label: t("profil.tab.activity") },
+            { value: "Kitaplık", label: t("profil.tab.library") },
+            { value: "Günlük", label: t("profil.tab.journal") },
+            { value: "Rozetler", label: t("profil.tab.badges") },
+          ]}
+          value={tab}
+          onChange={setTab}
+        />
       </div>
 
       {tab === "Profil" && (
         <>
-          <Card title="Kitaplık Özeti" tone="sunken" style={{ marginBottom: 32 }}>
+          <Card title={t("profil.librarySummary")} tone="sunken" style={{ marginBottom: 32 }}>
             <div style={{ display: "flex" }}>
-              <StatTile label="Seviye" value={String(user?.level ?? 1)} />
-              <StatTile label="Yaprak" value={(user?.yaprak ?? 0).toLocaleString("tr-TR")} />
-              <StatTile label="Güven Skoru" value={String(user?.trustScore ?? 0)} />
-              <StatTile label="XP" value={(user?.xp ?? 0).toLocaleString("tr-TR")} />
+              <StatTile label={t("profil.stat.level")} value={String(user?.level ?? 1)} />
+              <StatTile label={t("profil.stat.yaprak")} value={(user?.yaprak ?? 0).toLocaleString("tr-TR")} />
+              <StatTile label={t("profil.stat.trustScore")} value={String(user?.trustScore ?? 0)} />
+              <StatTile label={t("profil.stat.xp")} value={(user?.xp ?? 0).toLocaleString("tr-TR")} />
             </div>
           </Card>
 
           <section>
-            <SectionHead title="Vitrin · Favori Kitaplar" />
+            <SectionHead title={t("profil.favorites")} />
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
               {favorites.map((b) => (
                 <BookCard key={b._id} cover={b.coverUrl || undefined} title={b.title} author={b.author} width={124} onClick={() => router.push(`/kitap/${b._id}`)} />
@@ -181,7 +198,7 @@ export default function ProfilPage() {
           {(userPosts ?? []).map((p) => (
             <FeedPost key={p._id} post={p} currentUserId={user?._id} />
           ))}
-          {userPosts && userPosts.length === 0 && <p style={{ color: "var(--text-secondary)" }}>Henüz aktivite bulunmuyor.</p>}
+          {userPosts && userPosts.length === 0 && <p style={{ color: "var(--text-secondary)" }}>{t("profil.noActivity")}</p>}
         </div>
       )}
 
@@ -191,7 +208,7 @@ export default function ProfilPage() {
             const items = (library ?? []).filter((e) => e.status === group.status && e.book);
             return (
               <section key={group.status}>
-                <SectionHead title={`${group.label} (${items.length})`} />
+                <SectionHead title={`${t(group.labelKey)} (${items.length})`} />
                 {items.length > 0 ? (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
                     {items.map((e) => (
@@ -206,7 +223,7 @@ export default function ProfilPage() {
                     ))}
                   </div>
                 ) : (
-                  <p style={{ color: "var(--text-secondary)" }}>Bu listede kitap yok.</p>
+                  <p style={{ color: "var(--text-secondary)" }}>{t("profil.noBooksInGroup")}</p>
                 )}
               </section>
             );

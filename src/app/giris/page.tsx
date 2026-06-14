@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Icon } from "@/components/ui/Icon";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 export default function GirisPage() {
+  const { t } = useT();
   const router = useRouter();
   const { login } = useAuth();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
@@ -24,7 +26,7 @@ export default function GirisPage() {
       await login(usernameOrEmail.trim(), password);
       router.push("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Giriş başarısız.");
+      setError(err instanceof Error ? err.message : t("auth.loginFailed"));
     } finally {
       setLoading(false);
     }
@@ -58,12 +60,12 @@ export default function GirisPage() {
           marginBottom: 28,
         }}
       >
-        Tekrar hoş geldin.
+        {t("auth.welcomeBack")}
       </h1>
 
       <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: 380 }}>
         <Input
-          placeholder="Kullanıcı adı veya e-posta"
+          placeholder={t("auth.usernameOrEmail")}
           icon="user"
           pill
           value={usernameOrEmail}
@@ -73,7 +75,7 @@ export default function GirisPage() {
         />
         <Input
           type="password"
-          placeholder="Şifre"
+          placeholder={t("auth.password")}
           pill
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -84,14 +86,14 @@ export default function GirisPage() {
           <div style={{ color: "var(--kg-error, #E0654F)", fontSize: "var(--fs-body-3)" }}>{error}</div>
         )}
         <Button type="submit" variant="primary" size="lg" disabled={loading}>
-          {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+          {loading ? t("auth.loggingIn") : t("auth.login")}
         </Button>
       </form>
 
       <p style={{ marginTop: 28, color: "var(--kg-sage-soft)", fontSize: "var(--fs-body-3)" }}>
-        Hesabın yok mu?{" "}
+        {t("auth.noAccount")}{" "}
         <Link href="/kayit" style={{ color: "var(--kg-sage)", textDecoration: "underline" }}>
-          Kayıt ol
+          {t("auth.signUp")}
         </Link>
       </p>
     </div>

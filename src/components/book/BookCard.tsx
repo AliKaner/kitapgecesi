@@ -1,7 +1,10 @@
+"use client";
+
 import { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { BookCover } from "./BookCover";
 import { StarRating } from "../ui/StarRating";
 import { Tag } from "../ui/Tag";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 /* BookCard — composes a cover with title / author / rating.
    layout "grid": vertical, compact (the "Popüler Kitaplar" rail).
@@ -41,6 +44,7 @@ export function BookCard({
   style,
   ...rest
 }: BookCardProps) {
+  const { t } = useT();
   const titleStyle: CSSProperties = {
     fontFamily: serif ? "var(--font-serif)" : "var(--font-sans)",
     fontSize: serif ? "var(--fs-display-sm)" : "var(--fs-h3)",
@@ -59,7 +63,7 @@ export function BookCard({
           {author && <div style={{ fontSize: "var(--fs-body-2)", color: "var(--text-secondary)" } as CSSProperties}>{author}</div>}
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 2 }}>
             {rating != null && <StarRating value={rating} count={ratingCount} />}
-            {pages && <span style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" } as CSSProperties}>{pages} sayfa</span>}
+            {pages && <span style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" } as CSSProperties}>{t("kitap.pages", { count: pages })}</span>}
           </div>
           {dateRange && <div style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" } as CSSProperties}>{dateRange}</div>}
           {genres.length > 0 && (

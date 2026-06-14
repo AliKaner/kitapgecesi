@@ -4,8 +4,10 @@ import { CSSProperties, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Icon } from "@/components/ui/Icon";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 export default function OnkayitPage() {
+  const { t } = useT();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
 
@@ -44,12 +46,11 @@ export default function OnkayitPage() {
           marginBottom: 18,
         }}
       >
-        Kitap Gecesi&apos;ne hoş geldin.
+        {t("auth.preregHeading")}
       </h1>
 
       <p style={{ color: "var(--kg-sage-soft)", fontSize: "var(--fs-body-1)", maxWidth: 520, marginBottom: 40, lineHeight: 1.6 }}>
-        Okuduklarını paylaş, listeler oluştur, topluluğunla birlikte okuma alışkanlığını büyüt. Erken erişim için
-        önkayıt ol, davetiyeni ilk sıradan al.
+        {t("auth.preregBody")}
       </p>
 
       {sent ? (
@@ -65,14 +66,14 @@ export default function OnkayitPage() {
           }}
         >
           <Icon name="check" size={20} color="var(--kg-green)" />
-          Önkayıt alındı! Davetiyeni e-posta ile göndereceğiz.
+          {t("auth.preregSent")}
         </div>
       ) : (
         <form onSubmit={submit} style={{ display: "flex", gap: 10, width: "100%", maxWidth: 420 }}>
           <div style={{ flex: 1 }}>
             <Input
               type="email"
-              placeholder="E-posta adresin"
+              placeholder={t("auth.emailAddress")}
               icon="user"
               pill
               value={email}
@@ -82,13 +83,13 @@ export default function OnkayitPage() {
             />
           </div>
           <Button type="submit" variant="primary" size="lg">
-            Önkayıt Ol
+            {t("auth.preregButton")}
           </Button>
         </form>
       )}
 
       <p style={{ marginTop: 28, color: "var(--kg-sage-soft)", fontSize: "var(--fs-body-3)", opacity: 0.7 }}>
-        Davet kodun varsa, uygulamaya doğrudan katılabilirsin.
+        {t("auth.hasInviteCode")}
       </p>
     </div>
   );

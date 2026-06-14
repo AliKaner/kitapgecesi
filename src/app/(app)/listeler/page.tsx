@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/Card";
 import { Tabs } from "@/components/ui/Tabs";
 import { BookCover } from "@/components/book/BookCover";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 function CoverStack({ books }: { books: Doc<"books">[] }) {
   const slots = [0, 1, 2, 3];
@@ -29,6 +30,7 @@ function CoverStack({ books }: { books: Doc<"books">[] }) {
 }
 
 export default function ListelerPage() {
+  const { t } = useT();
   const [tab, setTab] = useState("Listelerim");
   const router = useRouter();
   const { user } = useAuth();
@@ -37,13 +39,21 @@ export default function ListelerPage() {
   return (
     <>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <ScreenTitle>Listeler</ScreenTitle>
+          <ScreenTitle>{t("nav.listeler")}</ScreenTitle>
           <Button variant="primary" size="sm" icon="plus" onClick={() => router.push("/listeler/yeni")}>
-            Yeni Liste
+            {t("listeler.new")}
           </Button>
         </div>
         <div style={{ marginBottom: 26 }}>
-          <Tabs items={["Listelerim", "Kaydedilenler", "Takip Edilen"]} value={tab} onChange={setTab} />
+          <Tabs
+            items={[
+              { value: "Listelerim", label: t("listeler.tab.mine") },
+              { value: "Kaydedilenler", label: t("listeler.tab.saved") },
+              { value: "Takip Edilen", label: t("listeler.tab.following") },
+            ]}
+            value={tab}
+            onChange={setTab}
+          />
         </div>
 
         {tab === "Listelerim" && (
@@ -55,17 +65,17 @@ export default function ListelerPage() {
                   <h3 style={{ fontSize: "var(--fs-h3)", fontWeight: 600, marginBottom: 4 }}>{l.title}</h3>
                   <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-2)", marginBottom: 8 }}>{l.description}</p>
                   <span style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)" }}>
-                    {l.previewBooks.length} kitap · {l.likeCount} beğeni
+                    {t("listeler.preview", { books: l.previewBooks.length, likes: l.likeCount })}
                   </span>
                 </div>
               </Card>
             ))}
-            {lists && lists.length === 0 && <p style={{ color: "var(--text-secondary)" }}>Henüz bir listeniz yok.</p>}
+            {lists && lists.length === 0 && <p style={{ color: "var(--text-secondary)" }}>{t("listeler.empty.mine")}</p>}
           </div>
         )}
 
-        {tab === "Kaydedilenler" && <p style={{ color: "var(--text-secondary)" }}>Henüz kaydedilen liste yok.</p>}
-        {tab === "Takip Edilen" && <p style={{ color: "var(--text-secondary)" }}>Takip ettiğiniz liste yok.</p>}
+        {tab === "Kaydedilenler" && <p style={{ color: "var(--text-secondary)" }}>{t("listeler.empty.saved")}</p>}
+        {tab === "Takip Edilen" && <p style={{ color: "var(--text-secondary)" }}>{t("listeler.empty.following")}</p>}
     </>
   );
 }

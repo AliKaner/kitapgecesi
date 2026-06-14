@@ -134,14 +134,14 @@ export default function AyarlarPage() {
           <Input label={t("ayarlar.davetKodu")} placeholder={t("ayarlar.davetKodu.placeholder")} hint={t("ayarlar.davetKodu.hint")} />
           <Input
             ref={profileImageRef}
-            label="Profil Fotoğrafı URL"
+            label={t("image.profileUrl")}
             placeholder="https://..."
             defaultValue={user?.profileImageUrl}
           />
           <Input
             ref={bannerRef}
-            label="Profil Banner URL"
-            hint="Twitter'daki gibi, profilinin üst kısmında görünür."
+            label={t("ayarlar.profilBanner")}
+            hint={t("image.bannerHint.profile")}
             placeholder="https://..."
             defaultValue={user?.bannerUrl}
           />

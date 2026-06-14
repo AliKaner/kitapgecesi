@@ -1,5 +1,8 @@
+"use client";
+
 import { CSSProperties, HTMLAttributes } from "react";
 import { Icon } from "./Icon";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 /* Star rating. `compact` shows one gold star + the score in Turkish format
    "(5,0)"; otherwise renders the full five-star row. Score is 0–5. */
@@ -18,6 +21,7 @@ export interface StarRatingProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 export function StarRating({ value = 0, count, size = 14, compact = true, showValue = true, onRate, style, ...rest }: StarRatingProps) {
+  const { t } = useT();
   const v = Math.max(0, Math.min(5, Number(value) || 0));
   if (compact) {
     return (
@@ -46,7 +50,7 @@ export function StarRating({ value = 0, count, size = 14, compact = true, showVa
               key={i}
               type="button"
               onClick={() => onRate(i + 1)}
-              aria-label={`${i + 1} yıldız`}
+              aria-label={t("starRating.star", { count: i + 1 })}
               style={{ border: "none", background: "none", padding: 0, cursor: "pointer", lineHeight: 0 }}
             >
               <Icon name="star" size={size} fill={i < Math.round(v)} color={i < Math.round(v) ? "var(--rating-star)" : "var(--border-strong)"} />

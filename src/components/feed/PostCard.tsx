@@ -4,6 +4,7 @@ import { CSSProperties, HTMLAttributes, ReactNode, useState } from "react";
 import { Avatar } from "../ui/Avatar";
 import { IconButton } from "../ui/IconButton";
 import { Icon } from "../ui/Icon";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 /* Feed post. Header (avatar · name · date · overflow), body text, an optional
    embedded block (a book review, club, image — passed as children), and the
@@ -68,6 +69,7 @@ export function PostCard({
   ...rest
 }: PostCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { t } = useT();
 
   return (
     <article
@@ -98,14 +100,14 @@ export function PostCard({
               {author.handle && date && <span> · </span>}
               {date}
               {views !== undefined && views !== null && (
-                <span> · {views} görüntülenme</span>
+                <span> · {t("post.views", { count: views })}</span>
               )}
             </div>
           )}
         </div>
         {compact ? null : moreActions && moreActions.length > 0 ? (
           <div style={{ position: "relative" }}>
-            <IconButton icon="more" label="Daha fazla" size={32} onClick={() => setMenuOpen((v) => !v)} />
+            <IconButton icon="more" label={t("post.more")} size={32} onClick={() => setMenuOpen((v) => !v)} />
             {menuOpen && (
               <>
                 <div
@@ -154,7 +156,7 @@ export function PostCard({
             )}
           </div>
         ) : (
-          <IconButton icon="more" label="Daha fazla" size={32} onClick={onMore} />
+          <IconButton icon="more" label={t("post.more")} size={32} onClick={onMore} />
         )}
       </header>
 
@@ -164,11 +166,11 @@ export function PostCard({
 
       {!compact && (
         <footer style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
-          <IconButton icon="comment" count={comments} label="Yorum" size={34} onClick={onCommentClick} />
-          <IconButton icon="repeat" count={reposts} active={reposted} label="Yeniden paylaş" size={34} onClick={onRepostClick} />
-          <IconButton icon="heart" count={likes} active={liked} label="Beğen" size={34} onClick={onLikeClick} />
+          <IconButton icon="comment" count={comments} label={t("post.comment")} size={34} onClick={onCommentClick} />
+          <IconButton icon="repeat" count={reposts} active={reposted} label={t("post.repost")} size={34} onClick={onRepostClick} />
+          <IconButton icon="heart" count={likes} active={liked} label={t("common.like")} size={34} onClick={onLikeClick} />
           <div style={{ flex: 1 }} />
-          <IconButton icon="share" count={shares} label="Paylaş" size={34} />
+          <IconButton icon="share" count={shares} label={t("common.share")} size={34} />
         </footer>
       )}
 

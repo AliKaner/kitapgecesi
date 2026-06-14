@@ -26,9 +26,18 @@ export type FeedPostData = FunctionReturnType<typeof api.posts.getFeed>[number];
 type RepostedPostData = NonNullable<FeedPostData["repostedPost"]>;
 
 function PostBody({ post }: { post: FeedPostData | RepostedPostData }) {
+  const { t } = useT();
   return (
     <>
       {post.content && <p style={{ fontSize: "var(--fs-body-1)", lineHeight: "var(--lh-body-1)", color: "var(--text-primary)" } as CSSProperties}>{post.content}</p>}
+      {post.mediaUrls?.[0] && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={post.mediaUrls[0]}
+          alt=""
+          style={{ width: "100%", maxHeight: 360, objectFit: "cover", borderRadius: "var(--radius-md)", display: "block" } as CSSProperties}
+        />
+      )}
       {post.books?.[0] && (
         <BookCard
           layout="row"
@@ -37,6 +46,11 @@ function PostBody({ post }: { post: FeedPostData | RepostedPostData }) {
           author={post.books[0]?.author}
           width={78}
         />
+      )}
+      {post.type === "okuma" && post.pageNumber != null && (
+        <div style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" } as CSSProperties}>
+          {t("post.pageProgress", { page: post.pageNumber })}
+        </div>
       )}
     </>
   );
@@ -207,15 +221,30 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
             </div>
           </div>
         ) : (
-          post.books?.[0] && (
-            <BookCard
-              layout="row"
-              cover={post.books[0]?.coverUrl}
-              title={post.books[0]?.title ?? ""}
-              author={post.books[0]?.author}
-              width={78}
-            />
-          )
+          <>
+            {post.mediaUrls?.[0] && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={post.mediaUrls[0]}
+                alt=""
+                style={{ width: "100%", maxHeight: 360, objectFit: "cover", borderRadius: "var(--radius-md)", display: "block" } as CSSProperties}
+              />
+            )}
+            {post.books?.[0] && (
+              <BookCard
+                layout="row"
+                cover={post.books[0]?.coverUrl}
+                title={post.books[0]?.title ?? ""}
+                author={post.books[0]?.author}
+                width={78}
+              />
+            )}
+            {post.type === "okuma" && post.pageNumber != null && (
+              <div style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" } as CSSProperties}>
+                {t("post.pageProgress", { page: post.pageNumber })}
+              </div>
+            )}
+          </>
         )}
 
         {post.repostedPost && (

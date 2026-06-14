@@ -23,7 +23,7 @@ export default function YazarlarPage() {
               <Avatar src={a.photoUrl} name={a.name} size="lg" />
               <div>
                 <div style={{ fontSize: "var(--fs-body-1)", fontWeight: "var(--fw-semibold)" as unknown as number }}>{a.name}</div>
-                <div style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)", marginTop: 2 }}>{a.bookCount} kitap</div>
+                <div style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)", marginTop: 2 }}>{t("yazarlar.bookCount", { count: a.bookCount })}</div>
               </div>
               {a.ratingCount > 0 && <StarRating value={a.avgRating} count={a.ratingCount} />}
             </Card>

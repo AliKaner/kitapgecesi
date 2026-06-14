@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Card } from "../ui/Card";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { BookCover } from "../book/BookCover";
 import { StarRating } from "../ui/StarRating";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 /* Right context rail — search, book of the month, reading-goal widget. */
 
@@ -52,40 +55,42 @@ function Stat({ n, l }: { n: string | number; l: string }) {
 }
 
 function ReadingGoal() {
+  const { t } = useT();
   const g = GOAL;
   return (
     <Card padding={20}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
         <div>
-          <div style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em" }}>Yıllık Kitap Hedefi</div>
+          <div style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em" }}>{t("contextRail.yearlyGoal")}</div>
           <div style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 2 }}>
-            {g.year} · {g.target} kitap
+            {t("contextRail.goalSubtitle", { year: g.year, target: g.target })}
           </div>
         </div>
         <GoalRing pct={g.pct} />
       </div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 6, margin: "4px 0 16px" }}>
         <span style={{ fontFamily: "var(--font-serif)", fontSize: 34, lineHeight: 1 }}>{g.done}</span>
-        <span style={{ fontSize: 15, color: "var(--text-secondary)" }}>/ {g.target} kitap</span>
+        <span style={{ fontSize: 15, color: "var(--text-secondary)" }}>{t("contextRail.ofTarget", { target: g.target })}</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, paddingTop: 16, borderTop: "1px solid var(--border-default)" }}>
-        <Stat n={g.pages} l="sayfa" />
-        <Stat n={g.reviews} l="inceleme" />
-        <Stat n={g.quotes} l="alıntı" />
+        <Stat n={g.pages} l={t("contextRail.pages")} />
+        <Stat n={g.reviews} l={t("contextRail.reviews")} />
+        <Stat n={g.quotes} l={t("contextRail.quotes")} />
       </div>
     </Card>
   );
 }
 
 function BookOfMonth() {
+  const { t } = useT();
   const b = BOOK_OF_MONTH;
   return (
     <Card
       padding={20}
-      title="Ayın Kitabı"
+      title={t("contextRail.bookOfMonth")}
       action={
         <Link href="/kitaplar" className="kg-eyebrow" style={{ cursor: "pointer" }}>
-          Tümü
+          {t("common.all")}
         </Link>
       }
     >
@@ -97,7 +102,7 @@ function BookOfMonth() {
           <StarRating value={b.rating} />
           <div style={{ marginTop: "auto", paddingTop: 8 }}>
             <Button size="sm" variant="primary" icon="book">
-              Oku
+              {t("contextRail.read")}
             </Button>
           </div>
         </div>
@@ -107,6 +112,7 @@ function BookOfMonth() {
 }
 
 export function ContextRail() {
+  const { t } = useT();
   return (
     <aside
       style={{
@@ -122,7 +128,7 @@ export function ContextRail() {
         alignSelf: "flex-start",
       }}
     >
-      <Input icon="search" pill placeholder="Arama" />
+      <Input icon="search" pill placeholder={t("contextRail.searchPlaceholder")} />
       <BookOfMonth />
       <ReadingGoal />
     </aside>

@@ -48,16 +48,16 @@ export default function KuluplerPage() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <ScreenTitle>{t("nav.kulupler")}</ScreenTitle>
           <Button variant="primary" size="sm" icon="plus" onClick={() => setCreating((v) => !v)}>
-            Kulüp Oluştur
+            {t("kulup.create")}
           </Button>
         </div>
 
         {creating && (
           <Card style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 24 }}>
-            <Input label="Kulüp Adı" value={name} onChange={(e) => setName(e.target.value)} />
-            <Input label="Açıklama" value={description} onChange={(e) => setDescription(e.target.value)} />
-            <Input label="Profil Fotoğrafı URL" placeholder="https://..." value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} />
-            <Input label="Kapak Resmi URL" hint="Twitter'daki gibi, kulüp sayfasının üst kısmında görünür." placeholder="https://..." value={bannerUrl} onChange={(e) => setBannerUrl(e.target.value)} />
+            <Input label={t("kulup.fields.name")} value={name} onChange={(e) => setName(e.target.value)} />
+            <Input label={t("liste.fields.description")} value={description} onChange={(e) => setDescription(e.target.value)} />
+            <Input label={t("image.profileUrl")} placeholder="https://..." value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} />
+            <Input label={t("image.bannerUrl")} hint={t("image.bannerHint.club")} placeholder="https://..." value={bannerUrl} onChange={(e) => setBannerUrl(e.target.value)} />
             <div style={{ display: "flex", gap: 8 }}>
               <Button variant="primary" onClick={submit} disabled={!name.trim()}>
                 {t("common.save")}
@@ -84,7 +84,7 @@ export default function KuluplerPage() {
               <div style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" }}>{c.description}</div>
             </Card>
           ))}
-          {clubs && clubs.length === 0 && <p style={{ color: "var(--text-secondary)" }}>Henüz bir kulüp yok.</p>}
+          {clubs && clubs.length === 0 && <p style={{ color: "var(--text-secondary)" }}>{t("kulup.empty")}</p>}
         </div>
     </>
   );

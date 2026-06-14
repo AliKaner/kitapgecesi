@@ -13,8 +13,10 @@ import { ScreenTitle } from "@/components/layout/Screen";
 import { Switch } from "@/components/ui/Switch";
 import { Tag } from "@/components/ui/Tag";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 export default function YeniListePage() {
+  const { t } = useT();
   const router = useRouter();
   const { user } = useAuth();
   const [title, setTitle] = useState("");
@@ -51,16 +53,16 @@ export default function YeniListePage() {
 
   return (
     <>
-      <ScreenTitle>Yeni Liste</ScreenTitle>
+      <ScreenTitle>{t("listeler.new")}</ScreenTitle>
       <Card style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 24 }}>
-        <Input label="Başlık" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <Input label="Açıklama" value={description} onChange={(e) => setDescription(e.target.value)} />
-        <Switch label="Gizli liste" checked={isPrivate} onChange={setIsPrivate} />
-        <Switch label="Sıralı liste" checked={isRanked} onChange={setIsRanked} />
+        <Input label={t("liste.fields.title")} value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Input label={t("liste.fields.description")} value={description} onChange={(e) => setDescription(e.target.value)} />
+        <Switch label={t("liste.fields.private")} checked={isPrivate} onChange={setIsPrivate} />
+        <Switch label={t("liste.fields.ranked")} checked={isRanked} onChange={setIsRanked} />
       </Card>
 
       <Card style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 24 }}>
-        <Input label="Kitap ara" icon="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Kitap adı veya yazar..." />
+        <Input label={t("liste.searchBooks")} icon="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("liste.searchPlaceholder")} />
         {results && results.length > 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 240, overflowY: "auto" }}>
             {results.map((b) => (
@@ -90,7 +92,7 @@ export default function YeniListePage() {
       </Card>
 
       <Button variant="primary" onClick={submit} disabled={!title.trim()}>
-        Listeyi Oluştur
+        {t("liste.create")}
       </Button>
     </>
   );

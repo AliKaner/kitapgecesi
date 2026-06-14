@@ -13,12 +13,6 @@ import { useT } from "@/lib/i18n/I18nProvider";
 
 const GENRES = ["Edebiyat", "Roman", "Psikoloji", "Duygu ve Düşünce", "Felsefe", "Tarih", "Bilim", "Tasavvuf", "Sanat", "Kişisel Gelişim"];
 
-const SORT_OPTIONS = [
-  { value: "yeni", label: "En Yeni" },
-  { value: "puan", label: "En Beğenilenler" },
-  { value: "alfabetik", label: "A-Z" },
-];
-
 interface BookWithRating {
   _id: string;
   title: string;

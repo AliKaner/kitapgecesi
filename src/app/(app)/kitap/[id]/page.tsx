@@ -14,12 +14,7 @@ import { Tag } from "@/components/ui/Tag";
 import { BookCover } from "@/components/book/BookCover";
 import { BookCard } from "@/components/book/BookCard";
 import { useAuth } from "@/lib/auth/AuthProvider";
-
-const STATUS_OPTIONS = [
-  { value: "want", label: "Okumak İstiyorum" },
-  { value: "reading", label: "Okuyorum" },
-  { value: "read", label: "Okudum" },
-];
+import { useT } from "@/lib/i18n/I18nProvider";
 
 function DetailStat({ label, value }: { label: string; value: string }) {
   return (
@@ -31,6 +26,7 @@ function DetailStat({ label, value }: { label: string; value: string }) {
 }
 
 export default function KitapDetayPage() {
+  const { t } = useT();
   const params = useParams();
   const router = useRouter();
   const [tab, setTab] = useState("Genel Bakış");
@@ -51,7 +47,7 @@ export default function KitapDetayPage() {
 
   if (book === undefined) return null;
   if (book === null) {
-    return <p>Kitap bulunamadı.</p>;
+    return <p>{t("kitap.notFound")}</p>;
   }
 
   const similar = (allBooks ?? []).filter((b) => b._id !== book._id).slice(0, 4);
@@ -75,7 +71,7 @@ export default function KitapDetayPage() {
         }}
       >
         <Icon name="arrow-left" size={16} />
-        Kitaplar
+        {t("nav.kitaplar")}
       </button>
 
       <div style={{ display: "flex", gap: 28, marginBottom: 32 }}>
@@ -83,7 +79,7 @@ export default function KitapDetayPage() {
         <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 38, lineHeight: 1.1, marginBottom: 8 }}>{book.title}</h1>
           <p style={{ color: "var(--text-secondary)", marginBottom: 10 }}>
-            {book.author} · {book.totalPages} sayfa
+            {book.author} · {t("kitap.pages", { count: book.totalPages })}
           </p>
           {book.genres && book.genres.length > 0 && (
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
@@ -105,7 +101,11 @@ export default function KitapDetayPage() {
           <Tabs
             variant="segmented"
             size="sm"
-            items={STATUS_OPTIONS}
+            items={[
+              { value: "want", label: t("kitap.status.want") },
+              { value: "reading", label: t("kitap.status.reading") },
+              { value: "read", label: t("kitap.status.read") },
+            ]}
             value={userBook?.status ?? ""}
             onChange={(v) => {
               if (!user) return;
@@ -117,30 +117,38 @@ export default function KitapDetayPage() {
 
       <Card tone="sunken" style={{ marginBottom: 32 }}>
         <div style={{ display: "flex" }}>
-          <DetailStat label="görüntüleme" value="8.364" />
+          <DetailStat label={t("kitap.stat.views")} value="8.364" />
           <DetailStat
-            label="değerlendirme"
+            label={t("kitap.stat.rating")}
             value={`${(ratingSummary?.avg ?? 0).toFixed(1).replace(".", ",")} / ${ratingSummary?.count ?? 0}`}
           />
-          <DetailStat label="okuma" value="2.657" />
+          <DetailStat label={t("kitap.stat.reads")} value="2.657" />
         </div>
       </Card>
 
       <div style={{ marginBottom: 22 }}>
-        <Tabs items={["Genel Bakış", "İncelemeler", "Alıntılar", "Benzer Kitaplar"]} value={tab} onChange={setTab} />
+        <Tabs
+          items={[
+            { value: "Genel Bakış", label: t("kitap.tab.overview") },
+            { value: "İncelemeler", label: t("kitap.tab.reviews") },
+            { value: "Alıntılar", label: t("kitap.tab.quotes") },
+            { value: "Benzer Kitaplar", label: t("kitap.tab.similar") },
+          ]}
+          value={tab}
+          onChange={setTab}
+        />
       </div>
 
       {tab === "Genel Bakış" && (
         <p style={{ color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 36 }}>
-          {book.author} tarafından yazılan &quot;{book.title}&quot;, okuyucularını derin bir düşünce yolculuğuna çıkarıyor. {book.totalPages} sayfa
-          boyunca akıcı bir anlatımla ilerleyen kitap, KitapGecesi topluluğunda en çok tartışılan eserlerden biri.
+          {t("kitap.overview", { author: book.author, title: book.title, pages: book.totalPages })}
         </p>
       )}
       {tab === "İncelemeler" && (
-        <p style={{ color: "var(--text-secondary)", marginBottom: 36 }}>Henüz inceleme bulunmuyor.</p>
+        <p style={{ color: "var(--text-secondary)", marginBottom: 36 }}>{t("kitap.noReviews")}</p>
       )}
       {tab === "Alıntılar" && (
-        <p style={{ color: "var(--text-secondary)", marginBottom: 36 }}>Henüz alıntı bulunmuyor.</p>
+        <p style={{ color: "var(--text-secondary)", marginBottom: 36 }}>{t("kitap.noQuotes")}</p>
       )}
       {tab === "Benzer Kitaplar" && similar.length > 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px", marginBottom: 36 }}>
@@ -152,7 +160,7 @@ export default function KitapDetayPage() {
 
       {tab !== "Benzer Kitaplar" && similar.length > 0 && (
         <section>
-          <SectionHead title="Benzer Kitaplar" />
+          <SectionHead title={t("kitap.tab.similar")} />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
             {similar.map((b) => (
               <BookCard key={b._id} cover={b.coverUrl || undefined} title={b.title} author={b.author} width={124} onClick={() => router.push(`/kitap/${b._id}`)} />

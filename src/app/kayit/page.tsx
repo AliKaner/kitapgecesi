@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Icon } from "@/components/ui/Icon";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 export default function KayitPage() {
+  const { t } = useT();
   const router = useRouter();
   const { register } = useAuth();
   const [name, setName] = useState("");
@@ -27,7 +29,7 @@ export default function KayitPage() {
       await register({ name: name.trim(), username: username.trim(), email: email.trim(), password, inviteCode: inviteCode.trim() });
       router.push("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Kayıt başarısız.");
+      setError(err instanceof Error ? err.message : t("auth.registerFailed"));
     } finally {
       setLoading(false);
     }
@@ -61,12 +63,12 @@ export default function KayitPage() {
           marginBottom: 28,
         }}
       >
-        Kitap Gecesi&apos;ne katıl.
+        {t("auth.joinUs")}
       </h1>
 
       <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: 380 }}>
         <Input
-          placeholder="Ad Soyad"
+          placeholder={t("auth.fullName")}
           icon="user"
           pill
           value={name}
@@ -75,7 +77,7 @@ export default function KayitPage() {
           required
         />
         <Input
-          placeholder="Kullanıcı adı"
+          placeholder={t("ayarlar.kullaniciAdi")}
           icon="user"
           pill
           value={username}
@@ -85,7 +87,7 @@ export default function KayitPage() {
         />
         <Input
           type="email"
-          placeholder="E-posta adresin"
+          placeholder={t("auth.emailAddress")}
           icon="user"
           pill
           value={email}
@@ -95,7 +97,7 @@ export default function KayitPage() {
         />
         <Input
           type="password"
-          placeholder="Şifre"
+          placeholder={t("auth.password")}
           pill
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -103,7 +105,7 @@ export default function KayitPage() {
           required
         />
         <Input
-          placeholder="Davet kodu"
+          placeholder={t("ayarlar.davetKodu")}
           pill
           value={inviteCode}
           onChange={(e) => setInviteCode(e.target.value)}
@@ -114,14 +116,14 @@ export default function KayitPage() {
           <div style={{ color: "var(--kg-error, #E0654F)", fontSize: "var(--fs-body-3)" }}>{error}</div>
         )}
         <Button type="submit" variant="primary" size="lg" disabled={loading}>
-          {loading ? "Kayıt oluşturuluyor..." : "Kayıt Ol"}
+          {loading ? t("auth.registering") : t("auth.register")}
         </Button>
       </form>
 
       <p style={{ marginTop: 28, color: "var(--kg-sage-soft)", fontSize: "var(--fs-body-3)" }}>
-        Zaten hesabın var mı?{" "}
+        {t("auth.hasAccount")}{" "}
         <Link href="/giris" style={{ color: "var(--kg-sage)", textDecoration: "underline" }}>
-          Giriş yap
+          {t("auth.login")}
         </Link>
       </p>
     </div>

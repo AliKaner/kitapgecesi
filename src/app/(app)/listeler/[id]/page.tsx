@@ -35,7 +35,7 @@ export default function ListeDetayPage() {
 
   if (list === undefined) return null;
   if (list === null) {
-    return <p>Liste bulunamadı.</p>;
+    return <p>{t("liste.notFound")}</p>;
   }
 
   const isOwner = user?._id === list.creatorId;
@@ -59,7 +59,7 @@ export default function ListeDetayPage() {
         }}
       >
         <Icon name="arrow-left" size={16} />
-        Listeler
+        {t("nav.listeler")}
       </button>
 
       <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 38, lineHeight: 1.1, marginBottom: 8 }}>{list.title}</h1>
@@ -73,7 +73,7 @@ export default function ListeDetayPage() {
           icon="heart"
           count={formatCount(list.likeCount)}
           active={!!isLiked}
-          label="Beğen"
+          label={t("common.like")}
           onClick={() => user && likeTarget({ userId: user._id, targetType: "list", targetId: listId })}
         />
         {!isOwner && (
@@ -87,7 +87,7 @@ export default function ListeDetayPage() {
               router.push(`/listeler/${newId}`);
             }}
           >
-            Klonla
+            {t("liste.clone")}
           </Button>
         )}
       </div>
@@ -113,7 +113,7 @@ export default function ListeDetayPage() {
       </div>
 
       <section>
-        <h3 style={{ fontSize: "var(--fs-h3)", fontWeight: 600, marginBottom: 14 }}>Yorumlar</h3>
+        <h3 style={{ fontSize: "var(--fs-h3)", fontWeight: 600, marginBottom: 14 }}>{t("liste.comments")}</h3>
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
           {comments?.length ? (
             comments.map((c) => (
