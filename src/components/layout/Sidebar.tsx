@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useQuery } from "convex/react";
@@ -27,7 +28,7 @@ const NAV: { id: string; icon: IconName; labelKey: string; href: string; count?:
 export function Sidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
-  const { t, locale, setLocale } = useT();
+  const { t } = useT();
   const unreadCount = useQuery(api.notifications.getUnreadCount, user ? { userId: user._id } : "skip");
 
   return (
@@ -46,9 +47,7 @@ export function Sidebar() {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 12px 20px" }}>
-        <span style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: 22, letterSpacing: "-0.02em", color: "var(--text-primary)" }}>
-          <span style={{ color: "var(--accent)" }}>kitap</span>gecesi
-        </span>
+        <Image src="/logo.png" alt="KitapGecesi" width={89} height={40} style={{ height: 28, width: "auto" }} priority />
       </div>
       <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
         {NAV.map((n) => (
@@ -70,29 +69,6 @@ export function Sidebar() {
             {t("nav.yeniGonderi")}
           </Button>
         </Link>
-      </div>
-      <div style={{ marginTop: 14, padding: "0 6px", display: "flex", gap: 6 }}>
-        {(["tr", "en"] as const).map((l) => (
-          <button
-            key={l}
-            onClick={() => setLocale(l)}
-            aria-label={t("nav.language")}
-            style={{
-              flex: 1,
-              height: 32,
-              borderRadius: "10px",
-              border: "1px solid var(--border-default)",
-              background: locale === l ? "var(--accent-tint)" : "transparent",
-              color: locale === l ? "var(--accent)" : "var(--text-secondary)",
-              fontFamily: "var(--font-sans)",
-              fontSize: "var(--fs-body-3)",
-              fontWeight: locale === l ? 700 : 500,
-              cursor: "pointer",
-            }}
-          >
-            {l.toUpperCase()}
-          </button>
-        ))}
       </div>
       {user && (
         <Link

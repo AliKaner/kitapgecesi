@@ -18,9 +18,37 @@ const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
 });
 
+const SITE_URL = "https://www.kitapgecesi.com";
+const TITLE = "Kitap Gecesi";
+const DESCRIPTION = "Kitap okuma, paylaşma ve kulüp deneyimi. Okuduklarını paylaş, listeler oluştur, topluluğunla birlikte okuma alışkanlığını büyüt.";
+
 export const metadata: Metadata = {
-  title: "KitapGecesi",
-  description: "Kitap okuma, paylaşma ve kulüp deneyimi.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: TITLE,
+    template: `%s · ${TITLE}`,
+  },
+  description: DESCRIPTION,
+  applicationName: TITLE,
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: SITE_URL,
+    siteName: TITLE,
+    images: ["/logo.png"],
+    locale: "tr_TR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/logo.png"],
+  },
 };
 
 export default function RootLayout({
