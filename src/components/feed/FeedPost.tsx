@@ -118,7 +118,7 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
   return (
     <div ref={ref}>
       <PostCard
-        author={{ name: post.author?.name, handle: post.author?.username ? `@${post.author.username}` : undefined, avatar: post.author?.profileImageUrl }}
+        author={{ name: post.author?.name, handle: post.author?.username ? `@${post.author.username}` : undefined, avatar: post.author?.profileImageUrl, roleBadges: post.author?.roleBadges }}
         date={formatDate(post.createdAt)}
         views={post.viewCount ? formatCount(post.viewCount) : undefined}
         text={editing ? undefined : post.content}
@@ -249,7 +249,7 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
 
         {post.repostedPost && (
           <PostCard
-            author={{ name: post.repostedPost.author?.name, handle: post.repostedPost.author?.username ? `@${post.repostedPost.author.username}` : undefined, avatar: post.repostedPost.author?.profileImageUrl }}
+            author={{ name: post.repostedPost.author?.name, handle: post.repostedPost.author?.username ? `@${post.repostedPost.author.username}` : undefined, avatar: post.repostedPost.author?.profileImageUrl, roleBadges: post.repostedPost.author?.roleBadges }}
             date={formatDate(post.repostedPost.createdAt)}
             style={{ background: "var(--surface-sunken)" }}
             compact

@@ -15,6 +15,10 @@ const en: Record<keyof typeof tr, string> = {
   "common.remove": "Remove",
   "common.saved": "Saved",
   "starRating.star": "{count} star",
+  "roleBadge.founder": "Founder",
+  "roleBadge.vip": "VIP",
+  "roleBadge.admin": "Admin",
+  "roleBadge.yazar": "Author",
 
   // Sidebar / Navigation
   "nav.anasayfa": "Home",

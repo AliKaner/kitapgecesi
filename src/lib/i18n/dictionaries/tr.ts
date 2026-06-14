@@ -13,6 +13,10 @@ const tr = {
   "common.remove": "Kaldır",
   "common.saved": "Kaydedildi",
   "starRating.star": "{count} yıldız",
+  "roleBadge.founder": "Kurucu",
+  "roleBadge.vip": "VIP",
+  "roleBadge.admin": "Yönetici",
+  "roleBadge.yazar": "Yazar",
 
   // Sidebar / Navigasyon
   "nav.anasayfa": "Anasayfa",

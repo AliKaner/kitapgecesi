@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/Input";
 import { Tabs } from "@/components/ui/Tabs";
 import { Tag } from "@/components/ui/Tag";
 import { Icon } from "@/components/ui/Icon";
+import { RoleBadges } from "@/components/ui/RoleBadges";
 import { BookCard } from "@/components/book/BookCard";
 import { FeedPost } from "@/components/feed/FeedPost";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -182,7 +183,10 @@ export default function ProfilPage() {
         </Button>
       </div>
       <div style={{ marginBottom: 28, padding: "0 4px" }}>
-        <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 32, lineHeight: 1.1 }}>{user?.name}</h1>
+        <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 32, lineHeight: 1.1, display: "flex", alignItems: "center", gap: 10 }}>
+          {user?.name}
+          <RoleBadges badges={user?.roleBadges} size={20} />
+        </h1>
         <p style={{ color: "var(--text-secondary)", marginTop: 4 }}>@{user?.username} · {t("profil.reader")}</p>
         <div style={{ display: "flex", gap: 18, marginTop: 10 }}>
           <span style={{ fontSize: "var(--fs-body-2)" }}>

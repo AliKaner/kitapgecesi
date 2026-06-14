@@ -4,6 +4,7 @@ import { CSSProperties, HTMLAttributes, ReactNode, useState } from "react";
 import { Avatar } from "../ui/Avatar";
 import { IconButton } from "../ui/IconButton";
 import { Icon } from "../ui/Icon";
+import { RoleBadges, RoleBadgeKey } from "../ui/RoleBadges";
 import { useT } from "@/lib/i18n/I18nProvider";
 
 /* Feed post. Header (avatar · name · date · overflow), body text, an optional
@@ -15,6 +16,7 @@ export interface PostCardAuthor {
   name?: string;
   handle?: string;
   avatar?: string;
+  roleBadges?: RoleBadgeKey[] | null;
 }
 
 export interface PostCardMoreAction {
@@ -93,7 +95,10 @@ export function PostCard({
       <header style={{ display: "flex", alignItems: "center", gap: 11 }}>
         <Avatar src={author.avatar} name={author.name} size="md" />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: "var(--fs-body-1)", fontWeight: "var(--fw-semibold)", color: "var(--text-primary)" } as CSSProperties}>{author.name}</div>
+          <div style={{ fontSize: "var(--fs-body-1)", fontWeight: "var(--fw-semibold)", color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 6 } as CSSProperties}>
+            {author.name}
+            <RoleBadges badges={author.roleBadges} />
+          </div>
           {(author.handle || date) && (
             <div style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" } as CSSProperties}>
               {author.handle && <span>{author.handle}</span>}
