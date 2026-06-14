@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Switch } from "@/components/ui/Switch";
 import { Tabs } from "@/components/ui/Tabs";
+import { ShowcaseEditor } from "@/components/profile/ShowcaseEditor";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
 import { useTheme } from "@/lib/theme/ThemeProvider";
@@ -151,6 +152,14 @@ export default function AyarlarPage() {
             </Button>
           </div>
         </Card>
+      )}
+
+      {tab === "profil" && user && (
+        <div style={{ marginTop: 24 }}>
+          <h2 style={{ fontSize: "var(--fs-h3)", fontWeight: 600, marginBottom: 6 }}>{t("showcase.title")}</h2>
+          <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)", marginBottom: 16 }}>{t("showcase.hint")}</p>
+          <ShowcaseEditor userId={user._id} />
+        </div>
       )}
     </>
   );

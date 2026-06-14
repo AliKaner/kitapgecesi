@@ -2,6 +2,15 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 
+export const searchAuthors = query({
+  args: { query: v.string() },
+  handler: async (ctx, { query: q }) => {
+    const lower = q.toLowerCase();
+    const all = await ctx.db.query("authors").collect();
+    return all.filter((a) => a.name.toLowerCase().includes(lower)).slice(0, 20);
+  },
+});
+
 export const listAuthors = query({
   args: {},
   handler: async (ctx) => {

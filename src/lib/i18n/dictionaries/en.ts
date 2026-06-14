@@ -13,6 +13,7 @@ const en: Record<keyof typeof tr, string> = {
   "common.following": "Following",
   "common.unfollow": "Unfollow",
   "common.remove": "Remove",
+  "common.saved": "Saved",
   "starRating.star": "{count} star",
 
   // Sidebar / Navigation
@@ -163,6 +164,19 @@ const en: Record<keyof typeof tr, string> = {
   "profil.range.week": "Week",
   "profil.range.month": "Month",
   "profil.range.year": "Year",
+
+  // Showcase settings
+  "showcase.title": "Showcase",
+  "showcase.hint": "Reorder, enable/disable, and edit the showcase widgets shown on your profile.",
+  "showcase.widget.favorites": "Favorite Books",
+  "showcase.widget.author": "Favorite Author",
+  "showcase.moveUp": "Move up",
+  "showcase.moveDown": "Move down",
+  "showcase.bookSearchPlaceholder": "Search books...",
+  "showcase.authorSearchPlaceholder": "Search authors...",
+  "showcase.maxBooksHint": "You can select up to {max} books.",
+  "showcase.favorites.empty": "No favorite books selected yet.",
+  "showcase.author.title": "Showcase · Favorite Author",
 
   // Notifications
   "bildirim.markAllRead": "Mark all as read",

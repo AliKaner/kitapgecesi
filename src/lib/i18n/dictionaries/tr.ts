@@ -11,6 +11,7 @@ const tr = {
   "common.following": "Takip Ediliyor",
   "common.unfollow": "Takibi Bırak",
   "common.remove": "Kaldır",
+  "common.saved": "Kaydedildi",
   "starRating.star": "{count} yıldız",
 
   // Sidebar / Navigasyon
@@ -161,6 +162,19 @@ const tr = {
   "profil.range.week": "Hafta",
   "profil.range.month": "Ay",
   "profil.range.year": "Yıl",
+
+  // Vitrin ayarları
+  "showcase.title": "Vitrin",
+  "showcase.hint": "Profilinde gösterilecek vitrin bileşenlerini sırala, aç/kapat ve içeriklerini düzenle.",
+  "showcase.widget.favorites": "Favori Kitaplar",
+  "showcase.widget.author": "Favori Yazar",
+  "showcase.moveUp": "Yukarı taşı",
+  "showcase.moveDown": "Aşağı taşı",
+  "showcase.bookSearchPlaceholder": "Kitap ara...",
+  "showcase.authorSearchPlaceholder": "Yazar ara...",
+  "showcase.maxBooksHint": "En fazla {max} kitap seçebilirsiniz.",
+  "showcase.favorites.empty": "Henüz favori kitap seçilmedi.",
+  "showcase.author.title": "Vitrin · Favori Yazar",
 
   // Bildirimler
   "bildirim.markAllRead": "Tümünü okundu işaretle",

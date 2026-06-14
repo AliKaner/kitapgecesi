@@ -95,6 +95,18 @@ const PATHS: Record<string, ReactElement> = {
     </>
   ),
   "chevron-down": <path d="m6 9 6 6 6-6" />,
+  "arrow-up": (
+    <>
+      <path d="M12 19V5" />
+      <path d="m5 12 7-7 7 7" />
+    </>
+  ),
+  "arrow-down": (
+    <>
+      <path d="M12 5v14" />
+      <path d="m19 12-7 7-7-7" />
+    </>
+  ),
   "chevron-right": <path d="m9 18 6-6-6-6" />,
   "arrow-left": (
     <>

@@ -24,6 +24,31 @@ export const getAllShowcases = query({
   },
 });
 
+export const ensureDefaultShowcases = mutation({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    const existing = await ctx.db
+      .query("showcases")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    const existingTypes = new Set(existing.map((s) => s.widgetType));
+    let nextOrder = existing.reduce((max, s) => Math.max(max, s.order), -1) + 1;
+
+    const defaults = ["favorites", "author"] as const;
+    for (const widgetType of defaults) {
+      if (existingTypes.has(widgetType)) continue;
+      await ctx.db.insert("showcases", {
+        userId,
+        widgetType,
+        order: nextOrder++,
+        isEnabled: true,
+        config: "{}",
+      });
+    }
+  },
+});
+
 export const updateShowcaseLayout = mutation({
   args: {
     userId: v.id("users"),

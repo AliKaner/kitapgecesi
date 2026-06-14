@@ -4,6 +4,7 @@ import { CSSProperties, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { Id } from "../../../../convex/_generated/dataModel";
 import { SectionHead } from "@/components/layout/Screen";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -112,20 +113,58 @@ function JournalTab({ userId }: { userId: import("../../../../convex/_generated/
   );
 }
 
+function FavoritesShowcase({ bookIds, router }: { bookIds: Id<"books">[]; router: ReturnType<typeof useRouter> }) {
+  const { t } = useT();
+  const books = useQuery(api.books.getBooksByIds, bookIds.length ? { bookIds } : "skip");
+
+  return (
+    <section>
+      <SectionHead title={t("profil.favorites")} />
+      {books && books.length > 0 ? (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
+          {books.map((b) => (
+            <BookCard key={b._id} cover={b.coverUrl || undefined} title={b.title} author={b.author} width={124} onClick={() => router.push(`/kitap/${b._id}`)} />
+          ))}
+        </div>
+      ) : (
+        <p style={{ color: "var(--text-secondary)" }}>{t("showcase.favorites.empty")}</p>
+      )}
+    </section>
+  );
+}
+
+function AuthorShowcase({ authorId, router }: { authorId: Id<"authors">; router: ReturnType<typeof useRouter> }) {
+  const { t } = useT();
+  const author = useQuery(api.authors.getAuthor, { authorId });
+
+  if (!author) return null;
+
+  return (
+    <section>
+      <SectionHead title={t("showcase.author.title")} />
+      <Card hover style={{ display: "flex", alignItems: "center", gap: 16, cursor: "pointer" }} onClick={() => router.push(`/yazar/${authorId}`)}>
+        <Avatar name={author.name} size="lg" />
+        <div>
+          <div style={{ fontSize: "var(--fs-h3)", fontWeight: 600 }}>{author.name}</div>
+          <div style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)" }}>{t("yazar.books")}</div>
+        </div>
+      </Card>
+    </section>
+  );
+}
+
 export default function ProfilPage() {
   const { t } = useT();
   const router = useRouter();
   const [tab, setTab] = useState("Profil");
   const { user } = useAuth();
   const profile = useQuery(api.users.getUserProfile, user ? { username: user.username } : "skip");
-  const books = useQuery(api.books.searchLocalBooks, { query: "" });
+  const showcases = useQuery(api.showcases.getUserShowcases, user ? { userId: user._id } : "skip");
   const library = useQuery(api.library.getUserLibrary, user ? { userId: user._id } : "skip");
   const badges = useQuery(api.badges.getUserBadges, user ? { userId: user._id } : "skip");
   const userPosts = useQuery(api.posts.getUserPosts, user ? { authorId: user._id, limit: 20 } : "skip");
 
   if (user === undefined) return null;
-
-  const favorites = (books ?? []).slice(0, 4);
 
   return (
     <>
@@ -182,14 +221,23 @@ export default function ProfilPage() {
             </div>
           </Card>
 
-          <section>
-            <SectionHead title={t("profil.favorites")} />
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
-              {favorites.map((b) => (
-                <BookCard key={b._id} cover={b.coverUrl || undefined} title={b.title} author={b.author} width={124} onClick={() => router.push(`/kitap/${b._id}`)} />
-              ))}
-            </div>
-          </section>
+          <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+            {(showcases ?? []).map((s) => {
+              let config: { bookIds?: string[]; authorId?: string } = {};
+              try {
+                config = JSON.parse(s.config);
+              } catch {
+                config = {};
+              }
+              if (s.widgetType === "favorites") {
+                return <FavoritesShowcase key={s._id} bookIds={(config.bookIds ?? []) as Id<"books">[]} router={router} />;
+              }
+              if (s.widgetType === "author" && config.authorId) {
+                return <AuthorShowcase key={s._id} authorId={config.authorId as Id<"authors">} router={router} />;
+              }
+              return null;
+            })}
+          </div>
         </>
       )}
 

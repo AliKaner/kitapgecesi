@@ -16,6 +16,14 @@ export const searchLocalBooks = query({
   },
 });
 
+export const getBooksByIds = query({
+  args: { bookIds: v.array(v.id("books")) },
+  handler: async (ctx, { bookIds }) => {
+    const books = await Promise.all(bookIds.map((id) => ctx.db.get(id)));
+    return books.filter((b): b is NonNullable<typeof b> => b !== null);
+  },
+});
+
 export const listBooksWithRatings = query({
   args: {},
   handler: async (ctx) => {
