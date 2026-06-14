@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
@@ -173,9 +173,11 @@ export default function KitapDetayPage() {
         <p style={{ color: "var(--text-secondary)", marginBottom: 36 }}>{t("kitap.noQuotes")}</p>
       )}
       {tab === "Benzer Kitaplar" && similar.length > 0 && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px", marginBottom: 36 }}>
+        <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4, marginBottom: 36, scrollSnapType: "x mandatory" } as CSSProperties}>
           {similar.map((b) => (
-            <BookCard key={b._id} cover={b.coverUrl || undefined} title={b.title} author={b.author} width={124} onClick={() => router.push(`/kitap/${b._id}`)} />
+            <div key={b._id} style={{ flex: "none", scrollSnapAlign: "start" } as CSSProperties}>
+              <BookCard cover={b.coverUrl || undefined} title={b.title} author={b.author} width={124} onClick={() => router.push(`/kitap/${b._id}`)} />
+            </div>
           ))}
         </div>
       )}
@@ -183,9 +185,11 @@ export default function KitapDetayPage() {
       {tab !== "Benzer Kitaplar" && similar.length > 0 && (
         <section>
           <SectionHead title={t("kitap.tab.similar")} />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
+          <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 4, scrollSnapType: "x mandatory" } as CSSProperties}>
             {similar.map((b) => (
-              <BookCard key={b._id} cover={b.coverUrl || undefined} title={b.title} author={b.author} width={124} onClick={() => router.push(`/kitap/${b._id}`)} />
+              <div key={b._id} style={{ flex: "none", scrollSnapAlign: "start" } as CSSProperties}>
+                <BookCard cover={b.coverUrl || undefined} title={b.title} author={b.author} width={124} onClick={() => router.push(`/kitap/${b._id}`)} />
+              </div>
             ))}
           </div>
         </section>
