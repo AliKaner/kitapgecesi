@@ -1,10 +1,11 @@
 "use client";
 
-import { ReactNode, useRef, useState } from "react";
+import { CSSProperties, ReactNode, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMutation } from "convex/react";
+import { useConvex, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { ScreenTitle } from "@/components/layout/Screen";
+import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -29,6 +30,69 @@ function Row({ label, hint, children }: { label: string; hint?: string; children
   );
 }
 
+function ImageUploadField({
+  label,
+  hint,
+  value,
+  onUploaded,
+  variant,
+}: {
+  label: string;
+  hint?: string;
+  value?: string;
+  onUploaded: (url: string) => void;
+  variant: "avatar" | "banner";
+}) {
+  const { t } = useT();
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const convex = useConvex();
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (file: File | undefined) => {
+    if (!file || !file.type.startsWith("image/")) return;
+    setUploading(true);
+    try {
+      const uploadUrl = await generateUploadUrl();
+      const res = await fetch(uploadUrl, { method: "POST", headers: { "Content-Type": file.type }, body: file });
+      const { storageId } = await res.json();
+      const url = await convex.query(api.files.getUrl, { storageId });
+      if (url) onUploaded(url);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div>
+      <div style={{ fontSize: "var(--fs-body-3)", fontWeight: "var(--fw-medium)" as unknown as number, color: "var(--text-secondary)", marginBottom: 7 }}>{label}</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {variant === "avatar" ? (
+          <Avatar src={value} name={label} size={56} />
+        ) : (
+          <div style={{ width: 120, height: 56, borderRadius: "var(--radius-md)", overflow: "hidden", background: "var(--surface-sunken)", flex: "none" }}>
+            {value && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={value} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" } as CSSProperties} />
+            )}
+          </div>
+        )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={(e) => handleFile(e.target.files?.[0])}
+          style={{ display: "none" }}
+        />
+        <Button variant="menu" size="sm" type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+          {uploading ? t("composer.uploading") : t("common.change")}
+        </Button>
+      </div>
+      {hint && <div style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)", marginTop: 6 }}>{hint}</div>}
+    </div>
+  );
+}
+
 export default function AyarlarPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -39,18 +103,7 @@ export default function AyarlarPage() {
   const { accent, setAccent } = useTheme();
   const updateProfileImages = useMutation(api.users.updateProfileImages);
   const setReadingGoal = useMutation(api.users.setReadingGoal);
-  const profileImageRef = useRef<HTMLInputElement>(null);
-  const bannerRef = useRef<HTMLInputElement>(null);
   const readingGoalRef = useRef<HTMLInputElement>(null);
-
-  const saveProfileImages = async () => {
-    if (!user) return;
-    await updateProfileImages({
-      userId: user._id,
-      profileImageUrl: profileImageRef.current?.value ?? "",
-      bannerUrl: bannerRef.current?.value ?? "",
-    });
-  };
 
   const saveReadingGoal = async () => {
     if (!user) return;
@@ -160,24 +213,19 @@ export default function AyarlarPage() {
           <Input label={t("ayarlar.kullaniciAdi")} defaultValue={user?.username} />
           <Input label={t("ayarlar.eposta")} defaultValue={user?.email} type="email" />
           <Input label={t("ayarlar.davetKodu")} placeholder={t("ayarlar.davetKodu.placeholder")} hint={t("ayarlar.davetKodu.hint")} />
-          <Input
-            ref={profileImageRef}
-            label={t("image.profileUrl")}
-            placeholder="https://..."
-            defaultValue={user?.profileImageUrl}
+          <ImageUploadField
+            variant="avatar"
+            label={t("ayarlar.profilFoto")}
+            value={user?.profileImageUrl}
+            onUploaded={(url) => user && updateProfileImages({ userId: user._id, profileImageUrl: url })}
           />
-          <Input
-            ref={bannerRef}
+          <ImageUploadField
+            variant="banner"
             label={t("ayarlar.profilBanner")}
             hint={t("image.bannerHint.profile")}
-            placeholder="https://..."
-            defaultValue={user?.bannerUrl}
+            value={user?.bannerUrl}
+            onUploaded={(url) => user && updateProfileImages({ userId: user._id, bannerUrl: url })}
           />
-          <div>
-            <Button variant="primary" onClick={saveProfileImages}>
-              {t("common.save")}
-            </Button>
-          </div>
         </Card>
       )}
 

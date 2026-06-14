@@ -7,6 +7,7 @@ import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { SectionHead } from "@/components/layout/Screen";
 import { Card } from "@/components/ui/Card";
+import { DetailRow } from "@/components/ui/DetailRow";
 import { DetailStat } from "@/components/ui/DetailStat";
 import { Icon } from "@/components/ui/Icon";
 import { IconButton } from "@/components/ui/IconButton";
@@ -136,6 +137,16 @@ export default function KitapDetayPage() {
           <DetailStat label={t("kitap.stat.likes")} value={(stats?.likeCount ?? 0).toLocaleString("tr-TR")} />
         </div>
       </Card>
+
+      <section style={{ marginBottom: 32 }}>
+        <SectionHead title={t("kitap.detail.title")} />
+        <Card>
+          <DetailRow label={t("kitap.detail.publisher")} value={book.publisher ?? "—"} />
+          <DetailRow label={t("kitap.detail.category")} value={book.category ?? "—"} />
+          <DetailRow label={t("kitap.detail.isbn")} value={book.isbn ?? "—"} />
+          <DetailRow label={t("kitap.detail.releaseYear")} value={book.releaseYear ? String(book.releaseYear) : "—"} />
+        </Card>
+      </section>
 
       <div style={{ marginBottom: 22 }}>
         <Tabs

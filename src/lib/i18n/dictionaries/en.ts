@@ -13,6 +13,7 @@ const en: Record<keyof typeof tr, string> = {
   "common.following": "Following",
   "common.unfollow": "Unfollow",
   "common.remove": "Remove",
+  "common.change": "Change",
   "common.saved": "Saved",
   "starRating.star": "{count} star",
   "roleBadge.founder": "Founder",
@@ -59,7 +60,8 @@ const en: Record<keyof typeof tr, string> = {
   "ayarlar.davetKodu": "Invite Code",
   "ayarlar.davetKodu.placeholder": "Your invite code",
   "ayarlar.davetKodu.hint": "Invite your friends to KitapGecesi.",
-  "ayarlar.profilBanner": "Profile Banner URL",
+  "ayarlar.profilFoto": "Profile Picture",
+  "ayarlar.profilBanner": "Profile Banner",
 
   // Composer (home / club)
   "composer.placeholder": "What are you reading?",
@@ -99,6 +101,11 @@ const en: Record<keyof typeof tr, string> = {
   "kitap.overview": "\"{title}\" by {author} takes its readers on a deep journey of thought. Spanning {pages} pages with a flowing narrative, it's one of the most discussed works in the KitapGecesi community.",
   "kitap.noReviews": "No reviews yet.",
   "kitap.noQuotes": "No quotes yet.",
+  "kitap.detail.title": "Details",
+  "kitap.detail.publisher": "Publisher",
+  "kitap.detail.category": "Category",
+  "kitap.detail.isbn": "ISBN",
+  "kitap.detail.releaseYear": "Release Year",
 
   // Authors
   "yazarlar.bookCount": "{count} books",

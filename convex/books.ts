@@ -105,11 +105,15 @@ export const searchExternalBooks = action({
         pageCount?: number;
         imageLinks?: { thumbnail?: string };
         industryIdentifiers?: { type: string; identifier: string }[];
+        publisher?: string;
+        categories?: string[];
+        publishedDate?: string;
       };
     };
 
     return (data.items ?? []).map((item: GoogleBookItem) => {
       const info = item.volumeInfo ?? {};
+      const releaseYear = info.publishedDate ? parseInt(info.publishedDate.slice(0, 4), 10) : undefined;
       return {
         title: info.title ?? "Bilinmeyen",
         author: (info.authors ?? []).join(", "),
@@ -120,6 +124,9 @@ export const searchExternalBooks = action({
           (info.industryIdentifiers ?? []).find(
             (i) => i.type === "ISBN_13"
           )?.identifier ?? undefined,
+        publisher: info.publisher,
+        category: info.categories?.[0],
+        releaseYear: releaseYear && !Number.isNaN(releaseYear) ? releaseYear : undefined,
       };
     });
   },
@@ -133,6 +140,9 @@ export const importOrGetBook = mutation({
     coverUrl: v.string(),
     externalId: v.optional(v.string()),
     isbn: v.optional(v.string()),
+    publisher: v.optional(v.string()),
+    category: v.optional(v.string()),
+    releaseYear: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     if (args.externalId) {

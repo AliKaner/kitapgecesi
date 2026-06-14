@@ -11,6 +11,7 @@ const tr = {
   "common.following": "Takip Ediliyor",
   "common.unfollow": "Takibi Bırak",
   "common.remove": "Kaldır",
+  "common.change": "Değiştir",
   "common.saved": "Kaydedildi",
   "starRating.star": "{count} yıldız",
   "roleBadge.founder": "Kurucu",
@@ -57,7 +58,8 @@ const tr = {
   "ayarlar.davetKodu": "Davet Kodu",
   "ayarlar.davetKodu.placeholder": "Davet kodunuz",
   "ayarlar.davetKodu.hint": "Arkadaşlarınızı KitapGecesi'ne davet edin.",
-  "ayarlar.profilBanner": "Profil Banner URL",
+  "ayarlar.profilFoto": "Profil Fotoğrafı",
+  "ayarlar.profilBanner": "Profil Banner",
 
   // Gönderi oluşturma (anasayfa/kulüp)
   "composer.placeholder": "Neler okuyorsun?",
@@ -97,6 +99,11 @@ const tr = {
   "kitap.overview": "{author} tarafından yazılan \"{title}\", okuyucularını derin bir düşünce yolculuğuna çıkarıyor. {pages} sayfa boyunca akıcı bir anlatımla ilerleyen kitap, KitapGecesi topluluğunda en çok tartışılan eserlerden biri.",
   "kitap.noReviews": "Henüz inceleme bulunmuyor.",
   "kitap.noQuotes": "Henüz alıntı bulunmuyor.",
+  "kitap.detail.title": "Detaylar",
+  "kitap.detail.publisher": "Yayınevi",
+  "kitap.detail.category": "Kategori",
+  "kitap.detail.isbn": "ISBN",
+  "kitap.detail.releaseYear": "Yayın Yılı",
 
   // Yazarlar
   "yazarlar.bookCount": "{count} kitap",
