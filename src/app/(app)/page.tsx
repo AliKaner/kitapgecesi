@@ -63,6 +63,25 @@ function Composer({ userId }: { userId: Id<"users"> }) {
 
   return (
     <Card padding={18} style={{ marginBottom: 22 }}>
+      <Tabs
+        variant="segmented"
+        size="sm"
+        items={[
+          { value: "Kitap Kaydı", label: t("composer.tab.bookLog") },
+          { value: "Alıntı", label: t("composer.tab.quote") },
+          { value: "Kitap Alışverişi", label: t("composer.tab.bookTrade") },
+        ]}
+        value={tab}
+        onChange={(v) => {
+          setTab(v);
+          if (v !== "Kitap Kaydı") {
+            setSelectedBook(null);
+            setBookSearch("");
+            setPageNumber("");
+          }
+        }}
+        style={{ marginBottom: 14 }}
+      />
       <div style={{ display: "flex", gap: 12 }}>
         <Avatar size="md" />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -149,32 +168,12 @@ function Composer({ userId }: { userId: Id<"users"> }) {
           )}
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 2 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <Tabs
-                variant="segmented"
-                size="sm"
-                items={[
-                  { value: "Kitap Kaydı", label: t("composer.tab.bookLog") },
-                  { value: "Alıntı", label: t("composer.tab.quote") },
-                  { value: "Kitap Alışverişi", label: t("composer.tab.bookTrade") },
-                ]}
-                value={tab}
-                onChange={(v) => {
-                  setTab(v);
-                  if (v !== "Kitap Kaydı") {
-                    setSelectedBook(null);
-                    setBookSearch("");
-                    setPageNumber("");
-                  }
-                }}
-              />
-              <IconButton
-                icon="image"
-                label={t("composer.addImage")}
-                active={showImageInput}
-                onClick={() => setShowImageInput((v) => !v)}
-              />
-            </div>
+            <IconButton
+              icon="image"
+              label={t("composer.addImage")}
+              active={showImageInput}
+              onClick={() => setShowImageInput((v) => !v)}
+            />
             <Button size="sm" variant="primary" onClick={share}>
               {t("common.share")}
             </Button>
