@@ -47,7 +47,7 @@ export function Input({
           padding: icon ? "0 14px 0 12px" : "0 14px",
           background: disabled ? "var(--surface-sunken)" : "var(--surface-card)",
           border: `1px solid ${focus ? "var(--accent)" : "var(--border-default)"}`,
-          borderRadius: pill ? "var(--radius-pill)" : "var(--radius-md)",
+          borderRadius: "10px",
           boxShadow: focus ? "0 0 0 3px var(--focus-ring)" : "none",
           transition: "border-color var(--dur-fast), box-shadow var(--dur-fast)",
         } as CSSProperties}

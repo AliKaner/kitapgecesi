@@ -97,7 +97,7 @@ export function Button({
         lineHeight: 1,
         letterSpacing: "-0.005em",
         whiteSpace: "nowrap",
-        borderRadius: "var(--radius-pill)",
+        borderRadius: "10px",
         border: v.border,
         background: bg,
         color: v.color,
