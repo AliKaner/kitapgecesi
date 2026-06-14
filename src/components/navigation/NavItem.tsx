@@ -10,10 +10,11 @@ export interface NavItemProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: IconName;
   active?: boolean;
   count?: number | null;
+  trailing?: ReactNode;
   children?: ReactNode;
 }
 
-export function NavItem({ icon, children, active = false, count, style, ...rest }: NavItemProps) {
+export function NavItem({ icon, children, active = false, count, trailing, style, ...rest }: NavItemProps) {
   const [hover, setHover] = useState(false);
   return (
     <button
@@ -59,6 +60,17 @@ export function NavItem({ icon, children, active = false, count, style, ...rest 
           } as CSSProperties}
         >
           {count}
+        </span>
+      )}
+      {trailing != null && (
+        <span
+          style={{
+            fontSize: "var(--fs-body-3)",
+            fontWeight: "var(--fw-medium)",
+            color: "var(--text-secondary)",
+          } as CSSProperties}
+        >
+          {trailing}
         </span>
       )}
     </button>

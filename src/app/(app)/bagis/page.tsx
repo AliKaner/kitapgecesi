@@ -6,6 +6,7 @@ import { api } from "../../../../convex/_generated/api";
 import { ScreenTitle } from "@/components/layout/Screen";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Icon } from "@/components/ui/Icon";
 import { Tabs } from "@/components/ui/Tabs";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
@@ -32,7 +33,32 @@ export default function BagisPage() {
 
   return (
     <>
-      <ScreenTitle sub={user ? t("bagis.balance", { amount: user.yaprak.toLocaleString("tr-TR") }) : undefined}>{t("nav.bagis")}</ScreenTitle>
+      <ScreenTitle>{t("nav.bagis")}</ScreenTitle>
+
+      {user && (
+        <Card style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 22 }}>
+          <span
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: "50%",
+              background: "var(--accent-tint)",
+              color: "var(--accent)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flex: "none",
+            }}
+          >
+            <Icon name="gift" size={22} />
+          </span>
+          <div>
+            <div style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)" }}>{t("bagis.yourBalance")}</div>
+            <div style={{ fontFamily: "var(--font-serif)", fontSize: 28 }}>{t("bagis.yaprakAmount", { amount: user.yaprak.toLocaleString("tr-TR") })}</div>
+          </div>
+        </Card>
+      )}
+
       <div style={{ marginBottom: 26 }}>
         <Tabs
           items={[
@@ -78,6 +104,23 @@ export default function BagisPage() {
               </Button>
             </Card>
           ))}
+
+          {history && history.length > 0 && (
+            <div style={{ marginTop: 12 }}>
+              <h2 style={{ fontSize: "var(--fs-h3)", fontWeight: 600, marginBottom: 12 }}>{t("bagis.recentDonations")}</h2>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {history.slice(0, 3).map((d) => (
+                  <Card key={d._id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div>
+                      <div style={{ fontSize: "var(--fs-body-2)", fontWeight: "var(--fw-medium)" as unknown as number }}>{d.organizationName}</div>
+                      <div style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)" }}>{formatDate(d.createdAt)}</div>
+                    </div>
+                    <div style={{ fontFamily: "var(--font-serif)", fontSize: 22 }}>{t("bagis.yaprakAmount", { amount: d.yaprakSpent })}</div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

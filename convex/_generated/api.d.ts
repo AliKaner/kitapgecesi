@@ -14,6 +14,7 @@ import type * as badges from "../badges.js";
 import type * as books from "../books.js";
 import type * as clubs from "../clubs.js";
 import type * as donations from "../donations.js";
+import type * as files from "../files.js";
 import type * as follows from "../follows.js";
 import type * as invites from "../invites.js";
 import type * as journal from "../journal.js";
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   books: typeof books;
   clubs: typeof clubs;
   donations: typeof donations;
+  files: typeof files;
   follows: typeof follows;
   invites: typeof invites;
   journal: typeof journal;

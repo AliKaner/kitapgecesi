@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/Input";
 import { Tabs } from "@/components/ui/Tabs";
 import { BookCard } from "@/components/book/BookCard";
 import { FeedPost } from "@/components/feed/FeedPost";
+import { ImageAttachment, useImageUpload } from "@/components/feed/ImageAttachment";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
 
@@ -21,7 +22,7 @@ function ClubComposer({ userId, clubId }: { userId: Id<"users">; clubId: Id<"clu
   const { t } = useT();
   const [text, setText] = useState("");
   const [showImageInput, setShowImageInput] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
+  const { imageUrl, setImageUrl, uploading, handleFiles } = useImageUpload();
   const createPost = useMutation(api.posts.createPost);
 
   const share = async () => {
@@ -48,49 +49,16 @@ function ClubComposer({ userId, clubId }: { userId: Id<"users">; clubId: Id<"clu
             placeholder={t("kulup.composerPlaceholder")}
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              setShowImageInput(true);
+              handleFiles(e.dataTransfer.files);
+            }}
             style={{ width: "100%", border: "none", outline: "none", background: "transparent", fontSize: 16, color: "var(--text-primary)", padding: "8px 0", fontFamily: "var(--font-sans)" }}
           />
           {showImageInput && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <Input
-                icon="image"
-                placeholder={t("composer.imageUrlPlaceholder")}
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-              />
-              {imageUrl.trim() && (
-                <div style={{ position: "relative", width: "fit-content" }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={imageUrl.trim()}
-                    alt=""
-                    style={{ maxHeight: 160, borderRadius: "var(--radius-md)", display: "block" }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setImageUrl("")}
-                    aria-label={t("common.remove")}
-                    style={{
-                      position: "absolute",
-                      top: 6,
-                      right: 6,
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: 24,
-                      height: 24,
-                      borderRadius: "var(--radius-pill)",
-                      border: "none",
-                      background: "rgba(0,0,0,0.55)",
-                      color: "#fff",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <Icon name="x" size={14} />
-                  </button>
-                </div>
-              )}
-            </div>
+            <ImageAttachment imageUrl={imageUrl} setImageUrl={setImageUrl} uploading={uploading} handleFiles={handleFiles} />
           )}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <IconButton

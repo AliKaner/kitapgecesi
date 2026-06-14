@@ -57,6 +57,7 @@ export function Sidebar() {
               icon={n.icon}
               active={pathname === n.href}
               count={n.id === "bildirimler" ? unreadCount || null : null}
+              trailing={n.id === "bagis" && user ? new Intl.NumberFormat("tr-TR", { notation: "compact" }).format(user.yaprak) : null}
             >
               {t(n.labelKey as Parameters<typeof t>[0])}
             </NavItem>

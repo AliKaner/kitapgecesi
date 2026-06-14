@@ -58,7 +58,8 @@ const tr = {
   "composer.tab.quote": "Alıntı",
   "composer.tab.bookTrade": "Kitap Alışverişi",
   "composer.addImage": "Görsel ekle",
-  "composer.imageUrlPlaceholder": "Görsel URL'si",
+  "composer.imageDropHint": "Bilgisayardan seç ya da buraya sürükle bırak",
+  "composer.uploading": "Yükleniyor...",
   "composer.bookSearchPlaceholder": "Kitap adı veya yazar...",
   "composer.pageNumberPlaceholder": "Sayfa no",
 
@@ -174,7 +175,8 @@ const tr = {
   "bildirim.daysAgo": "{count} gün önce",
 
   // Bağış
-  "bagis.balance": "Bakiyeniz: {amount} yaprak",
+  "bagis.yourBalance": "Yaprak bakiyeniz",
+  "bagis.recentDonations": "Son bağışlarınız",
   "bagis.tab.donate": "Bağış Yap",
   "bagis.tab.yours": "Bağışlarınız",
   "bagis.donateButton": "{amount} Yaprak Bağışla",

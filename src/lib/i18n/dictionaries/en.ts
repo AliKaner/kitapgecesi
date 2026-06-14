@@ -60,7 +60,8 @@ const en: Record<keyof typeof tr, string> = {
   "composer.tab.quote": "Quote",
   "composer.tab.bookTrade": "Book Exchange",
   "composer.addImage": "Add image",
-  "composer.imageUrlPlaceholder": "Image URL",
+  "composer.imageDropHint": "Choose from your computer or drag & drop here",
+  "composer.uploading": "Uploading...",
   "composer.bookSearchPlaceholder": "Book title or author...",
   "composer.pageNumberPlaceholder": "Page number",
 
@@ -176,7 +177,8 @@ const en: Record<keyof typeof tr, string> = {
   "bildirim.daysAgo": "{count}d ago",
 
   // Donations
-  "bagis.balance": "Your balance: {amount} leaves",
+  "bagis.yourBalance": "Your leaf balance",
+  "bagis.recentDonations": "Your recent donations",
   "bagis.tab.donate": "Donate",
   "bagis.tab.yours": "Your Donations",
   "bagis.donateButton": "Donate {amount} Leaves",
