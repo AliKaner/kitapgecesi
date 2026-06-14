@@ -75,8 +75,8 @@ export default function KitaplarPage() {
     return list;
   }, [books, selectedGenres, sort]);
 
-  const popular = filtered.slice(0, 5);
-  const rest = filtered.slice(5);
+  const popular = filtered.slice(0, 4);
+  const rest = filtered.slice(4);
 
   const pageSize = selectedGenres.length > 0 ? PAGE_SIZE_FILTERED : PAGE_SIZE_ALL;
   const filterKey = `${sort}:${selectedGenres.join(",")}`;
