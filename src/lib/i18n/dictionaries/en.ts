@@ -82,6 +82,7 @@ const en: Record<keyof typeof tr, string> = {
   "kitaplar.sort.alfabetik": "A-Z",
   "kitaplar.mostRead": "Most Read",
   "kitaplar.mostLiked": "Most Liked Books",
+  "kitaplar.showMore": "Show More",
 
   // Book detail page
   "kitap.notFound": "Book not found.",

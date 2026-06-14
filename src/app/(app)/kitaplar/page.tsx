@@ -5,11 +5,15 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { ScreenTitle, SectionHead } from "@/components/layout/Screen";
+import { Button } from "@/components/ui/Button";
 import { Tabs } from "@/components/ui/Tabs";
 import { Tag } from "@/components/ui/Tag";
 import { BookCard } from "@/components/book/BookCard";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
+
+const PAGE_SIZE_ALL = 20;
+const PAGE_SIZE_FILTERED = 40;
 
 const GENRES = ["Edebiyat", "Roman", "Psikoloji", "Duygu ve Düşünce", "Felsefe", "Tarih", "Bilim", "Tasavvuf", "Sanat", "Kişisel Gelişim"];
 
@@ -26,7 +30,7 @@ interface BookWithRating {
 
 function BookRail({ items, readIds, onOpen }: { items: BookWithRating[]; readIds: Set<string>; onOpen: (id: string) => void }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 12px" }}>
       {items.map((b) => (
         <div key={b._id} style={readIds.has(b._id) ? ({ opacity: 0.35, filter: "grayscale(70%)" } as CSSProperties) : undefined}>
           <BookCard
@@ -74,6 +78,17 @@ export default function KitaplarPage() {
   const popular = filtered.slice(0, 5);
   const rest = filtered.slice(5);
 
+  const pageSize = selectedGenres.length > 0 ? PAGE_SIZE_FILTERED : PAGE_SIZE_ALL;
+  const filterKey = `${sort}:${selectedGenres.join(",")}`;
+  const [visibleCount, setVisibleCount] = useState(pageSize);
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey);
+    setVisibleCount(pageSize);
+  }
+
+  const visibleRest = rest.slice(0, visibleCount);
+
   const toggleGenre = (g: string) => {
     setSelectedGenres((prev) => (prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g]));
   };
@@ -119,7 +134,14 @@ export default function KitaplarPage() {
         {rest.length > 0 && (
           <section>
             <SectionHead title={t("kitaplar.mostLiked")} />
-            <BookRail items={rest} readIds={readIds} onOpen={(id) => router.push(`/kitap/${id}`)} />
+            <BookRail items={visibleRest} readIds={readIds} onOpen={(id) => router.push(`/kitap/${id}`)} />
+            {visibleCount < rest.length && (
+              <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+                <Button variant="menu" onClick={() => setVisibleCount((c) => c + pageSize)}>
+                  {t("kitaplar.showMore")}
+                </Button>
+              </div>
+            )}
           </section>
         )}
     </>

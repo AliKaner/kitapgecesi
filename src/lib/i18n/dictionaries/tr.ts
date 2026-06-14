@@ -80,6 +80,7 @@ const tr = {
   "kitaplar.sort.alfabetik": "A-Z",
   "kitaplar.mostRead": "En Çok Okunanlar",
   "kitaplar.mostLiked": "En Beğenilen Kitaplar",
+  "kitaplar.showMore": "Daha Fazla Göster",
 
   // Kitap detay sayfası
   "kitap.notFound": "Kitap bulunamadı.",
