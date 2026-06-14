@@ -36,7 +36,7 @@
 
   /* Layout — the app is a fixed 3-column shell, centered at max 1440px */
   --shell-max:    1440px; /* outer shell max width */
-  --nav-width:    280px;  /* left navigation rail */
+  --nav-width:    260px;  /* left navigation rail */
   --aside-width:  280px;  /* right context rail (search, book of month, goal) */
   --feed-max:     600px;  /* center feed measure */
   --shell-gap:    24px;

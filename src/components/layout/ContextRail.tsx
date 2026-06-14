@@ -116,6 +116,7 @@ export function ContextRail() {
         flexDirection: "column",
         gap: 18,
         padding: "22px 24px 40px",
+        borderLeft: "1px solid var(--border-default)",
         position: "sticky",
         top: 0,
         alignSelf: "flex-start",

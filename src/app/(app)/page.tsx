@@ -66,7 +66,7 @@ export default function AnasayfaPage() {
 
   return (
     <div style={{ display: "flex" }}>
-      <div style={{ flex: 1, minWidth: 0, maxWidth: "var(--feed-max)", margin: "0 auto", padding: "26px 32px 60px" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "var(--feed-max)", padding: "26px 32px 60px" }}>
         {user && <Composer userId={user._id} />}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {feed?.map((p) => (

@@ -148,10 +148,58 @@ export const seed = internalMutation({
       return listId;
     };
 
-    await list("Design", "Tasarım üzerine sevdiğim kitaplar.", [designBooks, designArt, everyday, atomic]);
+    const designList = await list("Design", "Tasarım üzerine sevdiğim kitaplar.", [designBooks, designArt, everyday, atomic]);
     await list("Yeniler", "Son okuduklarım.", [dune, simyaci, bodyScore, beyin]);
     await list("Psikoloji", "Zihin ve davranış üzerine.", [bodyScore, beyin, seninle]);
     await list("İlham", "Beni besleyen kitaplar.", [creativeAct, atomic, simyaci, designArt]);
+
+    // ── Liste Yorumları ────────────────────────────────────────────
+    await ctx.db.insert("listComments", { listId: designList, authorId: cem, content: "Harika bir seçki, hepsini okumak istiyorum.", createdAt: now - 1000 * 60 * 60 * 6 });
+    await ctx.db.insert("listComments", { listId: designList, authorId: nazan, content: "Design as Art gerçekten ufuk açıcı.", createdAt: now - 1000 * 60 * 60 * 3 });
+
+    // ── Puanlamalar ──────────────────────────────────────────────
+    await ctx.db.insert("ratings", { userId: selcan, targetType: "book", targetId: dune, value: 5, createdAt: now - 1000 * 60 * 60 * 24 * 11 });
+    await ctx.db.insert("ratings", { userId: metecan, targetType: "book", targetId: dune, value: 4, createdAt: now - 1000 * 60 * 60 * 24 * 9 });
+    await ctx.db.insert("ratings", { userId: cem, targetType: "book", targetId: sifir, value: 5, createdAt: now - 1000 * 60 * 60 * 24 * 4 });
+    await ctx.db.insert("ratings", { userId: nazan, targetType: "book", targetId: atomic, value: 4, createdAt: now - 1000 * 60 * 60 * 24 * 7 });
+    await ctx.db.insert("ratings", { userId: selcan, targetType: "author", targetId: frankHerbert, value: 5, createdAt: now - 1000 * 60 * 60 * 24 * 11 });
+    await ctx.db.insert("ratings", { userId: metecan, targetType: "author", targetId: jamesClear, value: 4, createdAt: now - 1000 * 60 * 60 * 24 * 30 });
+
+    // ── Rozetler ─────────────────────────────────────────────────
+    await ctx.db.insert("userBadges", { userId: selcan, badgeKey: "ilk_paylasim", earnedAt: now - 1000 * 60 * 60 * 24 * 30 });
+    await ctx.db.insert("userBadges", { userId: selcan, badgeKey: "kitap_kurdu", earnedAt: now - 1000 * 60 * 60 * 24 * 12 });
+    await ctx.db.insert("userBadges", { userId: cem, badgeKey: "ilk_paylasim", earnedAt: now - 1000 * 60 * 60 * 24 * 5 });
+    await ctx.db.insert("userBadges", { userId: metecan, badgeKey: "aktif_okur", earnedAt: now - 1000 * 60 * 60 * 24 * 8 });
+
+    // ── Kulüpler ─────────────────────────────────────────────────
+    const club1 = await ctx.db.insert("clubs", {
+      name: "Tasarım Severler Kulübü",
+      description: "Tasarım ve sanat üzerine kitapları birlikte okuyup tartışıyoruz.",
+      bannerUrl: "",
+      leaderId: cem,
+      privacyMode: "public",
+      activeBookId: designBooks,
+      createdAt: now - 1000 * 60 * 60 * 24 * 20,
+    });
+    const club2 = await ctx.db.insert("clubs", {
+      name: "Bilim Kurgu Kulübü",
+      description: "Klasik ve modern bilim kurgu romanlarını birlikte keşfediyoruz.",
+      bannerUrl: "",
+      leaderId: selcan,
+      privacyMode: "public",
+      activeBookId: dune,
+      createdAt: now - 1000 * 60 * 60 * 24 * 45,
+    });
+
+    await ctx.db.insert("clubMembers", { clubId: club1, userId: cem, role: "leader", status: "active", joinedAt: now - 1000 * 60 * 60 * 24 * 20 });
+    await ctx.db.insert("clubMembers", { clubId: club1, userId: selcan, role: "member", status: "active", joinedAt: now - 1000 * 60 * 60 * 24 * 18 });
+    await ctx.db.insert("clubMembers", { clubId: club1, userId: nazan, role: "member", status: "pending", joinedAt: now - 1000 * 60 * 60 * 24 * 1 });
+
+    await ctx.db.insert("clubMembers", { clubId: club2, userId: selcan, role: "leader", status: "active", joinedAt: now - 1000 * 60 * 60 * 24 * 45 });
+    await ctx.db.insert("clubMembers", { clubId: club2, userId: metecan, role: "moderator", status: "active", joinedAt: now - 1000 * 60 * 60 * 24 * 40 });
+    await ctx.db.insert("clubMembers", { clubId: club2, userId: cem, role: "member", status: "active", joinedAt: now - 1000 * 60 * 60 * 24 * 30 });
+
+    await ctx.db.insert("clubArchive", { clubId: club2, bookId: simyaci, startedAt: now - 1000 * 60 * 60 * 24 * 60, finishedAt: now - 1000 * 60 * 60 * 24 * 46 });
 
     // ── Bildirimler ──────────────────────────────────────────────
     await ctx.db.insert("notifications", {
@@ -207,5 +255,107 @@ export const seed = internalMutation({
     await ctx.db.insert("journalEntries", { userId: selcan, content: "Bugün hiç kitap okuyamadım ama yarın telafi edeceğim.", createdAt: now - 1000 * 60 * 60 * 24 * 6 });
 
     return "Seed tamamlandı.";
+  },
+});
+
+// Mevcut bir veritabanına eksik mock verileri (ratings, userBadges,
+// listComments, ikinci kulüp, clubArchive) ekler. Birden fazla kez
+// çalıştırılması güvenlidir, mevcut kayıtları korur.
+export const seedExtra = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const now = Date.now();
+
+    const userByUsername = async (username: string) =>
+      ctx.db
+        .query("users")
+        .withIndex("by_username", (q) => q.eq("username", username))
+        .first();
+
+    const selcan = await userByUsername("selcanguler");
+    const cem = await userByUsername("cemyazgan");
+    const metecan = await userByUsername("metecankaplan");
+    const nazan = await userByUsername("nazanceliker");
+    if (!selcan || !cem || !metecan || !nazan) return "Önce ana seed çalıştırılmalı.";
+
+    const bookByTitle = async (title: string) =>
+      ctx.db
+        .query("books")
+        .filter((q) => q.eq(q.field("title"), title))
+        .first();
+
+    const authorByName = async (name: string) =>
+      ctx.db
+        .query("authors")
+        .filter((q) => q.eq(q.field("name"), name))
+        .first();
+
+    const listByTitle = async (title: string) =>
+      ctx.db
+        .query("lists")
+        .filter((q) => q.eq(q.field("title"), title))
+        .first();
+
+    const dune = await bookByTitle("Dune");
+    const sifir = await bookByTitle("Sıfır Noktasındaki Kadın");
+    const atomic = await bookByTitle("Atomic Habits");
+    const simyaci = await bookByTitle("Simyacı");
+    const frankHerbert = await authorByName("Frank Herbert");
+    const jamesClear = await authorByName("James Clear");
+    const designList = await listByTitle("Design");
+
+    // ── Liste Yorumları ────────────────────────────────────────────
+    const hasListComments = await ctx.db.query("listComments").first();
+    if (!hasListComments && designList) {
+      await ctx.db.insert("listComments", { listId: designList._id, authorId: cem._id, content: "Harika bir seçki, hepsini okumak istiyorum.", createdAt: now - 1000 * 60 * 60 * 6 });
+      await ctx.db.insert("listComments", { listId: designList._id, authorId: nazan._id, content: "Design as Art gerçekten ufuk açıcı.", createdAt: now - 1000 * 60 * 60 * 3 });
+    }
+
+    // ── Puanlamalar ──────────────────────────────────────────────
+    const hasRatings = await ctx.db.query("ratings").first();
+    if (!hasRatings) {
+      if (dune) {
+        await ctx.db.insert("ratings", { userId: selcan._id, targetType: "book", targetId: dune._id, value: 5, createdAt: now - 1000 * 60 * 60 * 24 * 11 });
+        await ctx.db.insert("ratings", { userId: metecan._id, targetType: "book", targetId: dune._id, value: 4, createdAt: now - 1000 * 60 * 60 * 24 * 9 });
+      }
+      if (sifir) await ctx.db.insert("ratings", { userId: cem._id, targetType: "book", targetId: sifir._id, value: 5, createdAt: now - 1000 * 60 * 60 * 24 * 4 });
+      if (atomic) await ctx.db.insert("ratings", { userId: nazan._id, targetType: "book", targetId: atomic._id, value: 4, createdAt: now - 1000 * 60 * 60 * 24 * 7 });
+      if (frankHerbert) await ctx.db.insert("ratings", { userId: selcan._id, targetType: "author", targetId: frankHerbert._id, value: 5, createdAt: now - 1000 * 60 * 60 * 24 * 11 });
+      if (jamesClear) await ctx.db.insert("ratings", { userId: metecan._id, targetType: "author", targetId: jamesClear._id, value: 4, createdAt: now - 1000 * 60 * 60 * 24 * 30 });
+    }
+
+    // ── Rozetler ─────────────────────────────────────────────────
+    const hasBadges = await ctx.db.query("userBadges").first();
+    if (!hasBadges) {
+      await ctx.db.insert("userBadges", { userId: selcan._id, badgeKey: "ilk_paylasim", earnedAt: now - 1000 * 60 * 60 * 24 * 30 });
+      await ctx.db.insert("userBadges", { userId: selcan._id, badgeKey: "kitap_kurdu", earnedAt: now - 1000 * 60 * 60 * 24 * 12 });
+      await ctx.db.insert("userBadges", { userId: cem._id, badgeKey: "ilk_paylasim", earnedAt: now - 1000 * 60 * 60 * 24 * 5 });
+      await ctx.db.insert("userBadges", { userId: metecan._id, badgeKey: "aktif_okur", earnedAt: now - 1000 * 60 * 60 * 24 * 8 });
+    }
+
+    // ── İkinci kulüp ve arşiv ─────────────────────────────────────
+    const existingClub = await ctx.db
+      .query("clubs")
+      .filter((q) => q.eq(q.field("name"), "Bilim Kurgu Kulübü"))
+      .first();
+    if (!existingClub && dune) {
+      const club2 = await ctx.db.insert("clubs", {
+        name: "Bilim Kurgu Kulübü",
+        description: "Klasik ve modern bilim kurgu romanlarını birlikte keşfediyoruz.",
+        bannerUrl: "",
+        leaderId: selcan._id,
+        privacyMode: "public",
+        activeBookId: dune._id,
+        createdAt: now - 1000 * 60 * 60 * 24 * 45,
+      });
+      await ctx.db.insert("clubMembers", { clubId: club2, userId: selcan._id, role: "leader", status: "active", joinedAt: now - 1000 * 60 * 60 * 24 * 45 });
+      await ctx.db.insert("clubMembers", { clubId: club2, userId: metecan._id, role: "moderator", status: "active", joinedAt: now - 1000 * 60 * 60 * 24 * 40 });
+      await ctx.db.insert("clubMembers", { clubId: club2, userId: cem._id, role: "member", status: "active", joinedAt: now - 1000 * 60 * 60 * 24 * 30 });
+      if (simyaci) {
+        await ctx.db.insert("clubArchive", { clubId: club2, bookId: simyaci._id, startedAt: now - 1000 * 60 * 60 * 24 * 60, finishedAt: now - 1000 * 60 * 60 * 24 * 46 });
+      }
+    }
+
+    return "Ekstra seed tamamlandı.";
   },
 });
