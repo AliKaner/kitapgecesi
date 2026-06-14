@@ -34,8 +34,10 @@
   /* Book covers get a tighter, directional drop */
   --shadow-book: 0 8px 20px rgba(var(--kg-shadow-rgb) / 0.18);
 
-  /* Layout — the app is a fixed 3-column shell, centered at max 1440px */
-  --shell-max:    1440px; /* outer shell max width */
+  /* Layout — the app is a fixed 3-column shell, centered at max 1160px
+     (= nav-width + feed-max + aside-width, so the shell has no internal
+     slack and stays symmetrically centered on wide viewports) */
+  --shell-max:    1160px; /* outer shell max width */
   --nav-width:    280px;  /* left navigation rail */
   --aside-width:  280px;  /* right context rail (search, book of month, goal) */
   --feed-max:     600px;  /* center feed measure */
