@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties, InputHTMLAttributes, ReactNode, useState } from "react";
+import { CSSProperties, InputHTMLAttributes, ReactNode, forwardRef, useState } from "react";
 import { Icon, IconName } from "./Icon";
 
 /* Text input. Optional floating-above label and a leading icon (e.g. search).
@@ -15,7 +15,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   hint?: ReactNode;
 }
 
-export function Input({
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input({
   label,
   icon,
   type = "text",
@@ -29,7 +29,7 @@ export function Input({
   hint,
   style,
   ...rest
-}: InputProps) {
+}, ref) {
   const [focus, setFocus] = useState(false);
   return (
     <label style={{ display: "inline-flex", flexDirection: "column", gap: 7, width: fullWidth ? "100%" : undefined }}>
@@ -54,6 +54,7 @@ export function Input({
       >
         {icon && <Icon name={icon} size={18} color="var(--text-secondary)" />}
         <input
+          ref={ref}
           type={type}
           placeholder={placeholder}
           value={value}
@@ -79,4 +80,4 @@ export function Input({
       {hint && <span style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" } as CSSProperties}>{hint}</span>}
     </label>
   );
-}
+});

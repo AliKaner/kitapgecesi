@@ -122,25 +122,32 @@ export default function ProfilPage() {
 
   return (
     <>
-      <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 28 }}>
+      <div
+        style={{
+          height: 180,
+          borderRadius: "var(--radius-lg)",
+          background: user?.bannerUrl ? `url(${user.bannerUrl}) center/cover` : "var(--surface-tint)",
+        }}
+      />
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 16, marginTop: -44, marginBottom: 12, padding: "0 4px" }}>
         <Avatar src={user?.profileImageUrl || undefined} name={user?.name} size="xl" ring />
-        <div style={{ flex: 1 }}>
-          <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 32, lineHeight: 1.1 }}>{user?.name}</h1>
-          <p style={{ color: "var(--text-secondary)", marginTop: 4 }}>@{user?.username} · Okur</p>
-          <div style={{ display: "flex", gap: 18, marginTop: 10 }}>
-            <span style={{ fontSize: "var(--fs-body-2)" }}>
-              <strong>{profile?.followingCount ?? 0}</strong>{" "}
-              <span style={{ color: "var(--text-secondary)" }}>Takip Edilen</span>
-            </span>
-            <span style={{ fontSize: "var(--fs-body-2)" }}>
-              <strong>{profile?.followerCount ?? 0}</strong>{" "}
-              <span style={{ color: "var(--text-secondary)" }}>Takipçi</span>
-            </span>
-          </div>
-        </div>
-        <Button variant="menu" icon="pencil">
+        <Button variant="menu" icon="pencil" style={{ marginLeft: "auto" }}>
           Düzenle
         </Button>
+      </div>
+      <div style={{ marginBottom: 28, padding: "0 4px" }}>
+        <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 32, lineHeight: 1.1 }}>{user?.name}</h1>
+        <p style={{ color: "var(--text-secondary)", marginTop: 4 }}>@{user?.username} · Okur</p>
+        <div style={{ display: "flex", gap: 18, marginTop: 10 }}>
+          <span style={{ fontSize: "var(--fs-body-2)" }}>
+            <strong>{profile?.followingCount ?? 0}</strong>{" "}
+            <span style={{ color: "var(--text-secondary)" }}>Takip Edilen</span>
+          </span>
+          <span style={{ fontSize: "var(--fs-body-2)" }}>
+            <strong>{profile?.followerCount ?? 0}</strong>{" "}
+            <span style={{ color: "var(--text-secondary)" }}>Takipçi</span>
+          </span>
+        </div>
       </div>
 
       <div style={{ marginBottom: 24 }}>

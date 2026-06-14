@@ -40,6 +40,7 @@ export const createClub = mutation({
   args: {
     name: v.string(),
     description: v.string(),
+    avatarUrl: v.optional(v.string()),
     bannerUrl: v.string(),
     privacyMode: v.union(
       v.literal("public"),
@@ -143,6 +144,25 @@ export const manageMembership = mutation({
     }
 
     return { status: action };
+  },
+});
+
+export const updateClubImages = mutation({
+  args: {
+    clubId: v.id("clubs"),
+    userId: v.id("users"),
+    avatarUrl: v.optional(v.string()),
+    bannerUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, { clubId, userId, avatarUrl, bannerUrl }) => {
+    const club = await ctx.db.get(clubId);
+    if (!club) throw new Error("Kulüp bulunamadı.");
+    if (club.leaderId !== userId) throw new Error("Sadece lider görselleri değiştirebilir.");
+
+    const patch: { avatarUrl?: string; bannerUrl?: string } = {};
+    if (avatarUrl !== undefined) patch.avatarUrl = avatarUrl;
+    if (bannerUrl !== undefined) patch.bannerUrl = bannerUrl;
+    await ctx.db.patch(clubId, patch);
   },
 });
 

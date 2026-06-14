@@ -8,6 +8,7 @@ export default defineSchema({
     username: v.string(),
     email: v.string(),
     profileImageUrl: v.string(),
+    bannerUrl: v.optional(v.string()),
     externalId: v.string(),
     xp: v.number(),
     yaprak: v.number(),
@@ -179,6 +180,7 @@ export default defineSchema({
   clubs: defineTable({
     name: v.string(),
     description: v.string(),
+    avatarUrl: v.optional(v.string()),
     bannerUrl: v.string(),
     leaderId: v.id("users"),
     privacyMode: v.union(

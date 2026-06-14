@@ -77,6 +77,20 @@ export const updateThemeColor = mutation({
   },
 });
 
+export const updateProfileImages = mutation({
+  args: {
+    userId: v.id("users"),
+    profileImageUrl: v.optional(v.string()),
+    bannerUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, { userId, profileImageUrl, bannerUrl }) => {
+    const patch: { profileImageUrl?: string; bannerUrl?: string } = {};
+    if (profileImageUrl !== undefined) patch.profileImageUrl = profileImageUrl;
+    if (bannerUrl !== undefined) patch.bannerUrl = bannerUrl;
+    await ctx.db.patch(userId, patch);
+  },
+});
+
 export const spendYaprak = mutation({
   args: {
     userId: v.id("users"),

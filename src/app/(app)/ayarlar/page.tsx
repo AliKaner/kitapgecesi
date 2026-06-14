@@ -1,7 +1,9 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 import { ScreenTitle } from "@/components/layout/Screen";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -32,6 +34,18 @@ export default function AyarlarPage() {
   const { user, logout } = useAuth();
   const { t, locale, setLocale } = useT();
   const { accent, setAccent } = useTheme();
+  const updateProfileImages = useMutation(api.users.updateProfileImages);
+  const profileImageRef = useRef<HTMLInputElement>(null);
+  const bannerRef = useRef<HTMLInputElement>(null);
+
+  const saveProfileImages = async () => {
+    if (!user) return;
+    await updateProfileImages({
+      userId: user._id,
+      profileImageUrl: profileImageRef.current?.value ?? "",
+      bannerUrl: bannerRef.current?.value ?? "",
+    });
+  };
 
   return (
     <>
@@ -118,8 +132,23 @@ export default function AyarlarPage() {
           <Input label={t("ayarlar.kullaniciAdi")} defaultValue={user?.username} />
           <Input label={t("ayarlar.eposta")} defaultValue={user?.email} type="email" />
           <Input label={t("ayarlar.davetKodu")} placeholder={t("ayarlar.davetKodu.placeholder")} hint={t("ayarlar.davetKodu.hint")} />
+          <Input
+            ref={profileImageRef}
+            label="Profil Fotoğrafı URL"
+            placeholder="https://..."
+            defaultValue={user?.profileImageUrl}
+          />
+          <Input
+            ref={bannerRef}
+            label="Profil Banner URL"
+            hint="Twitter'daki gibi, profilinin üst kısmında görünür."
+            placeholder="https://..."
+            defaultValue={user?.bannerUrl}
+          />
           <div>
-            <Button variant="primary">{t("common.save")}</Button>
+            <Button variant="primary" onClick={saveProfileImages}>
+              {t("common.save")}
+            </Button>
           </div>
         </Card>
       )}

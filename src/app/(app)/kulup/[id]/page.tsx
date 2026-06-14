@@ -9,6 +9,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
+import { Input } from "@/components/ui/Input";
 import { Tabs } from "@/components/ui/Tabs";
 import { BookCard } from "@/components/book/BookCard";
 import { FeedPost } from "@/components/feed/FeedPost";
@@ -58,6 +59,10 @@ export default function KulupDetayPage() {
   const feed = useQuery(api.posts.getClubFeed, { clubId, limit: 20 });
   const archive = useQuery(api.clubs.getClubArchive, { clubId });
   const manageMembership = useMutation(api.clubs.manageMembership);
+  const updateClubImages = useMutation(api.clubs.updateClubImages);
+  const [editingImages, setEditingImages] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [bannerUrl, setBannerUrl] = useState("");
 
   if (club === undefined) return null;
   if (club === null) {
@@ -66,6 +71,24 @@ export default function KulupDetayPage() {
 
   const isMember = membership?.status === "active";
   const isPending = membership?.status === "pending";
+  const isLeader = membership?.role === "leader";
+
+  const saveImages = async () => {
+    if (!user) return;
+    await updateClubImages({
+      clubId,
+      userId: user._id,
+      avatarUrl: avatarUrl.trim(),
+      bannerUrl: bannerUrl.trim(),
+    });
+    setEditingImages(false);
+  };
+
+  const startEditingImages = () => {
+    setAvatarUrl(club.avatarUrl ?? "");
+    setBannerUrl(club.bannerUrl ?? "");
+    setEditingImages(true);
+  };
 
   return (
     <>
@@ -77,29 +100,53 @@ export default function KulupDetayPage() {
         Kulüpler
       </button>
 
-      <div style={{ height: 140, borderRadius: "var(--radius-lg)", background: club.bannerUrl ? `url(${club.bannerUrl}) center/cover` : "var(--surface-tint)", marginBottom: 18 }} />
+      <div style={{ height: 140, borderRadius: "var(--radius-lg)", background: club.bannerUrl ? `url(${club.bannerUrl}) center/cover` : "var(--surface-tint)" }} />
 
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
-        <div>
-          <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 32, lineHeight: 1.1, marginBottom: 6 }}>{club.name}</h1>
-          <p style={{ color: "var(--text-secondary)" }}>{club.description}</p>
-          <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)", marginTop: 6 }}>{club.memberCount} üye</p>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 16, marginTop: -28, marginBottom: 12, padding: "0 4px" }}>
+        <Avatar src={club.avatarUrl} name={club.name} size="lg" ring />
+        <div style={{ marginLeft: "auto" }}>
+          {isLeader && !editingImages && (
+            <Button variant="menu" size="sm" icon="pencil" onClick={startEditingImages}>
+              Görselleri Düzenle
+            </Button>
+          )}
+          {user && !isMember && (
+            <Button
+              variant="primary"
+              size="sm"
+              disabled={isPending}
+              onClick={() => manageMembership({ clubId, userId: user._id, action: "join" })}
+            >
+              {isPending ? "Onay Bekliyor" : "Katıl"}
+            </Button>
+          )}
+          {user && isMember && membership?.role !== "leader" && (
+            <Button variant="menu" size="sm" onClick={() => manageMembership({ clubId, userId: user._id, action: "leave" })}>
+              Ayrıl
+            </Button>
+          )}
         </div>
-        {user && !isMember && (
-          <Button
-            variant="primary"
-            size="sm"
-            disabled={isPending}
-            onClick={() => manageMembership({ clubId, userId: user._id, action: "join" })}
-          >
-            {isPending ? "Onay Bekliyor" : "Katıl"}
-          </Button>
-        )}
-        {user && isMember && membership?.role !== "leader" && (
-          <Button variant="menu" size="sm" onClick={() => manageMembership({ clubId, userId: user._id, action: "leave" })}>
-            Ayrıl
-          </Button>
-        )}
+      </div>
+
+      {editingImages && (
+        <Card style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 18 }}>
+          <Input label="Profil Fotoğrafı URL" placeholder="https://..." value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} />
+          <Input label="Kapak Resmi URL" hint="Twitter'daki gibi, kulüp sayfasının üst kısmında görünür." placeholder="https://..." value={bannerUrl} onChange={(e) => setBannerUrl(e.target.value)} />
+          <div style={{ display: "flex", gap: 8 }}>
+            <Button variant="primary" size="sm" onClick={saveImages}>
+              Kaydet
+            </Button>
+            <Button variant="menu" size="sm" onClick={() => setEditingImages(false)}>
+              Vazgeç
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      <div style={{ marginBottom: 8, padding: "0 4px" }}>
+        <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 32, lineHeight: 1.1, marginBottom: 6 }}>{club.name}</h1>
+        <p style={{ color: "var(--text-secondary)" }}>{club.description}</p>
+        <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)", marginTop: 6 }}>{club.memberCount} üye</p>
       </div>
 
       {club.activeBook && (
