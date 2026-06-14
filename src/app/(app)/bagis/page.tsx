@@ -17,7 +17,7 @@ const ORGS = [
   { name: "Türkiye Eğitim Gönüllüleri", initials: "TE", color: "#C8881F", descriptionKey: "bagis.org.tegv" as const },
 ];
 
-const DONATE_AMOUNT = 10;
+const DONATE_AMOUNT = 1000000;
 
 function formatDate(ts: number) {
   return new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "long", year: "numeric" }).format(ts);

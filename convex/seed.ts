@@ -69,7 +69,7 @@ export const seed = internalMutation({
         profileImageUrl: "",
         externalId,
         xp: 0,
-        yaprak: 100,
+        yaprak: 1000000,
         level: 1,
         trustScore: 100,
         passwordHash: defaultPasswordHash,
