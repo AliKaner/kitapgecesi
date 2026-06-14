@@ -9,13 +9,14 @@ import { Tabs } from "@/components/ui/Tabs";
 import { Tag } from "@/components/ui/Tag";
 import { BookCard } from "@/components/book/BookCard";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 const GENRES = ["Edebiyat", "Roman", "Psikoloji", "Duygu ve Düşünce", "Felsefe", "Tarih", "Bilim", "Tasavvuf", "Sanat", "Kişisel Gelişim"];
 
 const SORT_OPTIONS = [
-  { value: "yeni", label: "Yeni Eklenenler" },
-  { value: "alfabetik", label: "Alfabetik" },
-  { value: "puan", label: "En Yüksek Puan" },
+  { value: "yeni", label: "En Yeni" },
+  { value: "puan", label: "En Beğenilenler" },
+  { value: "alfabetik", label: "A-Z" },
 ];
 
 interface BookWithRating {
@@ -49,6 +50,7 @@ function BookRail({ items, readIds, onOpen }: { items: BookWithRating[]; readIds
 }
 
 export default function KitaplarPage() {
+  const { t } = useT();
   const [tab, setTab] = useState("Kitap Türleri");
   const [sort, setSort] = useState("yeni");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -84,9 +86,17 @@ export default function KitaplarPage() {
 
   return (
     <>
-      <ScreenTitle>Kitaplar</ScreenTitle>
+      <ScreenTitle>{t("nav.kitaplar")}</ScreenTitle>
         <div style={{ marginBottom: 26 }}>
-          <Tabs items={["Kitap Türleri", "Yazarlar", "Konular"]} value={tab} onChange={setTab} />
+          <Tabs
+            items={[
+              { value: "Kitap Türleri", label: t("kitaplar.tab.turler") },
+              { value: "Yazarlar", label: t("nav.yazarlar") },
+              { value: "Konular", label: t("kitaplar.tab.konular") },
+            ]}
+            value={tab}
+            onChange={setTab}
+          />
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 18 }}>
           {GENRES.map((g) => (
@@ -96,15 +106,25 @@ export default function KitaplarPage() {
           ))}
         </div>
         <div style={{ marginBottom: 30 }}>
-          <Tabs variant="segmented" size="sm" items={SORT_OPTIONS} value={sort} onChange={setSort} />
+          <Tabs
+            variant="segmented"
+            size="sm"
+            items={[
+              { value: "yeni", label: t("kitaplar.sort.yeni") },
+              { value: "puan", label: t("kitaplar.sort.puan") },
+              { value: "alfabetik", label: t("kitaplar.sort.alfabetik") },
+            ]}
+            value={sort}
+            onChange={setSort}
+          />
         </div>
         <section style={{ marginBottom: 36 }}>
-          <SectionHead title="En Çok Okunanlar" />
+          <SectionHead title={t("kitaplar.mostRead")} />
           <BookRail items={popular} readIds={readIds} onOpen={(id) => router.push(`/kitap/${id}`)} />
         </section>
         {rest.length > 0 && (
           <section>
-            <SectionHead title="En Beğenilen Kitaplar" />
+            <SectionHead title={t("kitaplar.mostLiked")} />
             <BookRail items={rest} readIds={readIds} onOpen={(id) => router.push(`/kitap/${id}`)} />
           </section>
         )}

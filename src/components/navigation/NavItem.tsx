@@ -30,7 +30,7 @@ export function NavItem({ icon, children, active = false, count, style, ...rest 
         border: "none",
         cursor: "pointer",
         textAlign: "left",
-        borderRadius: "var(--radius-md)",
+        borderRadius: "10px",
         background: active ? "var(--surface-sunken)" : hover ? "var(--surface-sunken)" : "transparent",
         color: active ? "var(--text-primary)" : "var(--text-secondary)",
         fontFamily: "var(--font-sans)",

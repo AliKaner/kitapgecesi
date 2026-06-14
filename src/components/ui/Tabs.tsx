@@ -41,7 +41,7 @@ export function Tabs({ items = [], value, defaultValue, onChange, variant = "und
           gap: 3,
           padding: 3,
           background: "var(--surface-sunken)",
-          borderRadius: "var(--radius-pill)",
+          borderRadius: "10px",
           ...style,
         } as CSSProperties}
         {...rest}
@@ -59,7 +59,7 @@ export function Tabs({ items = [], value, defaultValue, onChange, variant = "und
                 padding: "0 16px",
                 border: "none",
                 cursor: "pointer",
-                borderRadius: "var(--radius-pill)",
+                borderRadius: "8px",
                 background: on ? "var(--surface-card)" : "transparent",
                 color: on ? "var(--text-primary)" : "var(--text-secondary)",
                 fontFamily: "var(--font-sans)",

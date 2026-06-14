@@ -10,8 +10,10 @@ import { Tabs } from "@/components/ui/Tabs";
 import { Button } from "@/components/ui/Button";
 import { FeedPost } from "@/components/feed/FeedPost";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useT } from "@/lib/i18n/I18nProvider";
 
 function Composer({ userId }: { userId: Id<"users"> }) {
+  const { t } = useT();
   const [tab, setTab] = useState("Kitap Kaydı");
   const [text, setText] = useState("");
   const createPost = useMutation(api.posts.createPost);
@@ -33,7 +35,7 @@ function Composer({ userId }: { userId: Id<"users"> }) {
         <Avatar size="md" />
         <div style={{ flex: 1 }}>
           <input
-            placeholder="Neler okuyorsun?"
+            placeholder={t("composer.placeholder")}
             value={text}
             onChange={(e) => setText(e.target.value)}
             style={{
@@ -48,9 +50,19 @@ function Composer({ userId }: { userId: Id<"users"> }) {
             }}
           />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
-            <Tabs variant="segmented" size="sm" items={["Kitap Kaydı", "Alıntı", "Kitap Alışverişi"]} value={tab} onChange={setTab} />
+            <Tabs
+              variant="segmented"
+              size="sm"
+              items={[
+                { value: "Kitap Kaydı", label: t("composer.tab.bookLog") },
+                { value: "Alıntı", label: t("composer.tab.quote") },
+                { value: "Kitap Alışverişi", label: t("composer.tab.bookTrade") },
+              ]}
+              value={tab}
+              onChange={setTab}
+            />
             <Button size="sm" variant="primary" onClick={share}>
-              Paylaş
+              {t("common.share")}
             </Button>
           </div>
         </div>

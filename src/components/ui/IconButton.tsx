@@ -46,7 +46,7 @@ export function IconButton({
         minWidth: size,
         justifyContent: "center",
         border: variant === "outline" ? "1px solid var(--border-default)" : "none",
-        borderRadius: "var(--radius-pill)",
+        borderRadius: "10px",
         background: hover ? "var(--surface-sunken)" : "transparent",
         color: tint,
         cursor: "pointer",

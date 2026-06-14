@@ -79,7 +79,7 @@ export function Sidebar() {
             style={{
               flex: 1,
               height: 32,
-              borderRadius: "var(--radius-pill)",
+              borderRadius: "10px",
               border: "1px solid var(--border-default)",
               background: locale === l ? "var(--accent-tint)" : "transparent",
               color: locale === l ? "var(--accent)" : "var(--text-secondary)",
@@ -96,7 +96,7 @@ export function Sidebar() {
       {user && (
         <Link
           href="/profil"
-          style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", borderRadius: "var(--radius-md)" }}
+          style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", borderRadius: "10px" }}
         >
           <Avatar src={user.profileImageUrl} name={user.name} size={38} />
           <div style={{ minWidth: 0 }}>

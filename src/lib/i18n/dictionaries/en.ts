@@ -51,6 +51,21 @@ const en: Record<keyof typeof tr, string> = {
   "ayarlar.davetKodu.placeholder": "Your invite code",
   "ayarlar.davetKodu.hint": "Invite your friends to KitapGecesi.",
 
+  // Composer (home / club)
+  "composer.placeholder": "What are you reading?",
+  "composer.tab.bookLog": "Book Log",
+  "composer.tab.quote": "Quote",
+  "composer.tab.bookTrade": "Book Exchange",
+
+  // Books page
+  "kitaplar.tab.turler": "Genres",
+  "kitaplar.tab.konular": "Topics",
+  "kitaplar.sort.yeni": "Newest",
+  "kitaplar.sort.puan": "Most Liked",
+  "kitaplar.sort.alfabetik": "A-Z",
+  "kitaplar.mostRead": "Most Read",
+  "kitaplar.mostLiked": "Most Liked Books",
+
   // Post interactions
   "post.views": "{count} views",
   "post.commentPlaceholder": "Write a comment...",

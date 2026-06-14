@@ -49,6 +49,21 @@ const tr = {
   "ayarlar.davetKodu.placeholder": "Davet kodunuz",
   "ayarlar.davetKodu.hint": "Arkadaşlarınızı KitapGecesi'ne davet edin.",
 
+  // Gönderi oluşturma (anasayfa/kulüp)
+  "composer.placeholder": "Neler okuyorsun?",
+  "composer.tab.bookLog": "Kitap Kaydı",
+  "composer.tab.quote": "Alıntı",
+  "composer.tab.bookTrade": "Kitap Alışverişi",
+
+  // Kitaplar sayfası
+  "kitaplar.tab.turler": "Kitap Türleri",
+  "kitaplar.tab.konular": "Konular",
+  "kitaplar.sort.yeni": "En Yeni",
+  "kitaplar.sort.puan": "En Beğenilenler",
+  "kitaplar.sort.alfabetik": "A-Z",
+  "kitaplar.mostRead": "En Çok Okunanlar",
+  "kitaplar.mostLiked": "En Beğenilen Kitaplar",
+
   // Gönderi etkileşimleri
   "post.views": "{count} görüntülenme",
   "post.commentPlaceholder": "Yorumunu yaz...",

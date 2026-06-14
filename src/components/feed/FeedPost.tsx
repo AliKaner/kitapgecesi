@@ -145,7 +145,7 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
                     style={{
                       flex: 1,
                       border: "1px solid var(--border-default)",
-                      borderRadius: "var(--radius-md)",
+                      borderRadius: "10px",
                       padding: "8px 12px",
                       fontSize: "var(--fs-body-2)",
                       fontFamily: "var(--font-sans)",
@@ -180,7 +180,7 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
               style={{
                 width: "100%",
                 border: "1px solid var(--border-default)",
-                borderRadius: "var(--radius-md)",
+                borderRadius: "10px",
                 padding: "10px 12px",
                 fontSize: "var(--fs-body-1)",
                 fontFamily: "var(--font-sans)",

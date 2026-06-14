@@ -140,7 +140,7 @@ export default function ListeDetayPage() {
               style={{
                 flex: 1,
                 border: "1px solid var(--border-default)",
-                borderRadius: "var(--radius-md)",
+                borderRadius: "10px",
                 padding: "8px 12px",
                 fontSize: "var(--fs-body-2)",
                 fontFamily: "var(--font-sans)",
