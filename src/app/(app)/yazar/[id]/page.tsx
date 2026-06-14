@@ -27,15 +27,11 @@ export default function YazarDetayPage() {
 
   if (author === undefined) return null;
   if (author === null) {
-    return (
-      <div style={{ padding: "26px 32px" }}>
-        <p>Yazar bulunamadı.</p>
-      </div>
-    );
+    return <p>Yazar bulunamadı.</p>;
   }
 
   return (
-    <div style={{ maxWidth: 760, margin: "0 auto", padding: "26px 32px 60px" }}>
+    <>
       <button
         onClick={() => router.push("/yazarlar")}
         style={{
@@ -79,6 +75,6 @@ export default function YazarDetayPage() {
           ))}
         </div>
       </section>
-    </div>
+    </>
   );
 }

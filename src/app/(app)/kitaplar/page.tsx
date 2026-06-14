@@ -4,7 +4,6 @@ import { CSSProperties, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { ContextRail } from "@/components/layout/ContextRail";
 import { ScreenTitle, SectionHead } from "@/components/layout/Screen";
 import { Tabs } from "@/components/ui/Tabs";
 import { Tag } from "@/components/ui/Tag";
@@ -84,9 +83,8 @@ export default function KitaplarPage() {
   };
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ flex: 1, minWidth: 0, maxWidth: 760, margin: "0 auto", padding: "26px 32px 60px" }}>
-        <ScreenTitle>Kitaplar</ScreenTitle>
+    <>
+      <ScreenTitle>Kitaplar</ScreenTitle>
         <div style={{ marginBottom: 26 }}>
           <Tabs items={["Kitap Türleri", "Yazarlar", "Konular"]} value={tab} onChange={setTab} />
         </div>
@@ -110,8 +108,6 @@ export default function KitaplarPage() {
             <BookRail items={rest} readIds={readIds} onOpen={(id) => router.push(`/kitap/${id}`)} />
           </section>
         )}
-      </div>
-      <ContextRail />
-    </div>
+    </>
   );
 }

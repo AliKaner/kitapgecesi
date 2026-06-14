@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Doc } from "../../../../convex/_generated/dataModel";
-import { ContextRail } from "@/components/layout/ContextRail";
 import { ScreenTitle } from "@/components/layout/Screen";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -36,8 +35,7 @@ export default function ListelerPage() {
   const lists = useQuery(api.lists.getUserLists, user ? { creatorId: user._id, includePrivate: true } : "skip");
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ flex: 1, minWidth: 0, maxWidth: 760, margin: "0 auto", padding: "26px 32px 60px" }}>
+    <>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <ScreenTitle>Listeler</ScreenTitle>
           <Button variant="primary" size="sm" icon="plus" onClick={() => router.push("/listeler/yeni")}>
@@ -68,8 +66,6 @@ export default function ListelerPage() {
 
         {tab === "Kaydedilenler" && <p style={{ color: "var(--text-secondary)" }}>Henüz kaydedilen liste yok.</p>}
         {tab === "Takip Edilen" && <p style={{ color: "var(--text-secondary)" }}>Takip ettiğiniz liste yok.</p>}
-      </div>
-      <ContextRail />
-    </div>
+    </>
   );
 }

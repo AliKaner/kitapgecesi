@@ -34,7 +34,7 @@ export default function AyarlarPage() {
   const { accent, setAccent } = useTheme();
 
   return (
-    <div style={{ maxWidth: 640, margin: "0 auto", padding: "26px 32px 60px" }}>
+    <>
       <ScreenTitle>{t("ayarlar.title")}</ScreenTitle>
       <div style={{ marginBottom: 26 }}>
         <Tabs
@@ -123,6 +123,6 @@ export default function AyarlarPage() {
           </div>
         </Card>
       )}
-    </div>
+    </>
   );
 }

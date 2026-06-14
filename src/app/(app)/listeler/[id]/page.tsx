@@ -35,17 +35,13 @@ export default function ListeDetayPage() {
 
   if (list === undefined) return null;
   if (list === null) {
-    return (
-      <div style={{ padding: "26px 32px" }}>
-        <p>Liste bulunamadı.</p>
-      </div>
-    );
+    return <p>Liste bulunamadı.</p>;
   }
 
   const isOwner = user?._id === list.creatorId;
 
   return (
-    <div style={{ maxWidth: 760, margin: "0 auto", padding: "26px 32px 60px" }}>
+    <>
       <button
         onClick={() => router.push("/listeler")}
         style={{
@@ -166,6 +162,6 @@ export default function ListeDetayPage() {
           </div>
         )}
       </section>
-    </div>
+    </>
   );
 }

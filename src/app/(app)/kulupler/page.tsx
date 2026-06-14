@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { ContextRail } from "@/components/layout/ContextRail";
 import { ScreenTitle } from "@/components/layout/Screen";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -39,8 +38,7 @@ export default function KuluplerPage() {
   };
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ flex: 1, minWidth: 0, maxWidth: 760, margin: "0 auto", padding: "26px 32px 60px" }}>
+    <>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <ScreenTitle>{t("nav.kulupler")}</ScreenTitle>
           <Button variant="primary" size="sm" icon="plus" onClick={() => setCreating((v) => !v)}>
@@ -73,8 +71,6 @@ export default function KuluplerPage() {
           ))}
           {clubs && clubs.length === 0 && <p style={{ color: "var(--text-secondary)" }}>Henüz bir kulüp yok.</p>}
         </div>
-      </div>
-      <ContextRail />
-    </div>
+    </>
   );
 }

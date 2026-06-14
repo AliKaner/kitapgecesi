@@ -2,7 +2,6 @@
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { ContextRail } from "@/components/layout/ContextRail";
 import { ScreenTitle } from "@/components/layout/Screen";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -42,8 +41,7 @@ export default function BildirimlerPage() {
   const markAllRead = useMutation(api.notifications.markAllRead);
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ flex: 1, minWidth: 0, maxWidth: 760, margin: "0 auto", padding: "26px 32px 60px" }}>
+    <>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <ScreenTitle>Bildirimler</ScreenTitle>
           {user && (
@@ -89,8 +87,6 @@ export default function BildirimlerPage() {
           ))}
           {notifications && notifications.length === 0 && <p style={{ color: "var(--text-secondary)" }}>Henüz bildirim yok.</p>}
         </div>
-      </div>
-      <ContextRail />
-    </div>
+    </>
   );
 }

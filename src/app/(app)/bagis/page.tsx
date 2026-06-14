@@ -29,7 +29,7 @@ export default function BagisPage() {
   const donate = useMutation(api.donations.donate);
 
   return (
-    <div style={{ maxWidth: 640, margin: "0 auto", padding: "26px 32px 60px" }}>
+    <>
       <ScreenTitle sub={user ? `Bakiyeniz: ${user.yaprak.toLocaleString("tr-TR")} yaprak` : undefined}>Bağış</ScreenTitle>
       <div style={{ marginBottom: 26 }}>
         <Tabs items={["Bağış Yap", "Bağışlarınız"]} value={tab} onChange={setTab} />
@@ -86,6 +86,6 @@ export default function BagisPage() {
           {history && history.length === 0 && <p style={{ color: "var(--text-secondary)" }}>Henüz bağış yapmadınız.</p>}
         </div>
       )}
-    </div>
+    </>
   );
 }

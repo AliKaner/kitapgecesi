@@ -121,7 +121,7 @@ export default function ProfilPage() {
   const favorites = (books ?? []).slice(0, 4);
 
   return (
-    <div style={{ maxWidth: 760, margin: "0 auto", padding: "26px 32px 60px" }}>
+    <>
       <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 28 }}>
         <Avatar src={user?.profileImageUrl || undefined} name={user?.name} size="xl" ring />
         <div style={{ flex: 1 }}>
@@ -239,6 +239,6 @@ export default function ProfilPage() {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }

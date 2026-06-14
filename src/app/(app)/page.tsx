@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
-import { ContextRail } from "@/components/layout/ContextRail";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { Tabs } from "@/components/ui/Tabs";
@@ -65,16 +64,13 @@ export default function AnasayfaPage() {
   const feed = useQuery(api.posts.getFeed, { limit: 20, cursor: null });
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ flex: 1, minWidth: 0, maxWidth: "var(--feed-max)", padding: "26px 32px 60px" }}>
-        {user && <Composer userId={user._id} />}
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {feed?.map((p) => (
-            <FeedPost key={p._id} post={p} currentUserId={user?._id} />
-          ))}
-        </div>
+    <>
+      {user && <Composer userId={user._id} />}
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        {feed?.map((p) => (
+          <FeedPost key={p._id} post={p} currentUserId={user?._id} />
+        ))}
       </div>
-      <ContextRail />
-    </div>
+    </>
   );
 }

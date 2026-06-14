@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { ContextRail } from "@/components/layout/ContextRail";
 import { ScreenTitle } from "@/components/layout/Screen";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
@@ -16,9 +15,8 @@ export default function YazarlarPage() {
   const authors = useQuery(api.authors.listAuthors, {});
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ flex: 1, minWidth: 0, maxWidth: 760, margin: "0 auto", padding: "26px 32px 60px" }}>
-        <ScreenTitle>{t("nav.yazarlar")}</ScreenTitle>
+    <>
+      <ScreenTitle>{t("nav.yazarlar")}</ScreenTitle>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16 }}>
           {authors?.map((a) => (
             <Card key={a._id} padding={16} style={{ cursor: "pointer", display: "flex", flexDirection: "column", gap: 10, alignItems: "center", textAlign: "center" }} onClick={() => router.push(`/yazar/${a._id}`)}>
@@ -31,8 +29,6 @@ export default function YazarlarPage() {
             </Card>
           ))}
         </div>
-      </div>
-      <ContextRail />
-    </div>
+    </>
   );
 }

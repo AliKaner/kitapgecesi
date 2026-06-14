@@ -50,7 +50,7 @@ export default function YeniListePage() {
   };
 
   return (
-    <div style={{ maxWidth: 640, margin: "0 auto", padding: "26px 32px 60px" }}>
+    <>
       <ScreenTitle>Yeni Liste</ScreenTitle>
       <Card style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 24 }}>
         <Input label="Başlık" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -92,6 +92,6 @@ export default function YeniListePage() {
       <Button variant="primary" onClick={submit} disabled={!title.trim()}>
         Listeyi Oluştur
       </Button>
-    </div>
+    </>
   );
 }

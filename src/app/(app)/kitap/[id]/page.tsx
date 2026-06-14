@@ -51,17 +51,13 @@ export default function KitapDetayPage() {
 
   if (book === undefined) return null;
   if (book === null) {
-    return (
-      <div style={{ padding: "26px 32px" }}>
-        <p>Kitap bulunamadı.</p>
-      </div>
-    );
+    return <p>Kitap bulunamadı.</p>;
   }
 
   const similar = (allBooks ?? []).filter((b) => b._id !== book._id).slice(0, 4);
 
   return (
-    <div style={{ maxWidth: 760, margin: "0 auto", padding: "26px 32px 60px" }}>
+    <>
       <button
         onClick={() => router.push("/kitaplar")}
         style={{
@@ -164,6 +160,6 @@ export default function KitapDetayPage() {
           </div>
         </section>
       )}
-    </div>
+    </>
   );
 }

@@ -61,18 +61,14 @@ export default function KulupDetayPage() {
 
   if (club === undefined) return null;
   if (club === null) {
-    return (
-      <div style={{ padding: "26px 32px" }}>
-        <p>Kulüp bulunamadı.</p>
-      </div>
-    );
+    return <p>Kulüp bulunamadı.</p>;
   }
 
   const isMember = membership?.status === "active";
   const isPending = membership?.status === "pending";
 
   return (
-    <div style={{ maxWidth: 760, margin: "0 auto", padding: "26px 32px 60px" }}>
+    <>
       <button
         onClick={() => router.push("/kulupler")}
         style={{ display: "inline-flex", alignItems: "center", gap: 6, border: "none", background: "none", cursor: "pointer", color: "var(--text-secondary)", fontFamily: "var(--font-sans)", fontSize: "var(--fs-body-2)", marginBottom: 22, padding: 0 }}
@@ -145,6 +141,6 @@ export default function KulupDetayPage() {
           {archive && archive.length === 0 && <p style={{ color: "var(--text-secondary)" }}>Arşiv boş.</p>}
         </div>
       )}
-    </div>
+    </>
   );
 }
