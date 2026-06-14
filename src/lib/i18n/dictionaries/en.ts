@@ -110,6 +110,8 @@ const en: Record<keyof typeof tr, string> = {
 
   // Authors
   "yazarlar.bookCount": "{count} books",
+  "yazarlar.searchPlaceholder": "Search authors...",
+  "yazarlar.empty": "No authors match your search.",
   "yazar.notFound": "Author not found.",
   "yazar.books": "Books",
   "yazar.stat.views": "views",

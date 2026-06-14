@@ -108,6 +108,8 @@ const tr = {
 
   // Yazarlar
   "yazarlar.bookCount": "{count} kitap",
+  "yazarlar.searchPlaceholder": "Yazar ara...",
+  "yazarlar.empty": "Aramanla eşleşen yazar bulunamadı.",
   "yazar.notFound": "Yazar bulunamadı.",
   "yazar.books": "Kitapları",
   "yazar.stat.views": "görüntüleme",
