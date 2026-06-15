@@ -97,3 +97,12 @@
   text-transform: uppercase;
 }
 
+
+/* Horizontal swipe row with hidden scrollbar (carousels in the context rail). */
+.kg-hscroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.kg-hscroll::-webkit-scrollbar {
+  display: none;
+}

@@ -106,8 +106,8 @@ function BookOfMonth() {
   return (
     <Card padding={20} title={t("contextRail.bookOfMonth")}>
       {b && (
-        <div style={{ display: "flex", gap: 16 }}>
-          <BookCover src={b.coverUrl || undefined} title={b.title} width={92} />
+        <div style={{ display: "flex", gap: 14 }}>
+          <BookCover src={b.coverUrl || undefined} title={b.title} width={120} />
           <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 2, flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: "var(--font-serif)", fontSize: 22, lineHeight: 1.1 }}>{b.title}</div>
             <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>{b.author}</div>
@@ -140,15 +140,25 @@ function PopularBooks() {
   if (!books || books.length === 0) return null;
   return (
     <Card padding={20} title={t("contextRail.popular")}>
-      <div style={{ display: "flex", gap: 10, justifyContent: "space-between" }}>
+      <div
+        className="kg-hscroll"
+        style={{
+          display: "flex",
+          gap: 12,
+          overflowX: "auto",
+          scrollSnapType: "x mandatory",
+          margin: "0 -20px",
+          padding: "0 20px 2px",
+        }}
+      >
         {books.map((b) => (
           <BookCover
             key={b._id}
             src={b.coverUrl || undefined}
             title={b.title}
-            width={44}
+            width={120}
             onClick={() => router.push(`/kitap/${b._id}`)}
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "pointer", flex: "none", scrollSnapAlign: "start" }}
           />
         ))}
       </div>
