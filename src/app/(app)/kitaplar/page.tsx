@@ -8,9 +8,8 @@ import { ScreenTitle, SectionHead } from "@/components/layout/Screen";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { Input } from "@/components/ui/Input";
-import { Switch } from "@/components/ui/Switch";
-import { Tabs } from "@/components/ui/Tabs";
-import { Tag } from "@/components/ui/Tag";
+import { Select } from "@/components/ui/Select";
+import { FilterBar } from "@/components/ui/FilterBar";
 import { BookCard } from "@/components/book/BookCard";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
@@ -77,9 +76,9 @@ function BookRail({ items, readIds, onOpen }: { items: BookWithRating[]; readIds
 export default function KitaplarPage() {
   const { t } = useT();
   const [sort, setSort] = useState("yeni");
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [hideRead, setHideRead] = useState(false);
+  const [genre, setGenre] = useState("");
+  const [year, setYear] = useState("");
+  const [readFilter, setReadFilter] = useState("all");
   const [search, setSearch] = useState("");
   const router = useRouter();
   const { user } = useAuth();
@@ -102,13 +101,13 @@ export default function KitaplarPage() {
     if (q) {
       list = list.filter((b) => b.title.toLocaleLowerCase("tr").includes(q) || b.author.toLocaleLowerCase("tr").includes(q));
     }
-    if (selectedGenres.length > 0) {
-      list = list.filter((b) => b.genres?.some((g) => selectedGenres.includes(g)));
+    if (genre) {
+      list = list.filter((b) => b.genres?.includes(genre));
     }
-    if (selectedYear != null) {
-      list = list.filter((b) => b.releaseYear === selectedYear);
+    if (year) {
+      list = list.filter((b) => b.releaseYear === Number(year));
     }
-    if (hideRead) {
+    if (readFilter === "unread") {
       list = list.filter((b) => !readIds.has(b._id));
     }
     list = [...list];
@@ -122,13 +121,13 @@ export default function KitaplarPage() {
       list.sort((a, b) => b.createdAt - a.createdAt);
     }
     return list;
-  }, [books, selectedGenres, selectedYear, hideRead, readIds, sort, search]);
+  }, [books, genre, year, readFilter, readIds, sort, search]);
 
   const popular = filtered.slice(0, 4);
   const rest = filtered.slice(4);
 
-  const pageSize = selectedGenres.length > 0 || selectedYear != null || search.trim() ? PAGE_SIZE_FILTERED : PAGE_SIZE_ALL;
-  const filterKey = `${sort}:${selectedGenres.join(",")}:${selectedYear ?? ""}:${hideRead}:${search.trim().toLocaleLowerCase("tr")}`;
+  const pageSize = genre || year || search.trim() ? PAGE_SIZE_FILTERED : PAGE_SIZE_ALL;
+  const filterKey = `${sort}:${genre}:${year}:${readFilter}:${search.trim().toLocaleLowerCase("tr")}`;
   const [visibleCount, setVisibleCount] = useState(pageSize);
   const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
   if (filterKey !== prevFilterKey) {
@@ -138,65 +137,52 @@ export default function KitaplarPage() {
 
   const visibleRest = rest.slice(0, visibleCount);
 
-  const toggleGenre = (g: string) => {
-    setSelectedGenres((prev) => (prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g]));
-  };
-
   return (
     <>
       <ScreenTitle>{t("nav.kitaplar")}</ScreenTitle>
-        <div style={{ marginBottom: 18, maxWidth: 360 }}>
-          <Input
-            icon="search"
+        <FilterBar>
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <Input
+              icon="search"
+              pill
+              placeholder={t("kitaplar.searchPlaceholder")}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <Select
             pill
-            placeholder={t("kitaplar.searchPlaceholder")}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={genre}
+            onChange={(e) => setGenre(e.target.value)}
+            options={[{ value: "", label: t("kitaplar.allGenres") }, ...GENRES.map((g) => ({ value: g, label: g }))]}
           />
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginBottom: 12 }}>
-          {GENRES.map((g) => (
-            <Tag key={g} tone={selectedGenres.includes(g) ? "tint" : "default"} onClick={() => toggleGenre(g)} style={{ cursor: "pointer" }}>
-              {g}
-            </Tag>
-          ))}
-        </div>
-        {years.length > 0 && (
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginBottom: 12 }}>
-            {years.map((y) => (
-              <Tag
-                key={y}
-                tone={selectedYear === y ? "tint" : "default"}
-                onClick={() => setSelectedYear((prev) => (prev === y ? null : y))}
-                style={{ cursor: "pointer" }}
-              >
-                {y}
-              </Tag>
-            ))}
-          </div>
-        )}
-        {(selectedGenres.length > 0 || selectedYear != null) && (
-          <div style={{ marginBottom: 12 }}>
-            <Tag onClick={() => { setSelectedGenres([]); setSelectedYear(null); }} style={{ cursor: "pointer" }}>
-              {t("kitaplar.clearFilters")}
-            </Tag>
-          </div>
-        )}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 30, flexWrap: "wrap", gap: 12 }}>
-          <Tabs
-            variant="segmented"
-            size="sm"
-            items={[
+          <Select
+            pill
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            options={[{ value: "", label: t("kitaplar.allYears") }, ...years.map((y) => ({ value: String(y), label: String(y) }))]}
+          />
+          <Select
+            pill
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            options={[
               { value: "yeni", label: t("kitaplar.sort.yeni") },
               { value: "populer", label: t("kitaplar.sort.populer") },
               { value: "puan", label: t("kitaplar.sort.puan") },
               { value: "alfabetik", label: t("kitaplar.sort.alfabetik") },
             ]}
-            value={sort}
-            onChange={setSort}
           />
-          <Switch label={t("kitaplar.hideRead")} checked={hideRead} onChange={setHideRead} />
-        </div>
+          <Select
+            pill
+            value={readFilter}
+            onChange={(e) => setReadFilter(e.target.value)}
+            options={[
+              { value: "all", label: t("kitaplar.readAll") },
+              { value: "unread", label: t("kitaplar.readUnread") },
+            ]}
+          />
+        </FilterBar>
         {filtered.length === 0 && books != null ? (
           <p style={{ color: "var(--text-secondary)" }}>{t("kitaplar.empty")}</p>
         ) : (

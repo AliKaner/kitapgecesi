@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { ScreenTitle } from "@/components/layout/Screen";
@@ -27,6 +28,23 @@ const NOTIF_TEXT_KEYS: Record<string, "bildirim.type.follow" | "bildirim.type.li
 
 const BADGE_NAME: Record<string, string> = Object.fromEntries(BADGE_DEFS.map((b) => [b.key, b.name]));
 
+/* Where each notification takes you when tapped. */
+function routeFor(n: { type: string; targetClubId?: string | null }): string {
+  switch (n.type) {
+    case "badge":
+      return "/profil?tab=Rozetler";
+    case "club_invite":
+      return n.targetClubId ? `/kulup/${n.targetClubId}` : "/kulupler";
+    case "follow":
+      return "/profil";
+    case "like":
+    case "reply":
+    case "repost":
+    default:
+      return "/";
+  }
+}
+
 function timeAgo(ts: number, t: ReturnType<typeof useT>["t"]) {
   const diff = Date.now() - ts;
   const hour = 1000 * 60 * 60;
@@ -38,9 +56,16 @@ function timeAgo(ts: number, t: ReturnType<typeof useT>["t"]) {
 
 export default function BildirimlerPage() {
   const { t } = useT();
+  const router = useRouter();
   const { user } = useAuth();
   const notifications = useQuery(api.notifications.getNotifications, user ? { userId: user._id } : "skip");
   const markAllRead = useMutation(api.notifications.markAllRead);
+  const markRead = useMutation(api.notifications.markRead);
+
+  const open = (n: { _id: string; isRead: boolean; type: string; targetClubId?: string | null }) => {
+    if (!n.isRead) markRead({ notificationId: n._id as Parameters<typeof markRead>[0]["notificationId"] });
+    router.push(routeFor(n));
+  };
 
   return (
     <>
@@ -57,6 +82,15 @@ export default function BildirimlerPage() {
           {(notifications ?? []).map((n) => (
             <div
               key={n._id}
+              onClick={() => open(n)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  open(n);
+                }
+              }}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -64,6 +98,7 @@ export default function BildirimlerPage() {
                 padding: "16px 0",
                 borderBottom: "1px solid var(--border-default)",
                 background: n.isRead ? "transparent" : "var(--surface-tint)",
+                cursor: "pointer",
               }}
             >
               <Avatar src={n.sender?.profileImageUrl || undefined} name={n.sender?.name} size="md" />
@@ -81,7 +116,7 @@ export default function BildirimlerPage() {
               </div>
               <Icon name={NOTIF_ICON[n.type] ?? "bell"} size={18} color="var(--text-secondary)" />
               {n.type === "follow" && (
-                <Button variant="secondary" size="sm">
+                <Button variant="secondary" size="sm" onClick={(e) => e.stopPropagation()}>
                   {t("common.follow")}
                 </Button>
               )}

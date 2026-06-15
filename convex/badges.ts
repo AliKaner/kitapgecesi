@@ -46,18 +46,45 @@ export async function checkAndAwardBadges(ctx: MutationCtx, userId: Id<"users">)
     .collect()
     .then((r) => r.length);
 
-  const stats: Record<string, number> = {
-    ilk_paylasim: userPosts.length,
-    aktif_okur: userPosts.length,
-    begeni_toplayici: likesReceived,
-    bagisci: donationCount,
-    kitap_kurdu: booksRead,
-    yildiz: followerCount,
+  const followingCount = await ctx.db
+    .query("follows")
+    .withIndex("by_follower", (q) => q.eq("followerId", userId))
+    .collect()
+    .then((r) => r.length);
+
+  const listCount = await ctx.db
+    .query("lists")
+    .withIndex("by_creator", (q) => q.eq("creatorId", userId))
+    .collect()
+    .then((r) => r.length);
+
+  const journalCount = await ctx.db
+    .query("journalEntries")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .collect()
+    .then((r) => r.length);
+
+  const clubCount = await ctx.db
+    .query("clubMembers")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .collect()
+    .then((r) => r.length);
+
+  const metrics: Record<string, number> = {
+    posts: userPosts.length,
+    likes: likesReceived,
+    books: booksRead,
+    followers: followerCount,
+    following: followingCount,
+    donations: donationCount,
+    lists: listCount,
+    journal: journalCount,
+    clubs: clubCount,
   };
 
   for (const def of BADGE_DEFS) {
     if (earnedKeys.has(def.key)) continue;
-    if ((stats[def.key] ?? 0) >= def.threshold) {
+    if ((metrics[def.metric] ?? 0) >= def.threshold) {
       await ctx.db.insert("userBadges", { userId, badgeKey: def.key, earnedAt: Date.now() });
       await ctx.db.insert("notifications", {
         userId,

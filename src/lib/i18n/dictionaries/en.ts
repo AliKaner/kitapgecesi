@@ -85,6 +85,10 @@ const en: Record<keyof typeof tr, string> = {
   "kitaplar.searchPlaceholder": "Search books or authors...",
   "kitaplar.clearFilters": "Clear",
   "kitaplar.hideRead": "Hide Read Books",
+  "kitaplar.allGenres": "All genres",
+  "kitaplar.allYears": "All years",
+  "kitaplar.readAll": "All",
+  "kitaplar.readUnread": "Unread",
   "kitaplar.empty": "No books match your search.",
 
   // Book detail page
@@ -114,6 +118,9 @@ const en: Record<keyof typeof tr, string> = {
   // Authors
   "yazarlar.bookCount": "{count} books",
   "yazarlar.searchPlaceholder": "Search authors...",
+  "yazarlar.sort.alfabetik": "A-Z",
+  "yazarlar.sort.kitap": "Most books",
+  "yazarlar.sort.puan": "Highest rated",
   "yazarlar.empty": "No authors match your search.",
   "yazar.notFound": "Author not found.",
   "yazar.books": "Books",
@@ -247,6 +254,10 @@ const en: Record<keyof typeof tr, string> = {
   "auth.preregSent": "Pre-registration received! We'll send your invite by email.",
   "auth.preregButton": "Pre-register",
   "auth.hasInviteCode": "If you have an invite code, you can join the app directly.",
+  "auth.inviteOnlyHeadline": "The most delightful, community way of reading.",
+  "auth.inviteOnlySubtitle": "Track your books, join reading clubs, and meet other book lovers. Grow your reading habits with the community.",
+  "auth.inviteOnlyBadge": "Invite Only",
+  "auth.inviteOnlyNotice": "KitapGecesi is currently in closed beta and only accepts members with an invite code. A valid invite code is required to register.",
 
   // Right rail (ContextRail)
   "common.all": "All",

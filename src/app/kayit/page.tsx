@@ -36,96 +36,175 @@ export default function KayitPage() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "var(--kg-night)",
-        color: "var(--kg-sage)",
-        padding: "32px",
-        textAlign: "center",
-      } as CSSProperties}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 32 }}>
-        <Icon name="book" size={28} color="var(--kg-sage)" />
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: 18, fontWeight: 600, letterSpacing: "0.04em" }}>KİTAPGECESİ</span>
+    <div className="auth-container">
+      {/* Left panel: Brand and Invite-only note */}
+      <div className="auth-left">
+        {/* Top brand header */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <Icon name="book" size={28} color="var(--kg-sage)" />
+          <span
+            style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: 18,
+              fontWeight: 600,
+              letterSpacing: "0.04em",
+              color: "var(--kg-white)",
+            }}
+          >
+            KİTAPGECESİ
+          </span>
+        </div>
+
+        {/* Middle contents */}
+        <div style={{ maxWidth: 440, margin: "auto 0" }}>
+          <span className="auth-badge">
+            <Icon name="bookmark" size={14} color="var(--kg-sage)" />
+            <span style={{ fontSize: 11 }}>{t("auth.inviteOnlyBadge")}</span>
+          </span>
+          
+          <h1
+            className="kg-serif"
+            style={{
+              fontSize: "clamp(32px, 5vw, 44px)",
+              lineHeight: 1.1,
+              color: "var(--kg-white)",
+              marginTop: 20,
+              marginBottom: 16,
+            }}
+          >
+            {t("auth.inviteOnlyHeadline")}
+          </h1>
+          
+          <p
+            style={{
+              fontSize: "var(--fs-body-1)",
+              lineHeight: "var(--lh-body-1)",
+              color: "var(--kg-sage-soft)",
+              marginBottom: 28,
+            }}
+          >
+            {t("auth.inviteOnlySubtitle")}
+          </p>
+
+          {/* Invite Code notice card */}
+          <div className="auth-warning-card">
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <Icon name="shield" size={18} color="var(--kg-sage)" />
+              <span
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "var(--fs-body-3)",
+                  fontWeight: 600,
+                  color: "var(--kg-white)",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                {t("auth.inviteOnlyBadge")}
+              </span>
+            </div>
+            <p
+              style={{
+                fontSize: "var(--fs-body-3)",
+                lineHeight: "var(--lh-body-3)",
+                color: "var(--kg-sage-soft)",
+              }}
+            >
+              {t("auth.inviteOnlyNotice")}
+            </p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ fontSize: "var(--fs-body-3)", color: "var(--kg-sage-soft)", opacity: 0.7 }}>
+          © {new Date().getFullYear()} KitapGecesi.
+        </div>
       </div>
 
-      <h1
-        style={{
-          fontFamily: "var(--font-serif)",
-          fontSize: "clamp(32px, 6vw, 56px)",
-          lineHeight: 1.05,
-          color: "var(--kg-white)",
-          marginBottom: 28,
-        }}
-      >
-        {t("auth.joinUs")}
-      </h1>
+      {/* Right panel: Register form */}
+      <div className="auth-right">
+        <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", gap: 28 }}>
+          <div>
+            <h2
+              className="kg-serif"
+              style={{
+                fontSize: "clamp(28px, 4vw, 36px)",
+                lineHeight: 1.15,
+                color: "var(--kg-ink)",
+                marginBottom: 8,
+              }}
+            >
+              {t("auth.joinUs")}
+            </h2>
+            <p style={{ fontSize: "var(--fs-body-2)", color: "var(--kg-slate)" }}>
+              {t("auth.hasInviteCode")}
+            </p>
+          </div>
 
-      <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: 380 }}>
-        <Input
-          placeholder={t("auth.fullName")}
-          icon="user"
-          pill
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={{ color: "var(--kg-ink)" }}
-          required
-        />
-        <Input
-          placeholder={t("ayarlar.kullaniciAdi")}
-          icon="user"
-          pill
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={{ color: "var(--kg-ink)" }}
-          required
-        />
-        <Input
-          type="email"
-          placeholder={t("auth.emailAddress")}
-          icon="user"
-          pill
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ color: "var(--kg-ink)" }}
-          required
-        />
-        <Input
-          type="password"
-          placeholder={t("auth.password")}
-          pill
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ color: "var(--kg-ink)" }}
-          required
-        />
-        <Input
-          placeholder={t("ayarlar.davetKodu")}
-          pill
-          value={inviteCode}
-          onChange={(e) => setInviteCode(e.target.value)}
-          style={{ color: "var(--kg-ink)" }}
-          required
-        />
-        {error && (
-          <div style={{ color: "var(--kg-error, #E0654F)", fontSize: "var(--fs-body-3)" }}>{error}</div>
-        )}
-        <Button type="submit" variant="primary" size="lg" disabled={loading}>
-          {loading ? t("auth.registering") : t("auth.register")}
-        </Button>
-      </form>
+          <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <Input
+              placeholder={t("auth.fullName")}
+              icon="user"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            <Input
+              placeholder={t("ayarlar.kullaniciAdi")}
+              icon="user"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <Input
+              type="email"
+              placeholder={t("auth.emailAddress")}
+              icon="user"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Input
+              type="password"
+              placeholder={t("auth.password")}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <Input
+              placeholder={t("ayarlar.davetKodu")}
+              value={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value)}
+              required
+            />
+            {error && (
+              <div style={{ color: "var(--kg-danger, #C0432F)", fontSize: "var(--fs-body-3)", display: "flex", alignItems: "center", gap: 6 }}>
+                <Icon name="x" size={14} />
+                <span>{error}</span>
+              </div>
+            )}
+            <Button type="submit" variant="primary" size="lg" disabled={loading} style={{ marginTop: 8 }}>
+              {loading ? t("auth.registering") : t("auth.register")}
+            </Button>
+          </form>
 
-      <p style={{ marginTop: 28, color: "var(--kg-sage-soft)", fontSize: "var(--fs-body-3)" }}>
-        {t("auth.hasAccount")}{" "}
-        <Link href="/giris" style={{ color: "var(--kg-sage)", textDecoration: "underline" }}>
-          {t("auth.login")}
-        </Link>
-      </p>
+          <p style={{ color: "var(--kg-slate)", fontSize: "var(--fs-body-2)", textAlign: "center" }}>
+            {t("auth.hasAccount")}{" "}
+            <Link
+              href="/giris"
+              style={{
+                color: "var(--kg-green)",
+                fontWeight: 600,
+                textDecoration: "underline",
+                textUnderlineOffset: "4px",
+                transition: "color 0.2s ease",
+              }}
+            >
+              {t("auth.login")}
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
+

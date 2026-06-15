@@ -83,6 +83,10 @@ const tr = {
   "kitaplar.searchPlaceholder": "Kitap veya yazar ara...",
   "kitaplar.clearFilters": "Temizle",
   "kitaplar.hideRead": "Okuduklarımı Gizle",
+  "kitaplar.allGenres": "Tüm türler",
+  "kitaplar.allYears": "Tüm yıllar",
+  "kitaplar.readAll": "Tümü",
+  "kitaplar.readUnread": "Okunmamış",
   "kitaplar.empty": "Aramanla eşleşen kitap bulunamadı.",
 
   // Kitap detay sayfası
@@ -112,6 +116,9 @@ const tr = {
   // Yazarlar
   "yazarlar.bookCount": "{count} kitap",
   "yazarlar.searchPlaceholder": "Yazar ara...",
+  "yazarlar.sort.alfabetik": "A-Z",
+  "yazarlar.sort.kitap": "En çok kitap",
+  "yazarlar.sort.puan": "En yüksek puan",
   "yazarlar.empty": "Aramanla eşleşen yazar bulunamadı.",
   "yazar.notFound": "Yazar bulunamadı.",
   "yazar.books": "Kitapları",
@@ -245,6 +252,10 @@ const tr = {
   "auth.preregSent": "Önkayıt alındı! Davetiyeni e-posta ile göndereceğiz.",
   "auth.preregButton": "Önkayıt Ol",
   "auth.hasInviteCode": "Davet kodun varsa, uygulamaya doğrudan katılabilirsin.",
+  "auth.inviteOnlyHeadline": "Okumanın en keyifli, topluluk hali.",
+  "auth.inviteOnlySubtitle": "Kitaplarınızı takip edin, okuma kulüplerine katılın ve diğer kitapseverlerle buluşun. Okuma alışkanlığınızı toplulukla birlikte büyütün.",
+  "auth.inviteOnlyBadge": "Sadece Davet Kodu İle",
+  "auth.inviteOnlyNotice": "KitapGecesi şu an kapalı beta aşamasındadır. Kayıtlar yalnızca davet kodu ile yapılabilmektedir. Üye olmak için geçerli bir davet koduna ihtiyacınız vardır.",
 
   // Sağ panel (ContextRail)
   "common.all": "Tümü",

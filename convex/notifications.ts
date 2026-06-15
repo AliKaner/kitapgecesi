@@ -33,6 +33,14 @@ export const markAllRead = mutation({
   },
 });
 
+export const markRead = mutation({
+  args: { notificationId: v.id("notifications") },
+  handler: async (ctx, { notificationId }) => {
+    const n = await ctx.db.get(notificationId);
+    if (n && !n.isRead) await ctx.db.patch(notificationId, { isRead: true });
+  },
+});
+
 export const getUnreadCount = query({
   args: { userId: v.id("users") },
   handler: async (ctx, { userId }) => {

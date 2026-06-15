@@ -1,7 +1,7 @@
 "use client";
 
 import { CSSProperties, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
@@ -157,7 +157,10 @@ function AuthorShowcase({ authorId, router }: { authorId: Id<"authors">; router:
 export default function ProfilPage() {
   const { t } = useT();
   const router = useRouter();
-  const [tab, setTab] = useState("Profil");
+  const searchParams = useSearchParams();
+  const TABS = ["Profil", "Aktivite", "Kitaplık", "Günlük", "Rozetler"];
+  const initialTab = searchParams.get("tab");
+  const [tab, setTab] = useState(initialTab && TABS.includes(initialTab) ? initialTab : "Profil");
   const { user } = useAuth();
   const profile = useQuery(api.users.getUserProfile, user ? { username: user.username } : "skip");
   const showcases = useQuery(api.showcases.getUserShowcases, user ? { userId: user._id } : "skip");
