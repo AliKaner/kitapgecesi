@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
@@ -135,12 +136,43 @@ function BookOfMonth() {
 function PopularBooks() {
   const { t } = useT();
   const router = useRouter();
-  const books = useQuery(api.books.getPopularBooks, { limit: 4 });
+  const books = useQuery(api.books.getPopularBooks, { limit: 8 });
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   if (!books || books.length === 0) return null;
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      const scrollAmount = 132; // book width (120) + gap (12)
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const action = (
+    <div style={{ display: "flex", gap: 2, marginRight: -8 }}>
+      <IconButton
+        icon="chevron-right"
+        size={28}
+        style={{ transform: "rotate(180deg)" }}
+        onClick={() => scroll("left")}
+        label="Önceki"
+      />
+      <IconButton
+        icon="chevron-right"
+        size={28}
+        onClick={() => scroll("right")}
+        label="Sonraki"
+      />
+    </div>
+  );
+
   return (
-    <Card padding={20} title={t("contextRail.popular")}>
+    <Card padding={20} title={t("contextRail.popular")} action={action}>
       <div
+        ref={scrollRef}
         className="kg-hscroll"
         style={{
           display: "flex",
@@ -149,6 +181,7 @@ function PopularBooks() {
           scrollSnapType: "x mandatory",
           margin: "0 -20px",
           padding: "0 20px 2px",
+          scrollBehavior: "smooth",
         }}
       >
         {books.map((b) => (

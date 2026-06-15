@@ -30,7 +30,7 @@ interface BookWithRating {
   ratingCount: number;
 }
 
-const COVER_WIDTH = 124;
+const COVER_WIDTH = 120;
 const COVER_HEIGHT = COVER_WIDTH * 1.5;
 
 function BookRail({ items, readIds, onOpen }: { items: BookWithRating[]; readIds: Set<string>; onOpen: (id: string) => void }) {
