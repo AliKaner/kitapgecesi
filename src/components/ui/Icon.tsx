@@ -95,6 +95,28 @@ const PATHS: Record<string, ReactElement> = {
     </>
   ),
   "chevron-down": <path d="m6 9 6 6 6-6" />,
+  calendar: (
+    <>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4" />
+      <path d="M8 2v4" />
+      <path d="M3 10h18" />
+    </>
+  ),
+  eye: (
+    <>
+      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  "eye-off": (
+    <>
+      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a13.16 13.16 0 0 1-1.67 2.68" />
+      <path d="M6.61 6.61C4.13 8.36 2.5 11 1 12c0 0 4 7 11 7a9.26 9.26 0 0 0 5.39-1.61" />
+      <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+      <path d="M1 1l22 22" />
+    </>
+  ),
   "arrow-up": (
     <>
       <path d="M12 19V5" />

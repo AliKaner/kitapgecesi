@@ -1,22 +1,27 @@
 "use client";
 
 import { CSSProperties, useState } from "react";
-import { Input } from "./Input";
-import { Select, SelectOption } from "./Select";
-import { IconName } from "./Icon";
+import { Icon, IconName } from "./Icon";
 
-/* Single-row, self-animating filter bar used across listing pages.
-   Everything lives inside ONE bordered, rounded container (max 600px wide) —
-   the inner search and selects are borderless segments, not separate pills.
-   - Focusing the search expands it to fill the row and the selects slide away;
-     blurring it shrinks search back and the selects return.
-   - The select you're interacting with grows slightly, then settles back. */
+/* Compact icon-only filter row used across listing pages.
+   - The search field collapses to a single icon button; clicking/focusing it
+     (or typing) expands it into a text input. Blurring an empty search
+     collapses it back.
+   - Each select collapses to an icon-sized square; a transparent native
+     <select> sits on top so clicking still opens the native picker. A select
+     whose value differs from its first ("default") option gets an accent
+     highlight so active filters stay visible even while collapsed. */
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}
 
 export interface CompactFilterSelect {
   value: string;
   onChange: (value: string) => void;
   options: SelectOption[];
-  icon?: IconName;
+  icon: IconName;
   ariaLabel?: string;
 }
 
@@ -28,86 +33,100 @@ export interface CompactFilterProps {
   style?: CSSProperties;
 }
 
-const EASE = "260ms cubic-bezier(0.22, 1, 0.36, 1)";
-
-function Divider() {
-  return <span aria-hidden style={{ width: 1, height: 20, background: "var(--border-default)", flex: "none" }} />;
-}
+const SIZE = 38;
+const SEARCH_WIDTH = 220;
+const EASE = "220ms cubic-bezier(0.22, 1, 0.36, 1)";
 
 export function CompactFilter({ searchValue, onSearchChange, searchPlaceholder, selects = [], style }: CompactFilterProps) {
   const [searchFocused, setSearchFocused] = useState(false);
-  const [activeSelect, setActiveSelect] = useState<number | null>(null);
-  const barActive = searchFocused || activeSelect !== null;
+  const searchOpen = searchFocused || searchValue.length > 0;
 
   return (
-    <div style={{ width: "100%", maxWidth: 600, marginBottom: 24, ...style }}>
-      <div
+    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 24, ...style } as CSSProperties}>
+      <label
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 4,
-          height: 44,
-          padding: "0 8px",
-          borderRadius: 12,
-          border: `1px solid ${barActive ? "var(--accent)" : "var(--border-default)"}`,
+          gap: 8,
+          height: SIZE,
+          width: searchOpen ? SEARCH_WIDTH : SIZE,
+          padding: searchOpen ? "0 12px" : 0,
+          justifyContent: searchOpen ? "flex-start" : "center",
+          borderRadius: 10,
+          border: `1px solid ${searchOpen ? "var(--accent)" : "var(--border-default)"}`,
           background: "var(--surface-card)",
-          boxShadow: barActive ? "0 0 0 3px var(--focus-ring)" : "none",
-          transition: "border-color var(--dur-fast), box-shadow var(--dur-fast)",
+          boxShadow: searchFocused ? "0 0 0 3px var(--focus-ring)" : "none",
+          cursor: "text",
+          flex: "none",
           overflow: "hidden",
-        }}
+          transition: `width ${EASE}, padding ${EASE}, border-color var(--dur-fast), box-shadow var(--dur-fast)`,
+        } as CSSProperties}
       >
-        {/* Search — grows to fill while focused. onFocus/onBlur ride the bubble
-            from the inner <input>. */}
-        <div
+        <Icon name="search" size={16} color="var(--text-secondary)" style={{ flex: "none" } as CSSProperties} />
+        <input
+          value={searchValue}
+          onChange={(e) => onSearchChange(e.target.value)}
           onFocus={() => setSearchFocused(true)}
           onBlur={() => setSearchFocused(false)}
+          placeholder={searchPlaceholder}
           style={{
-            flexGrow: 1,
-            flexShrink: 1,
-            flexBasis: searchFocused ? "100%" : "0%",
+            flex: 1,
             minWidth: 0,
-            transition: `flex-basis ${EASE}`,
-          }}
-        >
-          <Input bare icon="search" placeholder={searchPlaceholder} value={searchValue} onChange={(e) => onSearchChange(e.target.value)} />
-        </div>
+            width: searchOpen ? "auto" : 0,
+            border: "none",
+            outline: "none",
+            background: "transparent",
+            fontFamily: "var(--font-sans)",
+            fontSize: "var(--fs-body-2)",
+            color: "var(--text-primary)",
+          } as CSSProperties}
+        />
+      </label>
 
-        {/* Selects — collapse out of view while the search is focused. */}
-        {selects.length > 0 && (
-          <div
+      {selects.map((s, i) => {
+        const active = s.value !== s.options[0]?.value;
+        return (
+          <span
+            key={i}
             style={{
-              display: "flex",
+              position: "relative",
+              display: "inline-flex",
               alignItems: "center",
-              gap: 4,
-              overflow: "hidden",
+              justifyContent: "center",
+              width: SIZE,
+              height: SIZE,
               flex: "none",
-              maxWidth: searchFocused ? 0 : 1000,
-              opacity: searchFocused ? 0 : 1,
-              transform: searchFocused ? "translateX(12px)" : "none",
-              pointerEvents: searchFocused ? "none" : "auto",
-              transition: `max-width ${EASE}, opacity ${EASE}, transform ${EASE}`,
-            }}
+              borderRadius: 10,
+              border: `1px solid ${active ? "var(--accent)" : "var(--border-default)"}`,
+              background: active ? "var(--accent-tint)" : "var(--surface-card)",
+              color: active ? "var(--accent)" : "var(--text-secondary)",
+            } as CSSProperties}
           >
-            {selects.map((s, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: 4, flex: "none" }}>
-                <Divider />
-                <div
-                  onFocus={() => setActiveSelect(i)}
-                  onBlur={() => setActiveSelect(null)}
-                  style={{
-                    flex: "none",
-                    transformOrigin: "center",
-                    transform: activeSelect === i ? "scale(1.06)" : "scale(1)",
-                    transition: "transform 160ms cubic-bezier(0.22, 1, 0.36, 1)",
-                  }}
-                >
-                  <Select bare icon={s.icon} value={s.value} onChange={(e) => s.onChange(e.target.value)} options={s.options} aria-label={s.ariaLabel} />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+            <Icon name={s.icon} size={16} />
+            <select
+              value={s.value}
+              onChange={(e) => s.onChange(e.target.value)}
+              aria-label={s.ariaLabel}
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                opacity: 0,
+                border: "none",
+                cursor: "pointer",
+                appearance: "none",
+              } as CSSProperties}
+            >
+              {s.options.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </span>
+        );
+      })}
     </div>
   );
 }

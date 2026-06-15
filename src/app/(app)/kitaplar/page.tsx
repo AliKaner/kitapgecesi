@@ -153,6 +153,7 @@ export default function KitaplarPage() {
             {
               value: year,
               onChange: setYear,
+              icon: "calendar",
               ariaLabel: t("kitaplar.allYears"),
               options: [{ value: "", label: t("kitaplar.allYears") }, ...years.map((y) => ({ value: String(y), label: String(y) }))],
             },
@@ -171,6 +172,8 @@ export default function KitaplarPage() {
             {
               value: readFilter,
               onChange: setReadFilter,
+              icon: "eye",
+              ariaLabel: t("kitaplar.readAll"),
               options: [
                 { value: "all", label: t("kitaplar.readAll") },
                 { value: "unread", label: t("kitaplar.readUnread") },
