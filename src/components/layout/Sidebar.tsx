@@ -8,6 +8,7 @@ import { api } from "../../../convex/_generated/api";
 import { NavItem } from "../navigation/NavItem";
 import { Button } from "../ui/Button";
 import { Avatar } from "../ui/Avatar";
+import { ReadingGoalPrompt } from "../reading/ReadingGoalPrompt";
 import { IconName } from "../ui/Icon";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
@@ -69,6 +70,9 @@ export function Sidebar() {
             {t("nav.yeniGonderi")}
           </Button>
         </Link>
+      </div>
+      <div style={{ marginTop: 12, padding: "0 6px" }}>
+        <ReadingGoalPrompt />
       </div>
       {user && (
         <Link
