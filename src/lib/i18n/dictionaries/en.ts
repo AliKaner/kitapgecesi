@@ -131,6 +131,8 @@ const en: Record<keyof typeof tr, string> = {
   "common.like": "Like",
   "listeler.new": "New List",
   "listeler.tab.mine": "My Lists",
+  "listeler.searchPlaceholder": "Search lists...",
+  "listeler.sort.begeni": "Most liked",
   "listeler.tab.saved": "Saved",
   "listeler.tab.following": "Following",
   "listeler.preview": "{books} books · {likes} likes",

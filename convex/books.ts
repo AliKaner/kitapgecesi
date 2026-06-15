@@ -55,6 +55,40 @@ export const getBook = query({
   },
 });
 
+export const getBookOfMonth = query({
+  args: {},
+  handler: async (ctx) => {
+    // The flagged book; if several are flagged, the most recently added wins.
+    const flagged = await ctx.db
+      .query("books")
+      .withIndex("by_bookOfMonth", (q) => q.eq("isBookOfMonth", true))
+      .collect();
+    const book = flagged.sort((a, b) => b.createdAt - a.createdAt)[0];
+    if (!book) return null;
+
+    const ratings = await ctx.db
+      .query("ratings")
+      .withIndex("by_target", (q) => q.eq("targetType", "book").eq("targetId", book._id))
+      .collect();
+    const avgRating = ratings.length ? ratings.reduce((s, r) => s + r.value, 0) / ratings.length : 0;
+
+    return { ...book, avgRating, ratingCount: ratings.length };
+  },
+});
+
+// Set (or move) the book of the month — clears any previous flag first.
+export const setBookOfMonth = mutation({
+  args: { bookId: v.id("books") },
+  handler: async (ctx, { bookId }) => {
+    const current = await ctx.db
+      .query("books")
+      .withIndex("by_bookOfMonth", (q) => q.eq("isBookOfMonth", true))
+      .collect();
+    await Promise.all(current.map((b) => ctx.db.patch(b._id, { isBookOfMonth: false })));
+    await ctx.db.patch(bookId, { isBookOfMonth: true });
+  },
+});
+
 export const incrementBookViews = mutation({
   args: { bookId: v.id("books") },
   handler: async (ctx, { bookId }) => {

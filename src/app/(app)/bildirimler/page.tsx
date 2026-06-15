@@ -1,23 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { ScreenTitle } from "@/components/layout/Screen";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
-import { Icon, IconName } from "@/components/ui/Icon";
 import { BADGE_DEFS } from "@/lib/badges";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
-
-const NOTIF_ICON: Record<string, IconName> = {
-  follow: "user",
-  like: "heart",
-  repost: "repeat",
-  reply: "comment",
-  badge: "star",
-};
 
 const NOTIF_TEXT_KEYS: Record<string, "bildirim.type.follow" | "bildirim.type.like" | "bildirim.type.repost" | "bildirim.type.reply"> = {
   follow: "bildirim.type.follow",
@@ -61,6 +53,12 @@ export default function BildirimlerPage() {
   const notifications = useQuery(api.notifications.getNotifications, user ? { userId: user._id } : "skip");
   const markAllRead = useMutation(api.notifications.markAllRead);
   const markRead = useMutation(api.notifications.markRead);
+
+  // Seeing the list counts as reading it: clear the unread badge on view.
+  const hasUnread = (notifications ?? []).some((n) => !n.isRead);
+  useEffect(() => {
+    if (user && hasUnread) markAllRead({ userId: user._id });
+  }, [user, hasUnread, markAllRead]);
 
   const open = (n: { _id: string; isRead: boolean; type: string; targetClubId?: string | null }) => {
     if (!n.isRead) markRead({ notificationId: n._id as Parameters<typeof markRead>[0]["notificationId"] });
@@ -114,7 +112,6 @@ export default function BildirimlerPage() {
                 )}
                 <span style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)" }}>{timeAgo(n.createdAt, t)}</span>
               </div>
-              <Icon name={NOTIF_ICON[n.type] ?? "bell"} size={18} color="var(--text-secondary)" />
               {n.type === "follow" && (
                 <Button variant="secondary" size="sm" onClick={(e) => e.stopPropagation()}>
                   {t("common.follow")}

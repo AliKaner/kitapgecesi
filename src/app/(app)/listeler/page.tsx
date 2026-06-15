@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
@@ -8,7 +8,7 @@ import { Doc } from "../../../../convex/_generated/dataModel";
 import { ScreenTitle } from "@/components/layout/Screen";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Tabs } from "@/components/ui/Tabs";
+import { CompactFilter } from "@/components/ui/CompactFilter";
 import { BookCover } from "@/components/book/BookCover";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
@@ -32,9 +32,26 @@ function CoverStack({ books }: { books: Doc<"books">[] }) {
 export default function ListelerPage() {
   const { t } = useT();
   const [tab, setTab] = useState("Listelerim");
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("yeni");
   const router = useRouter();
   const { user } = useAuth();
   const lists = useQuery(api.lists.getUserLists, user ? { creatorId: user._id, includePrivate: true } : "skip");
+
+  const visibleLists = useMemo(() => {
+    const q = search.trim().toLocaleLowerCase("tr");
+    let list = q
+      ? (lists ?? []).filter((l) => l.title.toLocaleLowerCase("tr").includes(q))
+      : [...(lists ?? [])];
+    if (sort === "alfabetik") {
+      list.sort((a, b) => a.title.localeCompare(b.title, "tr"));
+    } else if (sort === "begeni") {
+      list.sort((a, b) => b.likeCount - a.likeCount);
+    } else {
+      list.sort((a, b) => b._creationTime - a._creationTime);
+    }
+    return list;
+  }, [lists, search, sort]);
 
   return (
     <>
@@ -44,21 +61,39 @@ export default function ListelerPage() {
             {t("listeler.new")}
           </Button>
         </div>
-        <div style={{ marginBottom: 26 }}>
-          <Tabs
-            items={[
-              { value: "Listelerim", label: t("listeler.tab.mine") },
-              { value: "Kaydedilenler", label: t("listeler.tab.saved") },
-              { value: "Takip Edilen", label: t("listeler.tab.following") },
-            ]}
-            value={tab}
-            onChange={setTab}
-          />
-        </div>
+        <CompactFilter
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={t("listeler.searchPlaceholder")}
+          selects={[
+            {
+              value: tab,
+              onChange: setTab,
+              icon: "bookmark",
+              ariaLabel: t("listeler.tab.mine"),
+              options: [
+                { value: "Listelerim", label: t("listeler.tab.mine") },
+                { value: "Kaydedilenler", label: t("listeler.tab.saved") },
+                { value: "Takip Edilen", label: t("listeler.tab.following") },
+              ],
+            },
+            {
+              value: sort,
+              onChange: setSort,
+              icon: "list",
+              ariaLabel: t("kitaplar.sort.yeni"),
+              options: [
+                { value: "yeni", label: t("kitaplar.sort.yeni") },
+                { value: "begeni", label: t("listeler.sort.begeni") },
+                { value: "alfabetik", label: t("kitaplar.sort.alfabetik") },
+              ],
+            },
+          ]}
+        />
 
         {tab === "Listelerim" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {(lists ?? []).map((l) => (
+            {visibleLists.map((l) => (
               <Card key={l._id} hover style={{ display: "flex", gap: 18, cursor: "pointer" } as React.CSSProperties} onClick={() => router.push(`/listeler/${l._id}`)}>
                 <CoverStack books={l.previewBooks as Doc<"books">[]} />
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -70,7 +105,7 @@ export default function ListelerPage() {
                 </div>
               </Card>
             ))}
-            {lists && lists.length === 0 && <p style={{ color: "var(--text-secondary)" }}>{t("listeler.empty.mine")}</p>}
+            {lists && visibleLists.length === 0 && <p style={{ color: "var(--text-secondary)" }}>{t("listeler.empty.mine")}</p>}
           </div>
         )}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Card } from "../ui/Card";
@@ -12,13 +13,6 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
 
 /* Right context rail — search, book of the month, reading-goal widget. */
-
-const BOOK_OF_MONTH = {
-  title: "Sıfır Noktasındaki Kadın",
-  author: "Neval El Seddavi",
-  rating: 5.0,
-  cover: undefined,
-};
 
 function GoalRing({ pct }: { pct: number }) {
   const r = 26;
@@ -88,7 +82,10 @@ function ReadingGoal() {
 
 function BookOfMonth() {
   const { t } = useT();
-  const b = BOOK_OF_MONTH;
+  const router = useRouter();
+  const b = useQuery(api.books.getBookOfMonth, {});
+
+  if (b === null) return null; // none set yet
   return (
     <Card
       padding={20}
@@ -99,19 +96,21 @@ function BookOfMonth() {
         </Link>
       }
     >
-      <div style={{ display: "flex", gap: 16 }}>
-        <BookCover src={b.cover} title={b.title} width={92} />
-        <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 2 }}>
-          <div style={{ fontFamily: "var(--font-serif)", fontSize: 22, lineHeight: 1.1 }}>{b.title}</div>
-          <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>{b.author}</div>
-          <StarRating value={b.rating} />
-          <div style={{ marginTop: "auto", paddingTop: 8 }}>
-            <Button size="sm" variant="primary" icon="book">
-              {t("contextRail.read")}
-            </Button>
+      {b && (
+        <div style={{ display: "flex", gap: 16 }}>
+          <BookCover src={b.coverUrl || undefined} title={b.title} width={92} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 2 }}>
+            <div style={{ fontFamily: "var(--font-serif)", fontSize: 22, lineHeight: 1.1 }}>{b.title}</div>
+            <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>{b.author}</div>
+            {b.ratingCount > 0 && <StarRating value={b.avgRating} count={b.ratingCount} />}
+            <div style={{ marginTop: "auto", paddingTop: 8 }}>
+              <Button size="sm" variant="primary" icon="book" onClick={() => router.push(`/kitap/${b._id}`)}>
+                {t("contextRail.read")}
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </Card>
   );
 }

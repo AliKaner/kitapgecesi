@@ -7,9 +7,7 @@ import { api } from "../../../../convex/_generated/api";
 import { ScreenTitle, SectionHead } from "@/components/layout/Screen";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { FilterBar } from "@/components/ui/FilterBar";
+import { CompactFilter } from "@/components/ui/CompactFilter";
 import { BookCard } from "@/components/book/BookCard";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
@@ -140,49 +138,46 @@ export default function KitaplarPage() {
   return (
     <>
       <ScreenTitle>{t("nav.kitaplar")}</ScreenTitle>
-        <FilterBar>
-          <div style={{ flex: 1, minWidth: 200 }}>
-            <Input
-              icon="search"
-              pill
-              placeholder={t("kitaplar.searchPlaceholder")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <Select
-            pill
-            value={genre}
-            onChange={(e) => setGenre(e.target.value)}
-            options={[{ value: "", label: t("kitaplar.allGenres") }, ...GENRES.map((g) => ({ value: g, label: g }))]}
-          />
-          <Select
-            pill
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            options={[{ value: "", label: t("kitaplar.allYears") }, ...years.map((y) => ({ value: String(y), label: String(y) }))]}
-          />
-          <Select
-            pill
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            options={[
-              { value: "yeni", label: t("kitaplar.sort.yeni") },
-              { value: "populer", label: t("kitaplar.sort.populer") },
-              { value: "puan", label: t("kitaplar.sort.puan") },
-              { value: "alfabetik", label: t("kitaplar.sort.alfabetik") },
-            ]}
-          />
-          <Select
-            pill
-            value={readFilter}
-            onChange={(e) => setReadFilter(e.target.value)}
-            options={[
-              { value: "all", label: t("kitaplar.readAll") },
-              { value: "unread", label: t("kitaplar.readUnread") },
-            ]}
-          />
-        </FilterBar>
+        <CompactFilter
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={t("kitaplar.searchPlaceholder")}
+          selects={[
+            {
+              value: genre,
+              onChange: setGenre,
+              icon: "book",
+              ariaLabel: t("kitaplar.allGenres"),
+              options: [{ value: "", label: t("kitaplar.allGenres") }, ...GENRES.map((g) => ({ value: g, label: g }))],
+            },
+            {
+              value: year,
+              onChange: setYear,
+              ariaLabel: t("kitaplar.allYears"),
+              options: [{ value: "", label: t("kitaplar.allYears") }, ...years.map((y) => ({ value: String(y), label: String(y) }))],
+            },
+            {
+              value: sort,
+              onChange: setSort,
+              icon: "list",
+              ariaLabel: t("kitaplar.sort.yeni"),
+              options: [
+                { value: "yeni", label: t("kitaplar.sort.yeni") },
+                { value: "populer", label: t("kitaplar.sort.populer") },
+                { value: "puan", label: t("kitaplar.sort.puan") },
+                { value: "alfabetik", label: t("kitaplar.sort.alfabetik") },
+              ],
+            },
+            {
+              value: readFilter,
+              onChange: setReadFilter,
+              options: [
+                { value: "all", label: t("kitaplar.readAll") },
+                { value: "unread", label: t("kitaplar.readUnread") },
+              ],
+            },
+          ]}
+        />
         {filtered.length === 0 && books != null ? (
           <p style={{ color: "var(--text-secondary)" }}>{t("kitaplar.empty")}</p>
         ) : (

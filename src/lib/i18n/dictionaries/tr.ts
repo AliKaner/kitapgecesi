@@ -129,6 +129,8 @@ const tr = {
   "common.like": "Beğen",
   "listeler.new": "Yeni Liste",
   "listeler.tab.mine": "Listelerim",
+  "listeler.searchPlaceholder": "Liste ara...",
+  "listeler.sort.begeni": "En beğenilen",
   "listeler.tab.saved": "Kaydedilenler",
   "listeler.tab.following": "Takip Edilen",
   "listeler.preview": "{books} kitap · {likes} beğeni",

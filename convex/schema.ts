@@ -60,11 +60,13 @@ export default defineSchema({
     isVerified: v.boolean(),
     externalId: v.optional(v.string()),
     viewCount: v.optional(v.number()),
+    isBookOfMonth: v.optional(v.boolean()),
     createdAt: v.number(),
   })
     .index("by_isbn", ["isbn"])
     .index("by_externalId", ["externalId"])
-    .index("by_authorId", ["authorId"]),
+    .index("by_authorId", ["authorId"])
+    .index("by_bookOfMonth", ["isBookOfMonth"]),
 
   // DEĞERLENDİRMELER
   ratings: defineTable({

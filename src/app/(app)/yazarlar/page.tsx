@@ -8,9 +8,7 @@ import { ScreenTitle } from "@/components/layout/Screen";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { FilterBar } from "@/components/ui/FilterBar";
+import { CompactFilter } from "@/components/ui/CompactFilter";
 import { StarRating } from "@/components/ui/StarRating";
 import { useT } from "@/lib/i18n/I18nProvider";
 
@@ -49,27 +47,24 @@ export default function YazarlarPage() {
   return (
     <>
       <ScreenTitle>{t("nav.yazarlar")}</ScreenTitle>
-      <FilterBar>
-        <div style={{ flex: 1, minWidth: 200 }}>
-          <Input
-            icon="search"
-            pill
-            placeholder={t("yazarlar.searchPlaceholder")}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        <Select
-          pill
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          options={[
-            { value: "alfabetik", label: t("yazarlar.sort.alfabetik") },
-            { value: "kitap", label: t("yazarlar.sort.kitap") },
-            { value: "puan", label: t("yazarlar.sort.puan") },
-          ]}
-        />
-      </FilterBar>
+      <CompactFilter
+        searchValue={search}
+        onSearchChange={setSearch}
+        searchPlaceholder={t("yazarlar.searchPlaceholder")}
+        selects={[
+          {
+            value: sort,
+            onChange: setSort,
+            icon: "list",
+            ariaLabel: t("yazarlar.sort.alfabetik"),
+            options: [
+              { value: "alfabetik", label: t("yazarlar.sort.alfabetik") },
+              { value: "kitap", label: t("yazarlar.sort.kitap") },
+              { value: "puan", label: t("yazarlar.sort.puan") },
+            ],
+          },
+        ]}
+      />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16 }}>
         {visible.map((a) => (
           <Card key={a._id} padding={16} style={{ cursor: "pointer", display: "flex", flexDirection: "column", gap: 10, alignItems: "center", textAlign: "center" }} onClick={() => router.push(`/yazar/${a._id}`)}>
