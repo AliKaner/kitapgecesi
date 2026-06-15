@@ -292,6 +292,13 @@ const tr = {
   "post.editPlaceholder": "Gönderini düzenle...",
   "post.pageProgress": "{page}. sayfadayım",
   "post.linkCopied": "Bağlantı kopyalandı",
+  "post.repostModalTitle": "Yeniden paylaş",
+  "post.repostQuotePlaceholder": "Bir şeyler ekle (isteğe bağlı)...",
+  "post.repostPlain": "Doğrudan yeniden paylaş",
+  "post.repostQuote": "Alıntıyla yeniden paylaş",
+  "post.repostOfRepost": "Bir repostu yeniden paylaşamazsınız.",
+  "post.unrepost": "Yeniden paylaşımı geri al",
+  "post.notFound": "Gönderi bulunamadı.",
 } satisfies Record<string, string>;
 
 export default tr;

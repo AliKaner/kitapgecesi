@@ -294,6 +294,13 @@ const en: Record<keyof typeof tr, string> = {
   "post.editPlaceholder": "Edit your post...",
   "post.pageProgress": "On page {page}",
   "post.linkCopied": "Link copied",
+  "post.repostModalTitle": "Repost",
+  "post.repostQuotePlaceholder": "Add a comment (optional)...",
+  "post.repostPlain": "Repost",
+  "post.repostQuote": "Quote repost",
+  "post.repostOfRepost": "You can't repost a repost.",
+  "post.unrepost": "Undo repost",
+  "post.notFound": "Post not found.",
 };
 
 export default en;

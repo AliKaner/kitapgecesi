@@ -1,7 +1,55 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 import { checkAndAwardBadges } from "./badges";
+
+async function enrichPost(ctx: QueryCtx, post: Doc<"posts">) {
+  const author = await ctx.db.get(post.authorId);
+  const books = post.bookIds
+    ? await Promise.all(post.bookIds.map((id) => ctx.db.get(id)))
+    : [];
+  const likeCount = await ctx.db
+    .query("likes")
+    .withIndex("by_target", (q) => q.eq("targetType", "post").eq("targetId", post._id))
+    .collect()
+    .then((r) => r.length);
+  const commentCount = await ctx.db
+    .query("comments")
+    .withIndex("by_post", (q) => q.eq("postId", post._id))
+    .collect()
+    .then((r) => r.length);
+  const repostCount = await ctx.db
+    .query("posts")
+    .withIndex("by_repostId", (q) => q.eq("repostId", post._id))
+    .collect()
+    .then((r) => r.length);
+
+  const repostedPost = post.repostId
+    ? await (async (repostId: Id<"posts">) => {
+        const original = await ctx.db.get(repostId);
+        if (!original) return null;
+        const originalAuthor = await ctx.db.get(original.authorId);
+        const originalBooks = original.bookIds
+          ? await Promise.all(original.bookIds.map((id) => ctx.db.get(id)))
+          : [];
+        return {
+          ...original,
+          author: originalAuthor,
+          books: originalBooks.filter(Boolean),
+        };
+      })(post.repostId)
+    : null;
+
+  return {
+    ...post,
+    author,
+    books: books.filter(Boolean),
+    likeCount,
+    commentCount,
+    repostCount,
+    repostedPost,
+  };
+}
 
 const POST_XP = 10;
 const POST_YAPRAK = 5;
@@ -137,6 +185,15 @@ export const getUserPosts = query({
         };
       })
     );
+  },
+});
+
+export const getPost = query({
+  args: { postId: v.id("posts") },
+  handler: async (ctx, { postId }) => {
+    const post = await ctx.db.get(postId);
+    if (!post) return null;
+    return enrichPost(ctx, post);
   },
 });
 
@@ -438,6 +495,11 @@ export const createRepost = mutation({
     if (existing) {
       await ctx.db.delete(existing._id);
       return { reposted: false };
+    }
+
+    const target = await ctx.db.get(postId);
+    if (target?.type === "repost") {
+      throw new Error("Bir repostu yeniden paylaşamazsınız.");
     }
 
     const repostId = await ctx.db.insert("posts", {

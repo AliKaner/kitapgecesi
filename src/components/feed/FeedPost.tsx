@@ -7,6 +7,7 @@ import { FunctionReturnType } from "convex/server";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { PostCard } from "./PostCard";
+import { RepostModal } from "./RepostModal";
 import { BookCard } from "../book/BookCard";
 import { Avatar } from "../ui/Avatar";
 import { Button } from "../ui/Button";
@@ -62,6 +63,7 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
   const { t } = useT();
   const router = useRouter();
   const [showComments, setShowComments] = useState(false);
+  const [showRepostModal, setShowRepostModal] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(post.content ?? "");
   const [commentText, setCommentText] = useState("");
@@ -102,6 +104,16 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
   }, [post._id, recordView]);
 
   const isOwner = currentUserId === post.authorId;
+  const isRepost = post.type === "repost";
+
+  const handleRepostClick = () => {
+    if (!currentUserId) return;
+    if (reposted) {
+      createRepost({ userId: currentUserId, postId: post._id });
+      return;
+    }
+    setShowRepostModal(true);
+  };
 
   const goToProfile = (username?: string) => {
     if (username) router.push(`/profil/${username}`);
@@ -144,12 +156,13 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
         likes={formatCount(post.likeCount)}
         liked={!!liked}
         reposted={!!reposted}
+        repostDisabled={isRepost}
         moreActions={moreActions}
         onAuthorClick={() => goToProfile(post.author?.username)}
         onShareClick={share}
         onCommentClick={() => setShowComments((v) => !v)}
         onLikeClick={() => currentUserId && likeTarget({ userId: currentUserId, targetType: "post", targetId: post._id })}
-        onRepostClick={() => currentUserId && createRepost({ userId: currentUserId, postId: post._id })}
+        onRepostClick={isRepost ? undefined : handleRepostClick}
         commentsSection={
           showComments && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10, borderTop: "1px solid var(--border-default)", paddingTop: 12 }}>
@@ -277,6 +290,14 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
           </PostCard>
         )}
       </PostCard>
+      <RepostModal
+        open={showRepostModal}
+        onClose={() => setShowRepostModal(false)}
+        onSubmit={(content) => {
+          if (!currentUserId) return;
+          createRepost({ userId: currentUserId, postId: post._id, content });
+        }}
+      />
     </div>
   );
 }

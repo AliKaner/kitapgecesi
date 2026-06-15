@@ -36,6 +36,7 @@ export interface PostCardProps extends HTMLAttributes<HTMLElement> {
   views?: number | string;
   liked?: boolean;
   reposted?: boolean;
+  repostDisabled?: boolean;
   contextLabel?: ReactNode;
   onMore?: () => void;
   onCommentClick?: () => void;
@@ -61,6 +62,7 @@ export function PostCard({
   views,
   liked = false,
   reposted = false,
+  repostDisabled = false,
   contextLabel,
   onMore,
   onCommentClick,
@@ -181,7 +183,16 @@ export function PostCard({
       {!compact && (
         <footer style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 2 }}>
           <IconButton icon="comment" count={comments} label={t("post.comment")} size={34} onClick={onCommentClick} />
-          <IconButton icon="repeat" count={reposts} active={reposted} label={t("post.repost")} size={34} onClick={onRepostClick} />
+          <IconButton
+            icon="repeat"
+            count={reposts}
+            active={reposted}
+            label={reposted ? t("post.unrepost") : t("post.repost")}
+            size={34}
+            onClick={onRepostClick}
+            disabled={repostDisabled}
+            style={repostDisabled ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
+          />
           <IconButton icon="heart" count={likes} active={liked} label={t("common.like")} size={34} onClick={onLikeClick} />
           <div style={{ flex: 1 }} />
           <IconButton icon="share" count={shares} label={t("common.share")} size={34} onClick={onShareClick} />
