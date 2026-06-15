@@ -166,26 +166,25 @@ function BookOfMonth() {
   return (
     <Card padding={20} title={t("contextRail.bookOfMonth")}>
       {b && (
-        <div style={{ display: "flex", gap: 14 }}>
-          <BookCover src={b.coverUrl || undefined} title={b.title} width={120} />
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 2, flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "var(--font-serif)", fontSize: 22, lineHeight: 1.1 }}>{b.title}</div>
-            <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>{b.author}</div>
-            {b.ratingCount > 0 && <StarRating value={b.avgRating} count={b.ratingCount} />}
-            <div style={{ marginTop: "auto", paddingTop: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <Button size="sm" variant="primary" icon="book" onClick={() => router.push(`/kitap/${b._id}`)}>
-                {t("contextRail.read")}
-              </Button>
-              <IconButton
-                icon="bookmark"
-                variant="outline"
-                active={added}
-                onClick={addToList}
-                label={t("contextRail.addToList")}
-                disabled={!user}
-              />
-            </div>
-          </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, textAlign: "center" }}>
+          <BookCover src={b.coverUrl || undefined} title={b.title} width={120} style={{ marginBottom: 8 }} />
+          <div style={{ fontFamily: "var(--font-serif)", fontSize: 22, lineHeight: 1.1 }}>{b.title}</div>
+          <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>{b.author}</div>
+          {b.ratingCount > 0 && <StarRating value={b.avgRating} count={b.ratingCount} />}
+          <Button size="sm" variant="primary" icon="book" fullWidth onClick={() => router.push(`/kitap/${b._id}`)} style={{ marginTop: 10 }}>
+            {t("contextRail.read")}
+          </Button>
+          <Button
+            size="sm"
+            variant={added ? "primary" : "menu"}
+            icon="bookmark"
+            fullWidth
+            onClick={addToList}
+            disabled={!user}
+            style={{ marginTop: 8 }}
+          >
+            {added ? t("common.saved") : t("contextRail.addToList")}
+          </Button>
         </div>
       )}
     </Card>
