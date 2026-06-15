@@ -17,6 +17,9 @@ export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement
   icon?: IconName;
   pill?: boolean;
   fullWidth?: boolean;
+  /* Borderless, transparent, tight-padded — for embedding inside a shared
+     bordered container (e.g. the compact filter bar). */
+  bare?: boolean;
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select({
@@ -25,6 +28,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   pill = false,
   fullWidth = false,
   disabled = false,
+  bare = false,
   style,
   ...rest
 }, ref) {
@@ -35,13 +39,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         position: "relative",
         display: "inline-flex",
         alignItems: "center",
-        gap: 9,
-        height: 44,
-        padding: icon ? "0 12px 0 12px" : "0 14px",
-        background: disabled ? "var(--surface-sunken)" : "var(--surface-card)",
-        border: `1px solid ${focus ? "var(--accent)" : "var(--border-default)"}`,
-        borderRadius: pill ? "999px" : "10px",
-        boxShadow: focus ? "0 0 0 3px var(--focus-ring)" : "none",
+        gap: bare ? 6 : 9,
+        height: bare ? 38 : 44,
+        padding: bare ? "0 6px" : icon ? "0 12px 0 12px" : "0 14px",
+        background: bare ? "transparent" : disabled ? "var(--surface-sunken)" : "var(--surface-card)",
+        border: bare ? "none" : `1px solid ${focus ? "var(--accent)" : "var(--border-default)"}`,
+        borderRadius: bare ? 0 : pill ? "999px" : "10px",
+        boxShadow: bare || !focus ? "none" : "0 0 0 3px var(--focus-ring)",
         transition: "border-color var(--dur-fast), box-shadow var(--dur-fast)",
         width: fullWidth ? "100%" : undefined,
       } as CSSProperties}
@@ -65,7 +69,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
           fontSize: "var(--fs-body-2)",
           color: "var(--text-primary)",
           cursor: disabled ? "default" : "pointer",
-          paddingRight: 18,
+          paddingRight: 16,
           ...style,
         } as CSSProperties}
         {...rest}
@@ -85,7 +89,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        style={{ position: "absolute", right: 12, pointerEvents: "none" }}
+        style={{ position: "absolute", right: bare ? 4 : 12, pointerEvents: "none" }}
         aria-hidden
       >
         <path d="m6 9 6 6 6-6" />

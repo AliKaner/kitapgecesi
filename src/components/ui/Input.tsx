@@ -13,6 +13,9 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   pill?: boolean;
   fullWidth?: boolean;
   hint?: ReactNode;
+  /* Borderless, transparent, tight-padded — for embedding inside a shared
+     bordered container (e.g. the compact filter bar). */
+  bare?: boolean;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input({
@@ -27,6 +30,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input({
   fullWidth = true,
   disabled = false,
   hint,
+  bare = false,
   style,
   ...rest
 }, ref) {
@@ -42,13 +46,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input({
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 9,
-          height: 44,
-          padding: icon ? "0 14px 0 12px" : "0 14px",
-          background: disabled ? "var(--surface-sunken)" : "var(--surface-card)",
-          border: `1px solid ${focus ? "var(--accent)" : "var(--border-default)"}`,
-          borderRadius: "10px",
-          boxShadow: focus ? "0 0 0 3px var(--focus-ring)" : "none",
+          gap: bare ? 7 : 9,
+          height: bare ? 40 : 44,
+          width: bare ? "100%" : undefined,
+          padding: bare ? "0 4px" : icon ? "0 14px 0 12px" : "0 14px",
+          background: bare ? "transparent" : disabled ? "var(--surface-sunken)" : "var(--surface-card)",
+          border: bare ? "none" : `1px solid ${focus ? "var(--accent)" : "var(--border-default)"}`,
+          borderRadius: bare ? 0 : pill ? "999px" : "10px",
+          boxShadow: bare ? "none" : focus ? "0 0 0 3px var(--focus-ring)" : "none",
           transition: "border-color var(--dur-fast), box-shadow var(--dur-fast)",
         } as CSSProperties}
       >

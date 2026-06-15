@@ -222,7 +222,6 @@ export default function AyarlarPage() {
           <ImageUploadField
             variant="banner"
             label={t("ayarlar.profilBanner")}
-            hint={t("image.bannerHint.profile")}
             value={user?.bannerUrl}
             onUploaded={(url) => user && updateProfileImages({ userId: user._id, bannerUrl: url })}
           />
