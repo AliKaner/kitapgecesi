@@ -72,8 +72,16 @@ export const getBookOfMonth = query({
       .query("books")
       .withIndex("by_bookOfMonth", (q) => q.eq("isBookOfMonth", true))
       .collect();
-    const book = flagged.sort((a, b) => b.createdAt - a.createdAt)[0];
-    if (!book) return null;
+    let book = flagged.sort((a, b) => b.createdAt - a.createdAt)[0];
+
+    // No book flagged yet — pick one at random, rotating once a month.
+    if (!book) {
+      const all = await ctx.db.query("books").collect();
+      if (all.length === 0) return null;
+      const now = new Date();
+      const seed = now.getFullYear() * 12 + now.getMonth();
+      book = all[seed % all.length];
+    }
 
     const ratings = await ctx.db
       .query("ratings")

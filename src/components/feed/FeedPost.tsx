@@ -1,6 +1,7 @@
 "use client";
 
 import { CSSProperties, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { FunctionReturnType } from "convex/server";
 import { api } from "../../../convex/_generated/api";
@@ -9,6 +10,7 @@ import { PostCard } from "./PostCard";
 import { BookCard } from "../book/BookCard";
 import { Avatar } from "../ui/Avatar";
 import { Button } from "../ui/Button";
+import { showToast } from "../ui/Toast";
 import { useT } from "@/lib/i18n/I18nProvider";
 
 /* Posts viewed once per browser session are not re-counted on re-render. */

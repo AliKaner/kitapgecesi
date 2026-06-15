@@ -34,7 +34,6 @@ export interface CompactFilterProps {
 }
 
 const SIZE = 38;
-const SEARCH_WIDTH = 220;
 const EASE = "220ms cubic-bezier(0.22, 1, 0.36, 1)";
 
 export function CompactFilter({ searchValue, onSearchChange, searchPlaceholder, selects = [], style }: CompactFilterProps) {
@@ -42,14 +41,15 @@ export function CompactFilter({ searchValue, onSearchChange, searchPlaceholder, 
   const searchOpen = searchFocused || searchValue.length > 0;
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 24, ...style } as CSSProperties}>
+    <div style={{ display: "flex", alignItems: "center", gap: 6, width: "100%", marginBottom: 24, ...style } as CSSProperties}>
       <label
         style={{
           display: "flex",
           alignItems: "center",
           gap: 8,
           height: SIZE,
-          width: searchOpen ? SEARCH_WIDTH : SIZE,
+          flex: "1 1 auto",
+          minWidth: SIZE,
           padding: searchOpen ? "0 12px" : 0,
           justifyContent: searchOpen ? "flex-start" : "center",
           borderRadius: 10,
@@ -57,9 +57,8 @@ export function CompactFilter({ searchValue, onSearchChange, searchPlaceholder, 
           background: "var(--surface-card)",
           boxShadow: searchFocused ? "0 0 0 3px var(--focus-ring)" : "none",
           cursor: "text",
-          flex: "none",
           overflow: "hidden",
-          transition: `width ${EASE}, padding ${EASE}, border-color var(--dur-fast), box-shadow var(--dur-fast)`,
+          transition: `padding ${EASE}, border-color var(--dur-fast), box-shadow var(--dur-fast)`,
         } as CSSProperties}
       >
         <Icon name="search" size={16} color="var(--text-secondary)" style={{ flex: "none" } as CSSProperties} />

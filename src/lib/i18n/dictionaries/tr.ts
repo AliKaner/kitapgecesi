@@ -116,9 +116,6 @@ const tr = {
   // Yazarlar
   "yazarlar.bookCount": "{count} kitap",
   "yazarlar.searchPlaceholder": "Yazar ara...",
-  "yazarlar.sort.alfabetik": "A-Z",
-  "yazarlar.sort.kitap": "En çok kitap",
-  "yazarlar.sort.puan": "En yüksek puan",
   "yazarlar.empty": "Aramanla eşleşen yazar bulunamadı.",
   "yazar.notFound": "Yazar bulunamadı.",
   "yazar.books": "Kitapları",

@@ -41,6 +41,8 @@ export interface PostCardProps extends HTMLAttributes<HTMLElement> {
   onCommentClick?: () => void;
   onRepostClick?: () => void;
   onLikeClick?: () => void;
+  onShareClick?: () => void;
+  onAuthorClick?: () => void;
   moreActions?: PostCardMoreAction[];
   commentsSection?: ReactNode;
   children?: ReactNode;
@@ -64,6 +66,8 @@ export function PostCard({
   onCommentClick,
   onRepostClick,
   onLikeClick,
+  onShareClick,
+  onAuthorClick,
   moreActions,
   commentsSection,
   compact = false,
@@ -93,12 +97,16 @@ export function PostCard({
         </div>
       )}
       <header style={{ display: "flex", alignItems: "center", gap: 11 }}>
-        <Avatar src={author.avatar} name={author.name} size="md" />
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: "var(--fs-body-1)", fontWeight: "var(--fw-semibold)", color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 6 } as CSSProperties}>
-            {author.name}
-            <RoleBadges badges={author.roleBadges} />
-          </div>
+        <div
+          onClick={onAuthorClick}
+          style={{ display: "flex", alignItems: "center", gap: 11, flex: 1, minWidth: 0, cursor: onAuthorClick ? "pointer" : undefined }}
+        >
+          <Avatar src={author.avatar} name={author.name} size="md" />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: "var(--fs-body-1)", fontWeight: "var(--fw-semibold)", color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 6 } as CSSProperties}>
+              {author.name}
+              <RoleBadges badges={author.roleBadges} />
+            </div>
           {(author.handle || date) && (
             <div style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" } as CSSProperties}>
               {author.handle && <span>{author.handle}</span>}
@@ -109,6 +117,7 @@ export function PostCard({
               )}
             </div>
           )}
+          </div>
         </div>
         {compact ? null : moreActions && moreActions.length > 0 ? (
           <div style={{ position: "relative" }}>
@@ -175,7 +184,7 @@ export function PostCard({
           <IconButton icon="repeat" count={reposts} active={reposted} label={t("post.repost")} size={34} onClick={onRepostClick} />
           <IconButton icon="heart" count={likes} active={liked} label={t("common.like")} size={34} onClick={onLikeClick} />
           <div style={{ flex: 1 }} />
-          <IconButton icon="share" count={shares} label={t("common.share")} size={34} />
+          <IconButton icon="share" count={shares} label={t("common.share")} size={34} onClick={onShareClick} />
         </footer>
       )}
 

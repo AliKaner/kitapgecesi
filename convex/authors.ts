@@ -1,45 +1,42 @@
-import { action, internalMutation, mutation, query } from "./_generated/server";
+import { action, internalMutation, mutation, query, QueryCtx } from "./_generated/server";
+import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
+
+async function enrichAuthor(ctx: QueryCtx, author: Doc<"authors">) {
+  const bookCount = await ctx.db
+    .query("books")
+    .withIndex("by_authorId", (q) => q.eq("authorId", author._id))
+    .collect()
+    .then((r) => r.length);
+  const ratings = await ctx.db
+    .query("ratings")
+    .withIndex("by_target", (q) => q.eq("targetType", "author").eq("targetId", author._id))
+    .collect();
+  const ratingCount = ratings.length;
+  const avgRating = ratingCount > 0 ? ratings.reduce((sum, r) => sum + r.value, 0) / ratingCount : 0;
+  return { ...author, bookCount, avgRating, ratingCount };
+}
 
 export const searchAuthors = query({
   args: { query: v.string() },
   handler: async (ctx, { query: q }) => {
-    const lower = q.toLowerCase();
-    const all = await ctx.db.query("authors").collect();
-    return all.filter((a) => a.name.toLowerCase().includes(lower)).slice(0, 20);
+    if (!q.trim()) return [];
+    const results = await ctx.db
+      .query("authors")
+      .withSearchIndex("search_name", (s) => s.search("name", q))
+      .take(20);
+    return Promise.all(results.map((author) => enrichAuthor(ctx, author)));
   },
 });
 
-export const listAuthors = query({
-  args: {},
-  handler: async (ctx) => {
-    const authors = await ctx.db.query("authors").collect();
-    const ratings = await ctx.db
-      .query("ratings")
-      .withIndex("by_target", (q) => q.eq("targetType", "author"))
-      .collect();
-
-    const sums = new Map<string, { sum: number; count: number }>();
-    for (const r of ratings) {
-      const cur = sums.get(r.targetId) ?? { sum: 0, count: 0 };
-      cur.sum += r.value;
-      cur.count += 1;
-      sums.set(r.targetId, cur);
-    }
-
-    return Promise.all(
-      authors.map(async (author) => {
-        const bookCount = await ctx.db
-          .query("books")
-          .withIndex("by_authorId", (q) => q.eq("authorId", author._id))
-          .collect()
-          .then((r) => r.length);
-        const m = sums.get(author._id);
-        return { ...author, bookCount, avgRating: m ? m.sum / m.count : 0, ratingCount: m?.count ?? 0 };
-      })
-    );
+export const listAuthorsPage = query({
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async (ctx, { paginationOpts }) => {
+    const result = await ctx.db.query("authors").order("desc").paginate(paginationOpts);
+    const page = await Promise.all(result.page.map((author) => enrichAuthor(ctx, author)));
+    return { ...result, page };
   },
 });
 

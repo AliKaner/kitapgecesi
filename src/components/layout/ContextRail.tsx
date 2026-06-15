@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { CSSProperties, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
@@ -177,12 +177,13 @@ function PopularBooks() {
         style={{
           display: "flex",
           gap: 12,
+          justifyContent: "safe center",
           overflowX: "auto",
           scrollSnapType: "x mandatory",
           margin: "0 -20px",
           padding: "0 20px 2px",
           scrollBehavior: "smooth",
-        }}
+        } as CSSProperties}
       >
         {books.map((b) => (
           <BookCover

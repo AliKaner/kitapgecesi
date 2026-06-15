@@ -118,9 +118,6 @@ const en: Record<keyof typeof tr, string> = {
   // Authors
   "yazarlar.bookCount": "{count} books",
   "yazarlar.searchPlaceholder": "Search authors...",
-  "yazarlar.sort.alfabetik": "A-Z",
-  "yazarlar.sort.kitap": "Most books",
-  "yazarlar.sort.puan": "Highest rated",
   "yazarlar.empty": "No authors match your search.",
   "yazar.notFound": "Author not found.",
   "yazar.books": "Books",

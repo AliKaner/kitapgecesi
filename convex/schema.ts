@@ -43,7 +43,9 @@ export default defineSchema({
     photoUrl: v.optional(v.string()),
     viewCount: v.optional(v.number()),
     createdAt: v.number(),
-  }).index("by_name", ["name"]),
+  })
+    .index("by_name", ["name"])
+    .searchIndex("search_name", { searchField: "name" }),
 
   // KİTAP KATALOĞU
   books: defineTable({
