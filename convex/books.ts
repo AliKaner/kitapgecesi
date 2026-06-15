@@ -55,6 +55,15 @@ export const getBook = query({
   },
 });
 
+export const getPopularBooks = query({
+  args: { limit: v.number() },
+  handler: async (ctx, { limit }) => {
+    const books = await ctx.db.query("books").collect();
+    books.sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0));
+    return books.slice(0, limit);
+  },
+});
+
 export const getBookOfMonth = query({
   args: {},
   handler: async (ctx) => {

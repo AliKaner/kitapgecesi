@@ -270,6 +270,9 @@ const tr = {
   "contextRail.quotes": "alıntı",
   "contextRail.bookOfMonth": "Ayın Kitabı",
   "contextRail.read": "Oku",
+  "contextRail.addToList": "Okuma listeme ekle",
+  "contextRail.popular": "Popüler Kitaplar",
+  "contextRail.books": "Kitaplar",
 
   // Gönderi etkileşimleri
   "post.views": "{count} görüntülenme",

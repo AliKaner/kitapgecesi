@@ -272,6 +272,9 @@ const en: Record<keyof typeof tr, string> = {
   "contextRail.quotes": "quotes",
   "contextRail.bookOfMonth": "Book of the Month",
   "contextRail.read": "Read",
+  "contextRail.addToList": "Add to reading list",
+  "contextRail.popular": "Popular Books",
+  "contextRail.books": "Books",
 
   // Post interactions
   "post.views": "{count} views",

@@ -40,7 +40,7 @@ export default function ListelerPage() {
 
   const visibleLists = useMemo(() => {
     const q = search.trim().toLocaleLowerCase("tr");
-    let list = q
+    const list = q
       ? (lists ?? []).filter((l) => l.title.toLocaleLowerCase("tr").includes(q))
       : [...(lists ?? [])];
     if (sort === "alfabetik") {
