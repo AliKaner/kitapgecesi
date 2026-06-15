@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { ContextRail } from "@/components/layout/ContextRail";
+import { MobileNav } from "@/components/layout/MobileNav";
 import { ToastHost } from "@/components/ui/Toast";
 import { useAuth } from "@/lib/auth/AuthProvider";
 
@@ -19,11 +20,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-page)" }}>
-      <div style={{ display: "flex", maxWidth: "var(--shell-max)", margin: "0 auto" }}>
+      <div className="kg-shell" style={{ display: "flex", maxWidth: "var(--shell-max)", margin: "0 auto" }}>
         <Sidebar />
-        <main style={{ flex: 1, minWidth: 0, maxWidth: "var(--feed-max)", padding: "26px 32px 60px" }}>{children}</main>
+        <main className="kg-main" style={{ flex: 1, minWidth: 0, maxWidth: "var(--feed-max)", padding: "26px 32px 60px" }}>{children}</main>
         <ContextRail />
       </div>
+      <MobileNav />
       <ToastHost />
     </div>
   );

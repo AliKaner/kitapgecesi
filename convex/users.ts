@@ -147,7 +147,20 @@ export const getReadingGoalStats = query({
       .query("userBooks")
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .collect();
-    const done = userBooks.filter((b) => b.status === "read" && (b.finishedAt ?? 0) >= yearStart).length;
+    const doneEntries = userBooks.filter((b) => b.status === "read" && (b.finishedAt ?? 0) >= yearStart);
+    const done = doneEntries.length;
+
+    const doneBooks = await Promise.all(
+      doneEntries.map(async (entry) => {
+        const book = await ctx.db.get(entry.bookId);
+        return {
+          _id: entry.bookId,
+          title: book?.title ?? "",
+          coverUrl: book?.coverUrl ?? "",
+          author: book?.author ?? "",
+        };
+      })
+    );
 
     const journalEntries = await ctx.db
       .query("journalEntries")
@@ -176,6 +189,7 @@ export const getReadingGoalStats = query({
       quotes,
       pct,
       year: new Date().getFullYear(),
+      doneBooks,
     };
   },
 });

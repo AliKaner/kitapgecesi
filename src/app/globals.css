@@ -106,3 +106,57 @@
 .kg-hscroll::-webkit-scrollbar {
   display: none;
 }
+
+/* Mobile shell — below this breakpoint the left nav and right context rail
+   are replaced by a fixed top bar (logo + drawer trigger) and a fixed
+   bottom tab bar, Twitter-style. */
+.kg-mobile-topbar,
+.kg-mobile-nav {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .kg-sidebar,
+  .kg-context-rail {
+    display: none;
+  }
+
+  .kg-shell {
+    flex-direction: column;
+  }
+
+  .kg-main {
+    max-width: 100% !important;
+    padding: 70px 16px calc(64px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .kg-mobile-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    padding: 0 16px;
+    padding-top: env(safe-area-inset-top);
+    background: var(--bg-page);
+    border-bottom: 1px solid var(--border-default);
+    z-index: 100;
+  }
+
+  .kg-mobile-nav {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--bg-page);
+    border-top: 1px solid var(--border-default);
+    z-index: 100;
+  }
+}

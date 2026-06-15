@@ -9,6 +9,7 @@ import { Card } from "../ui/Card";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { IconButton } from "../ui/IconButton";
+import { Icon } from "../ui/Icon";
 import { BookCover } from "../book/BookCover";
 import { StarRating } from "../ui/StarRating";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -57,9 +58,30 @@ function Stat({ n, l }: { n: string | number; l: string }) {
 function ReadingGoal() {
   const { t } = useT();
   const { user } = useAuth();
+  const router = useRouter();
   const goal = useQuery(api.users.getReadingGoalStats, user ? { userId: user._id } : "skip");
 
   if (!user || !goal) return null;
+
+  const today = new Date();
+  const yearEnd = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
+  const diffTime = yearEnd.getTime() - today.getTime();
+  const diffDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+  const remainingBooks = Math.max(0, goal.target - goal.done);
+
+  let paceText = "";
+  if (remainingBooks === 0) {
+    paceText = "Hedefinizi tamamladınız! 🎉";
+  } else {
+    const booksPerDay = remainingBooks / diffDays;
+    if (booksPerDay >= 1) {
+      const rounded = Math.round(booksPerDay);
+      paceText = `Günde ${rounded} kitap okumalısın`;
+    } else {
+      const daysPerBook = Math.round(diffDays / remainingBooks);
+      paceText = daysPerBook === 1 ? "Günde 1 kitap okumalısın" : `${daysPerBook} günde bir kitap okumalısın`;
+    }
+  }
 
   return (
     <Card padding={20}>
@@ -76,6 +98,43 @@ function ReadingGoal() {
         <span style={{ fontFamily: "var(--font-serif)", fontSize: 34, lineHeight: 1 }}>{goal.done}</span>
         <span style={{ fontSize: 15, color: "var(--text-secondary)" }}>{t("contextRail.ofTarget", { target: goal.target })}</span>
       </div>
+
+      <div style={{ 
+        display: "flex", 
+        alignItems: "center", 
+        gap: 8, 
+        padding: "8px 12px", 
+        borderRadius: "10px", 
+        background: "var(--accent-tint)", 
+        color: "var(--accent-active)", 
+        fontSize: "13px", 
+        fontWeight: 500, 
+        marginBottom: 16 
+      }}>
+        <Icon name="calendar" size={14} color="var(--accent)" />
+        <span>{paceText}</span>
+      </div>
+
+      {goal.doneBooks && goal.doneBooks.length > 0 && (
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            Bu Yıl Okunan Kitaplar ({goal.doneBooks.length})
+          </div>
+          <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }} className="kg-hscroll">
+            {goal.doneBooks.map((b) => (
+              <BookCover
+                key={b._id}
+                src={b.coverUrl || undefined}
+                title={b.title}
+                width={40}
+                onClick={() => router.push(`/kitap/${b._id}`)}
+                style={{ cursor: "pointer" }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, paddingTop: 16, borderTop: "1px solid var(--border-default)" }}>
         <Stat n={goal.pages.toLocaleString("tr-TR")} l={t("contextRail.pages")} />
         <Stat n={goal.reviews} l={t("contextRail.reviews")} />
@@ -250,6 +309,7 @@ export function ContextRail() {
   const { t } = useT();
   return (
     <aside
+      className="kg-context-rail"
       style={{
         width: "var(--aside-width)",
         flex: "none",
