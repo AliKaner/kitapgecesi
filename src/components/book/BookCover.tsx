@@ -1,8 +1,9 @@
 import { CSSProperties, HTMLAttributes } from "react";
+import { Icon } from "../ui/Icon";
 
 /* Book cover image. Fixed 2:3 portrait by default, soft directional drop
-   shadow, gentle rounding. Falls back to a warm paper panel with the title
-   if no image is supplied. */
+   shadow, gentle rounding. Falls back to a warm paper panel with a centered
+   book icon if no image is supplied. */
 
 export interface BookCoverProps extends HTMLAttributes<HTMLDivElement> {
   src?: string;
@@ -40,15 +41,11 @@ export function BookCover({ src, title = "", width = 96, ratio = 1.5, rounded = 
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: 10,
-            textAlign: "center",
-            fontFamily: "var(--font-serif)",
-            fontSize: Math.max(12, width * 0.16),
-            lineHeight: 1.1,
             color: "var(--text-secondary)",
+            opacity: 0.5,
           } as CSSProperties}
         >
-          {title}
+          <Icon name="book" size={Math.max(14, Math.round(width * 0.36))} />
         </span>
       )}
       <span style={{ position: "absolute", inset: 0, borderRadius: rounded, boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05)" } as CSSProperties} />
