@@ -60,6 +60,7 @@ function PostBody({ post }: { post: FeedPostData | RepostedPostData }) {
 
 export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentUserId?: Id<"users"> }) {
   const { t } = useT();
+  const router = useRouter();
   const [showComments, setShowComments] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(post.content ?? "");
@@ -102,6 +103,20 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
 
   const isOwner = currentUserId === post.authorId;
 
+  const goToProfile = (username?: string) => {
+    if (username) router.push(`/profil/${username}`);
+  };
+
+  const share = async () => {
+    const url = `${window.location.origin}/post/${post._id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // ignore — clipboard may be unavailable
+    }
+    showToast(t("post.linkCopied"));
+  };
+
   const moreActions = isOwner
     ? [
         { label: t("post.edit"), onClick: () => setEditing(true) },
@@ -127,10 +142,11 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
         comments={formatCount(post.commentCount)}
         reposts={formatCount(post.repostCount)}
         likes={formatCount(post.likeCount)}
-        shares={0}
         liked={!!liked}
         reposted={!!reposted}
         moreActions={moreActions}
+        onAuthorClick={() => goToProfile(post.author?.username)}
+        onShareClick={share}
         onCommentClick={() => setShowComments((v) => !v)}
         onLikeClick={() => currentUserId && likeTarget({ userId: currentUserId, targetType: "post", targetId: post._id })}
         onRepostClick={() => currentUserId && createRepost({ userId: currentUserId, postId: post._id })}
@@ -254,6 +270,7 @@ export function FeedPost({ post, currentUserId }: { post: FeedPostData; currentU
             author={{ name: post.repostedPost.author?.name, handle: post.repostedPost.author?.username ? `@${post.repostedPost.author.username}` : undefined, avatar: post.repostedPost.author?.profileImageUrl, roleBadges: post.repostedPost.author?.roleBadges }}
             date={formatDate(post.repostedPost.createdAt)}
             style={{ background: "var(--surface-sunken)" }}
+            onAuthorClick={() => goToProfile(post.repostedPost?.author?.username)}
             compact
           >
             <PostBody post={post.repostedPost} />

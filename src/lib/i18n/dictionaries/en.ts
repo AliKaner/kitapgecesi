@@ -293,6 +293,7 @@ const en: Record<keyof typeof tr, string> = {
   "post.deleteConfirm": "Are you sure you want to delete this post?",
   "post.editPlaceholder": "Edit your post...",
   "post.pageProgress": "On page {page}",
+  "post.linkCopied": "Link copied",
 };
 
 export default en;

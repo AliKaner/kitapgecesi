@@ -291,6 +291,7 @@ const tr = {
   "post.deleteConfirm": "Bu gönderiyi silmek istediğine emin misin?",
   "post.editPlaceholder": "Gönderini düzenle...",
   "post.pageProgress": "{page}. sayfadayım",
+  "post.linkCopied": "Bağlantı kopyalandı",
 } satisfies Record<string, string>;
 
 export default tr;
