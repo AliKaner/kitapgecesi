@@ -1,178 +1,63 @@
 "use client";
 
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { IconButton } from "../ui/IconButton";
-import { Input } from "../ui/Input";
 import { Switch } from "../ui/Switch";
-import { Tag } from "../ui/Tag";
+import { Icon } from "../ui/Icon";
 import { useT } from "@/lib/i18n/I18nProvider";
-
-const MAX_FAVORITE_BOOKS = 6;
-
-const WIDGET_LABEL_KEYS = {
-  favorites: "showcase.widget.favorites",
-  author: "showcase.widget.author",
-} as const;
-
-type WidgetType = keyof typeof WIDGET_LABEL_KEYS;
+import {
+  ShowcaseConfig,
+  ShowcaseConfigEditor,
+  WIDGET_META,
+  WIDGET_ORDER,
+  WidgetType,
+} from "./showcaseWidgets";
 
 interface LocalRow {
   _id: Id<"showcases">;
   widgetType: WidgetType;
   isEnabled: boolean;
-  bookIds: Id<"books">[];
-  authorId: Id<"authors"> | null;
+  config: ShowcaseConfig;
 }
 
-function FavoritesEditor({ bookIds, onChange }: { bookIds: Id<"books">[]; onChange: (ids: Id<"books">[]) => void }) {
-  const { t } = useT();
-  const [search, setSearch] = useState("");
-  const selected = useQuery(api.books.getBooksByIds, bookIds.length ? { bookIds } : "skip");
-  const results = useQuery(api.books.searchLocalBooks, search.trim() ? { query: search.trim() } : "skip");
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      {selected && selected.length > 0 && (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {selected.map((b) => (
-            <Tag key={b._id} onRemove={() => onChange(bookIds.filter((id) => id !== b._id))}>
-              {b.title}
-            </Tag>
-          ))}
-        </div>
-      )}
-      {bookIds.length < MAX_FAVORITE_BOOKS && (
-        <>
-          <Input icon="search" placeholder={t("showcase.bookSearchPlaceholder")} value={search} onChange={(e) => setSearch(e.target.value)} />
-          {results && results.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 180, overflowY: "auto" }}>
-              {results
-                .filter((b) => !bookIds.includes(b._id))
-                .map((b) => (
-                  <div
-                    key={b._id}
-                    onClick={() => {
-                      onChange([...bookIds, b._id]);
-                      setSearch("");
-                    }}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "8px 10px",
-                      borderRadius: "var(--radius-md)",
-                      cursor: "pointer",
-                      background: "var(--surface-sunken)",
-                    }}
-                  >
-                    <div>
-                      <div style={{ fontSize: "var(--fs-body-2)", color: "var(--text-primary)" }}>{b.title}</div>
-                      <div style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" }}>{b.author}</div>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          )}
-        </>
-      )}
-      <p style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)", margin: 0 }}>
-        {t("showcase.maxBooksHint", { max: MAX_FAVORITE_BOOKS })}
-      </p>
-    </div>
-  );
-}
-
-function AuthorEditor({ authorId, onChange }: { authorId: Id<"authors"> | null; onChange: (id: Id<"authors"> | null) => void }) {
-  const { t } = useT();
-  const [search, setSearch] = useState("");
-  const selected = useQuery(api.authors.getAuthor, authorId ? { authorId } : "skip");
-  const results = useQuery(api.authors.searchAuthors, search.trim() ? { query: search.trim() } : "skip");
-
-  if (selected) {
-    return (
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-        <Tag onRemove={() => onChange(null)}>{selected.name}</Tag>
-      </div>
-    );
-  }
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      <Input icon="search" placeholder={t("showcase.authorSearchPlaceholder")} value={search} onChange={(e) => setSearch(e.target.value)} />
-      {results && results.length > 0 && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 180, overflowY: "auto" }}>
-          {results.map((a) => (
-            <div
-              key={a._id}
-              onClick={() => {
-                onChange(a._id);
-                setSearch("");
-              }}
-              style={{
-                padding: "8px 10px",
-                borderRadius: "var(--radius-md)",
-                cursor: "pointer",
-                background: "var(--surface-sunken)",
-                fontSize: "var(--fs-body-2)",
-                color: "var(--text-primary)",
-              }}
-            >
-              {a.name}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
+const MAX_ROWS = 12;
 
 export function ShowcaseEditor({ userId }: { userId: Id<"users"> }) {
   const { t } = useT();
   const showcases = useQuery(api.showcases.getAllShowcases, { userId });
-  const ensureDefaults = useMutation(api.showcases.ensureDefaultShowcases);
+  const addShowcase = useMutation(api.showcases.addShowcase);
+  const removeShowcase = useMutation(api.showcases.removeShowcase);
   const updateLayout = useMutation(api.showcases.updateShowcaseLayout);
 
   const [rows, setRows] = useState<LocalRow[] | null>(null);
   const [saved, setSaved] = useState(false);
+  const [adding, setAdding] = useState(false);
   const [loadedFrom, setLoadedFrom] = useState<typeof showcases>(undefined);
 
+  // Sync local editable rows from the server query (only when it changes).
   if (showcases !== loadedFrom) {
     setLoadedFrom(showcases);
-    if (showcases && showcases.length > 0) {
+    if (showcases) {
       setRows(
         showcases
-          .filter((s) => s.widgetType === "favorites" || s.widgetType === "author")
+          .filter((s): s is typeof s & { widgetType: WidgetType } => (WIDGET_ORDER as string[]).includes(s.widgetType))
           .map((s) => {
-            let parsed: { bookIds?: string[]; authorId?: string } = {};
+            let parsed: ShowcaseConfig = {};
             try {
               parsed = JSON.parse(s.config);
             } catch {
               parsed = {};
             }
-            return {
-              _id: s._id,
-              widgetType: s.widgetType as WidgetType,
-              isEnabled: s.isEnabled,
-              bookIds: (parsed.bookIds ?? []) as Id<"books">[],
-              authorId: (parsed.authorId ?? null) as Id<"authors"> | null,
-            };
+            return { _id: s._id, widgetType: s.widgetType, isEnabled: s.isEnabled, config: parsed };
           })
       );
     }
   }
-
-  useEffect(() => {
-    if (showcases === undefined) return;
-    const types = new Set(showcases.map((s) => s.widgetType));
-    if (!types.has("favorites") || !types.has("author")) {
-      ensureDefaults({ userId });
-    }
-  }, [showcases, ensureDefaults, userId]);
 
   if (!rows) return null;
 
@@ -199,10 +84,22 @@ export function ShowcaseEditor({ userId }: { userId: Id<"users"> }) {
         id: r._id,
         order: i,
         isEnabled: r.isEnabled,
-        config: JSON.stringify(r.widgetType === "favorites" ? { bookIds: r.bookIds } : { authorId: r.authorId }),
+        config: JSON.stringify(r.config),
       })),
     });
     setSaved(true);
+  };
+
+  const add = async (type: WidgetType) => {
+    setAdding(false);
+    await addShowcase({ userId, widgetType: type });
+    setSaved(false);
+    // The query will refetch and re-seed `rows` via the sync above.
+  };
+
+  const remove = async (row: LocalRow) => {
+    setRows(rows.filter((r) => r._id !== row._id));
+    await removeShowcase({ userId, showcaseId: row._id });
   };
 
   return (
@@ -214,20 +111,59 @@ export function ShowcaseEditor({ userId }: { userId: Id<"users"> }) {
               <IconButton icon="arrow-up" size={28} iconSize={14} label={t("showcase.moveUp")} disabled={i === 0} onClick={() => move(i, -1)} />
               <IconButton icon="arrow-down" size={28} iconSize={14} label={t("showcase.moveDown")} disabled={i === rows.length - 1} onClick={() => move(i, 1)} />
             </div>
-            <div style={{ flex: 1, fontSize: "var(--fs-body-1)", fontWeight: "var(--fw-semibold)" as unknown as number }}>
-              {t(WIDGET_LABEL_KEYS[row.widgetType])}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
+              <Icon name={WIDGET_META[row.widgetType].icon} size={16} color="var(--text-secondary)" />
+              <span style={{ fontSize: "var(--fs-body-1)", fontWeight: "var(--fw-semibold)" as unknown as number }}>
+                {t(WIDGET_META[row.widgetType].labelKey as Parameters<typeof t>[0])}
+              </span>
             </div>
             <Switch checked={row.isEnabled} onChange={(checked) => update(i, { isEnabled: checked })} />
+            <IconButton icon="x" size={28} iconSize={15} label={t("showcase.remove")} onClick={() => remove(row)} />
           </div>
 
-          {row.isEnabled && row.widgetType === "favorites" && (
-            <FavoritesEditor bookIds={row.bookIds} onChange={(bookIds) => update(i, { bookIds })} />
-          )}
-          {row.isEnabled && row.widgetType === "author" && (
-            <AuthorEditor authorId={row.authorId} onChange={(authorId) => update(i, { authorId })} />
+          {row.isEnabled && (
+            <ShowcaseConfigEditor type={row.widgetType} config={row.config} userId={userId} onChange={(config) => update(i, { config })} />
           )}
         </Card>
       ))}
+
+      {rows.length < MAX_ROWS && (
+        <div style={{ position: "relative" }}>
+          <Button variant="menu" icon="plus" onClick={() => setAdding((v) => !v)}>
+            {t("showcase.add")}
+          </Button>
+          {adding && (
+            <Card style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 4, padding: 6 }}>
+              {WIDGET_ORDER.map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => add(type)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    padding: "9px 10px",
+                    borderRadius: "var(--radius-md)",
+                    border: "none",
+                    background: "transparent",
+                    color: "var(--text-primary)",
+                    fontSize: "var(--fs-body-2)",
+                    fontFamily: "var(--font-sans)",
+                    textAlign: "left",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-sunken)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <Icon name={WIDGET_META[type].icon} size={16} color="var(--text-secondary)" />
+                  {t(WIDGET_META[type].labelKey as Parameters<typeof t>[0])}
+                </button>
+              ))}
+            </Card>
+          )}
+        </div>
+      )}
 
       <div>
         <Button variant="primary" onClick={save}>

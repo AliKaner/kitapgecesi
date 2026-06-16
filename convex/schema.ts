@@ -188,7 +188,9 @@ export default defineSchema({
       v.literal("image"),
       v.literal("clubs"),
       v.literal("favoriteClub"),
-      v.literal("list")
+      v.literal("list"),
+      v.literal("review"),
+      v.literal("idCard")
     ),
     order: v.number(),
     isEnabled: v.boolean(),

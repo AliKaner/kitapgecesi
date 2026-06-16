@@ -4,7 +4,6 @@ import { CSSProperties, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
-import { Id } from "../../../../../convex/_generated/dataModel";
 import { SectionHead } from "@/components/layout/Screen";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
@@ -14,6 +13,7 @@ import { RoleBadges } from "@/components/ui/RoleBadges";
 import { BookCard } from "@/components/book/BookCard";
 import { FeedPost } from "@/components/feed/FeedPost";
 import { Tabs } from "@/components/ui/Tabs";
+import { ShowcaseView, ShowcaseConfig, WidgetType } from "@/components/profile/showcaseWidgets";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
 
@@ -31,46 +31,6 @@ const LIBRARY_GROUPS: { status: "reading" | "want" | "read"; labelKey: "kitap.st
   { status: "want", labelKey: "kitap.status.want" },
   { status: "read", labelKey: "kitap.status.read" },
 ];
-
-function FavoritesShowcase({ bookIds, router }: { bookIds: Id<"books">[]; router: ReturnType<typeof useRouter> }) {
-  const { t } = useT();
-  const books = useQuery(api.books.getBooksByIds, bookIds.length ? { bookIds } : "skip");
-
-  return (
-    <section>
-      <SectionHead title={t("profil.favorites")} />
-      {books && books.length > 0 ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
-          {books.map((b) => (
-            <BookCard key={b._id} cover={b.coverUrl || undefined} title={b.title} author={b.author} width={124} onClick={() => router.push(`/kitap/${b._id}`)} />
-          ))}
-        </div>
-      ) : (
-        <p style={{ color: "var(--text-secondary)" }}>{t("showcase.favorites.empty")}</p>
-      )}
-    </section>
-  );
-}
-
-function AuthorShowcase({ authorId, router }: { authorId: Id<"authors">; router: ReturnType<typeof useRouter> }) {
-  const { t } = useT();
-  const author = useQuery(api.authors.getAuthor, { authorId });
-
-  if (!author) return null;
-
-  return (
-    <section>
-      <SectionHead title={t("showcase.author.title")} />
-      <Card hover style={{ display: "flex", alignItems: "center", gap: 16, cursor: "pointer" }} onClick={() => router.push(`/yazar/${authorId}`)}>
-        <Avatar name={author.name} size="lg" />
-        <div>
-          <div style={{ fontSize: "var(--fs-h3)", fontWeight: 600 }}>{author.name}</div>
-          <div style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)" }}>{t("yazar.books")}</div>
-        </div>
-      </Card>
-    </section>
-  );
-}
 
 export default function PublicProfilePage() {
   const { t } = useT();
@@ -165,21 +125,15 @@ export default function PublicProfilePage() {
             </div>
           </Card>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
             {(showcases ?? []).map((s) => {
-              let config: { bookIds?: string[]; authorId?: string } = {};
+              let config: ShowcaseConfig = {};
               try {
                 config = JSON.parse(s.config);
               } catch {
                 config = {};
               }
-              if (s.widgetType === "favorites") {
-                return <FavoritesShowcase key={s._id} bookIds={(config.bookIds ?? []) as Id<"books">[]} router={router} />;
-              }
-              if (s.widgetType === "author" && config.authorId) {
-                return <AuthorShowcase key={s._id} authorId={config.authorId as Id<"authors">} router={router} />;
-              }
-              return null;
+              return <ShowcaseView key={s._id} type={s.widgetType as WidgetType} config={config} userId={profile._id} />;
             })}
           </div>
         </>

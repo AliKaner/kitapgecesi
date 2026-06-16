@@ -49,6 +49,48 @@ export const ensureDefaultShowcases = mutation({
   },
 });
 
+const MAX_SHOWCASES = 12;
+
+export const addShowcase = mutation({
+  args: {
+    userId: v.id("users"),
+    widgetType: v.union(
+      v.literal("idCard"),
+      v.literal("favorites"),
+      v.literal("quote"),
+      v.literal("review"),
+      v.literal("list"),
+      v.literal("favoriteClub"),
+      v.literal("target"),
+      v.literal("author")
+    ),
+  },
+  handler: async (ctx, { userId, widgetType }) => {
+    const existing = await ctx.db
+      .query("showcases")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+    if (existing.length >= MAX_SHOWCASES) throw new Error("En fazla bileşen sayısına ulaştınız.");
+    const nextOrder = existing.reduce((max, s) => Math.max(max, s.order), -1) + 1;
+    return ctx.db.insert("showcases", {
+      userId,
+      widgetType,
+      order: nextOrder,
+      isEnabled: true,
+      config: "{}",
+    });
+  },
+});
+
+export const removeShowcase = mutation({
+  args: { userId: v.id("users"), showcaseId: v.id("showcases") },
+  handler: async (ctx, { userId, showcaseId }) => {
+    const showcase = await ctx.db.get(showcaseId);
+    if (!showcase || showcase.userId !== userId) return;
+    await ctx.db.delete(showcaseId);
+  },
+});
+
 export const updateShowcaseLayout = mutation({
   args: {
     userId: v.id("users"),
