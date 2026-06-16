@@ -28,12 +28,6 @@ function StatTile({ label, value }: { label: string; value: string }) {
   );
 }
 
-const LIBRARY_GROUPS: { status: "reading" | "want" | "read"; labelKey: "kitap.status.reading" | "kitap.status.want" | "kitap.status.read" }[] = [
-  { status: "reading", labelKey: "kitap.status.reading" },
-  { status: "want", labelKey: "kitap.status.want" },
-  { status: "read", labelKey: "kitap.status.read" },
-];
-
 function JournalTab({ userId }: { userId: import("../../../../convex/_generated/dataModel").Id<"users"> }) {
   const { t } = useT();
   const [range, setRange] = useState("week");
@@ -158,9 +152,10 @@ export default function ProfilPage() {
   const { t } = useT();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const TABS = ["Profil", "Aktivite", "Kitaplık", "Günlük", "Rozetler"];
+  const TABS = ["Profil", "Aktivite", "Kitaplık", "Okuma Listesi", "Günlük", "Rozetler"];
   const initialTab = searchParams.get("tab");
   const [tab, setTab] = useState(initialTab && TABS.includes(initialTab) ? initialTab : "Profil");
+  const [libFilter, setLibFilter] = useState<"all" | "reading" | "read">("all");
   const { user } = useAuth();
   const profile = useQuery(api.users.getUserProfile, user ? { username: user.username } : "skip");
   const showcases = useQuery(api.showcases.getUserShowcases, user ? { userId: user._id } : "skip");
@@ -209,6 +204,7 @@ export default function ProfilPage() {
             { value: "Profil", label: t("profil.tab.profile") },
             { value: "Aktivite", label: t("profil.tab.activity") },
             { value: "Kitaplık", label: t("profil.tab.library") },
+            { value: "Okuma Listesi", label: t("profil.tab.wishlist") },
             { value: "Günlük", label: t("profil.tab.journal") },
             { value: "Rozetler", label: t("profil.tab.badges") },
           ]}
@@ -258,31 +254,92 @@ export default function ProfilPage() {
       )}
 
       {tab === "Kitaplık" && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-          {LIBRARY_GROUPS.map((group) => {
-            const items = (library ?? []).filter((e) => e.status === group.status && e.book);
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          {(() => {
+            const readCount = (library ?? []).filter((e) => e.status === "read").length;
+            const readingCount = (library ?? []).filter((e) => e.status === "reading").length;
+            const groups = (libFilter === "all"
+              ? (["reading", "read"] as const)
+              : ([libFilter] as const)
+            ).map((status) => ({
+              status,
+              labelKey: status === "reading" ? ("kitap.status.reading" as const) : ("kitap.status.read" as const),
+            }));
             return (
-              <section key={group.status}>
-                <SectionHead title={`${t(group.labelKey)} (${items.length})`} />
-                {items.length > 0 ? (
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
-                    {items.map((e) => (
-                      <BookCard
-                        key={e._id}
-                        cover={e.book!.coverUrl || undefined}
-                        title={e.book!.title}
-                        author={e.book!.author}
-                        width={124}
-                        onClick={() => router.push(`/kitap/${e.book!._id}`)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <p style={{ color: "var(--text-secondary)" }}>{t("profil.noBooksInGroup")}</p>
-                )}
-              </section>
+              <>
+                <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 14, justifyContent: "space-between" }}>
+                  <Tabs
+                    variant="segmented"
+                    size="sm"
+                    items={[
+                      { value: "all", label: t("profil.library.all") },
+                      { value: "reading", label: t("kitap.status.reading") },
+                      { value: "read", label: t("kitap.status.read") },
+                    ]}
+                    value={libFilter}
+                    onChange={(v) => setLibFilter(v as "all" | "reading" | "read")}
+                  />
+                  <span style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)" }}>
+                    {t("profil.library.readSummary", { count: readCount })}
+                    {readingCount > 0 && ` · ${t("profil.library.readingSummary", { count: readingCount })}`}
+                  </span>
+                </div>
+
+                {groups.map((group) => {
+                  const items = (library ?? []).filter((e) => e.status === group.status && e.book);
+                  return (
+                    <section key={group.status}>
+                      <SectionHead title={`${t(group.labelKey)} (${items.length})`} />
+                      {items.length > 0 ? (
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
+                          {items.map((e) => (
+                            <BookCard
+                              key={e._id}
+                              cover={e.book!.coverUrl || undefined}
+                              title={e.book!.title}
+                              author={e.book!.author}
+                              width={124}
+                              onClick={() => router.push(`/kitap/${e.book!._id}`)}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <p style={{ color: "var(--text-secondary)" }}>{t("profil.noBooksInGroup")}</p>
+                      )}
+                    </section>
+                  );
+                })}
+              </>
             );
-          })}
+          })()}
+        </div>
+      )}
+
+      {tab === "Okuma Listesi" && (
+        <div>
+          {(() => {
+            const items = (library ?? []).filter((e) => e.status === "want" && e.book);
+            if (items.length === 0) {
+              return <p style={{ color: "var(--text-secondary)" }}>{t("profil.wishlist.empty")}</p>;
+            }
+            return (
+              <>
+                <SectionHead title={`${t("kitap.status.want")} (${items.length})`} />
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
+                  {items.map((e) => (
+                    <BookCard
+                      key={e._id}
+                      cover={e.book!.coverUrl || undefined}
+                      title={e.book!.title}
+                      author={e.book!.author}
+                      width={124}
+                      onClick={() => router.push(`/kitap/${e.book!._id}`)}
+                    />
+                  ))}
+                </div>
+              </>
+            );
+          })()}
         </div>
       )}
 
