@@ -32,6 +32,7 @@ const tr = {
   "nav.ayarlar": "Ayarlar",
   "nav.yeniGonderi": "Yeni Gönderi",
   "nav.language": "Dil",
+  "nav.menu": "Menü",
 
   // Ayarlar
   "ayarlar.title": "Ayarlar",
@@ -160,6 +161,14 @@ const tr = {
   "kulup.tab.archive": "Arşiv",
   "kulup.noPosts": "Henüz gönderi yok.",
   "kulup.emptyArchive": "Arşiv boş.",
+  "kulup.bookOfMonth": "Ayın Kitabı",
+  "kulup.setBook": "Ayın Kitabını Belirle",
+  "kulup.startPoll": "Anket Başlat",
+  "kulup.pollQuestion": "Anket Sorusu",
+  "kulup.pollQuestionPlaceholder": "Ayın kitabı hangisi olsun?",
+  "kulup.bookSearchPlaceholder": "Kitap ara...",
+  "kulup.voteCount": "{count} oy",
+  "kulup.closePoll": "Anketi Bitir ve Ayın Kitabını Seç",
   "image.profileUrl": "Profil Fotoğrafı URL",
   "image.bannerUrl": "Kapak Resmi URL",
   "image.bannerHint.club": "Twitter'daki gibi, kulüp sayfasının üst kısmında görünür.",

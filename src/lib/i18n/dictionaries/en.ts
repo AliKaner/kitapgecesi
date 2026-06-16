@@ -34,6 +34,7 @@ const en: Record<keyof typeof tr, string> = {
   "nav.ayarlar": "Settings",
   "nav.yeniGonderi": "New Post",
   "nav.language": "Language",
+  "nav.menu": "Menu",
 
   // Settings
   "ayarlar.title": "Settings",
@@ -162,6 +163,14 @@ const en: Record<keyof typeof tr, string> = {
   "kulup.tab.archive": "Archive",
   "kulup.noPosts": "No posts yet.",
   "kulup.emptyArchive": "Archive is empty.",
+  "kulup.bookOfMonth": "Book of the Month",
+  "kulup.setBook": "Set Book of the Month",
+  "kulup.startPoll": "Start Poll",
+  "kulup.pollQuestion": "Poll Question",
+  "kulup.pollQuestionPlaceholder": "Which book should it be?",
+  "kulup.bookSearchPlaceholder": "Search books...",
+  "kulup.voteCount": "{count} votes",
+  "kulup.closePoll": "Close Poll & Set Book",
   "image.profileUrl": "Profile Picture URL",
   "image.bannerUrl": "Cover Image URL",
   "image.bannerHint.club": "Like on Twitter, shown at the top of the club page.",

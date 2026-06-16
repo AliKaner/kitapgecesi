@@ -100,7 +100,7 @@ export default function AyarlarPage() {
   const [tab, setTab] = useState(initialTab === "profil" || initialTab === "tema" ? initialTab : "genel");
   const { user, logout } = useAuth();
   const { t, locale, setLocale } = useT();
-  const { accent, setAccent } = useTheme();
+  const { accent, setAccent, mode, setMode } = useTheme();
   const updateProfileImages = useMutation(api.users.updateProfileImages);
   const setReadingGoal = useMutation(api.users.setReadingGoal);
   const readingGoalRef = useRef<HTMLInputElement>(null);
@@ -201,7 +201,7 @@ export default function AyarlarPage() {
           </div>
           <div style={{ marginTop: 18 }}>
             <Row label={t("ayarlar.koyuMod.label")} hint={t("ayarlar.koyuMod.hint")}>
-              <Switch />
+              <Switch checked={mode === "dark"} onChange={(v) => setMode(v ? "dark" : "light")} />
             </Row>
           </div>
         </Card>

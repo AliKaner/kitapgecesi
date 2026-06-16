@@ -72,3 +72,35 @@
   --rating-star:     var(--kg-gold);
   --focus-ring:      color-mix(in srgb, var(--theme-accent) 55%, transparent);
 }
+
+/* ── Dark theme ───────────────────────────────────────────────────
+   Activated by setting data-theme="dark" on <html> (see ThemeProvider).
+   Only the semantic aliases are remapped; the brand accent stays the
+   user-selected green so accent tints just compose against a dark base. */
+:root[data-theme="dark"] {
+  --bg-page:         #131517;
+  --bg-feed:         #181B1E;
+  --bg-post:         #181B1E;
+  --bg-book-image:   #1F2327;
+  --surface-card:    #1B1E21;
+  --surface-sunken:  #23272B;
+  --surface-tint:    color-mix(in srgb, var(--theme-accent) 16%, #131517);
+
+  --text-primary:    #ECEDEE;
+  --text-secondary:  #9BA0A4;
+  --text-on-accent:  var(--kg-white);
+  --text-link:       color-mix(in srgb, var(--theme-accent) 65%, white);
+
+  --border-default:  #2B2F33;
+  --border-strong:   #3A3F44;
+
+  --accent-tint:     color-mix(in srgb, var(--theme-accent) 22%, #131517);
+
+  --btn-secondary-bg: #2B2F33;
+  --btn-menu-bg:     #23272B;
+
+  --kg-shadow-rgb:   0 0 0;
+
+  --surface-hover:   rgba(255, 255, 255, 0.06);
+  --shadow-pop:      0 12px 32px rgba(0, 0, 0, 0.55);
+}

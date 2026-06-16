@@ -67,19 +67,21 @@ function ReadingGoal() {
   const yearEnd = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
   const diffTime = yearEnd.getTime() - today.getTime();
   const diffDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
-  const remainingBooks = Math.max(0, goal.target - goal.done);
+  const target = goal.target ?? 0;
+  const remainingBooks = Math.max(0, target - goal.done);
 
   let paceText = "";
-  if (remainingBooks === 0) {
-    paceText = "Hedefinizi tamamladınız! 🎉";
-  } else {
-    const booksPerDay = remainingBooks / diffDays;
-    if (booksPerDay >= 1) {
-      const rounded = Math.round(booksPerDay);
-      paceText = `Günde ${rounded} kitap okumalısın`;
+  if (target > 0) {
+    if (remainingBooks === 0) {
+      paceText = "Hedefinizi tamamladınız! 🎉";
     } else {
-      const daysPerBook = Math.round(diffDays / remainingBooks);
-      paceText = daysPerBook === 1 ? "Günde 1 kitap okumalısın" : `${daysPerBook} günde bir kitap okumalısın`;
+      const booksPerDay = remainingBooks / diffDays;
+      if (booksPerDay > 1) {
+        paceText = `Günde ${Math.ceil(booksPerDay)} kitap okumalısın`;
+      } else {
+        const daysPerBook = Math.max(1, Math.floor(diffDays / remainingBooks));
+        paceText = daysPerBook === 1 ? "Günde 1 kitap okumalısın" : `${daysPerBook} günde 1 kitap okumalısın`;
+      }
     }
   }
 
@@ -99,21 +101,23 @@ function ReadingGoal() {
         <span style={{ fontSize: 15, color: "var(--text-secondary)" }}>{t("contextRail.ofTarget", { target: goal.target ?? 0 })}</span>
       </div>
 
-      <div style={{ 
-        display: "flex", 
-        alignItems: "center", 
-        gap: 8, 
-        padding: "8px 12px", 
-        borderRadius: "10px", 
-        background: "var(--accent-tint)", 
-        color: "var(--accent-active)", 
-        fontSize: "13px", 
-        fontWeight: 500, 
-        marginBottom: 16 
-      }}>
-        <Icon name="calendar" size={14} color="var(--accent)" />
-        <span>{paceText}</span>
-      </div>
+      {paceText && (
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          padding: "8px 12px",
+          borderRadius: "10px",
+          background: "var(--accent-tint)",
+          color: "var(--accent-active)",
+          fontSize: "13px",
+          fontWeight: 500,
+          marginBottom: 16
+        }}>
+          <Icon name="calendar" size={14} color="var(--accent)" />
+          <span>{paceText}</span>
+        </div>
+      )}
 
       {goal.doneBooks && goal.doneBooks.length > 0 && (
         <div style={{ marginBottom: 16 }}>
@@ -209,50 +213,59 @@ function PopularBooks() {
     }
   };
 
-  const action = (
-    <div style={{ display: "flex", gap: 2, marginRight: -8 }}>
-      <IconButton
-        icon="chevron-right"
-        size={28}
-        style={{ transform: "rotate(180deg)" }}
-        onClick={() => scroll("left")}
-        label="Önceki"
-      />
-      <IconButton
-        icon="chevron-right"
-        size={28}
-        onClick={() => scroll("right")}
-        label="Sonraki"
-      />
-    </div>
-  );
+  const edgeButton = (direction: "left" | "right"): CSSProperties => ({
+    position: "absolute",
+    top: "50%",
+    transform: direction === "left" ? "translateY(-50%) rotate(180deg)" : "translateY(-50%)",
+    [direction]: 4,
+    zIndex: 2,
+    boxShadow: "var(--shadow-sm)",
+  });
 
   return (
-    <Card padding={20} title={t("contextRail.popular")} action={action}>
-      <div
-        ref={scrollRef}
-        className="kg-hscroll"
-        style={{
-          display: "flex",
-          gap: 12,
-          justifyContent: "safe center",
-          overflowX: "auto",
-          scrollSnapType: "x mandatory",
-          margin: "0 -20px",
-          padding: "0 20px 2px",
-          scrollBehavior: "smooth",
-        } as CSSProperties}
-      >
-        {books.map((b) => (
-          <BookCover
-            key={b._id}
-            src={b.coverUrl || undefined}
-            title={b.title}
-            width={120}
-            onClick={() => router.push(`/kitap/${b._id}`)}
-            style={{ cursor: "pointer", flex: "none", scrollSnapAlign: "start" }}
-          />
-        ))}
+    <Card padding={20} title={t("contextRail.popular")}>
+      <div style={{ position: "relative", margin: "0 -20px" } as CSSProperties}>
+        <div
+          ref={scrollRef}
+          className="kg-hscroll"
+          style={{
+            display: "flex",
+            gap: 12,
+            overflowX: "auto",
+            scrollSnapType: "x mandatory",
+            // Side padding equal to half the rail minus half a cover, so the
+            // first (and any) book snaps to the visual centre of the rail.
+            padding: "0 calc(50% - 60px) 2px",
+            scrollBehavior: "smooth",
+          } as CSSProperties}
+        >
+          {books.map((b) => (
+            <BookCover
+              key={b._id}
+              src={b.coverUrl || undefined}
+              title={b.title}
+              width={120}
+              onClick={() => router.push(`/kitap/${b._id}`)}
+              style={{ cursor: "pointer", flex: "none", scrollSnapAlign: "center" }}
+            />
+          ))}
+        </div>
+        <IconButton
+          icon="chevron-right"
+          size={32}
+          variant="outline"
+          style={edgeButton("left")}
+          onClick={() => scroll("left")}
+          label="Önceki"
+        />
+        <IconButton
+          icon="chevron-right"
+          size={32}
+          variant="outline"
+          style={edgeButton("right")}
+          onClick={() => scroll("right")}
+          label="Sonraki"
+        />
       </div>
     </Card>
   );

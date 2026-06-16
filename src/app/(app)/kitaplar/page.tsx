@@ -186,12 +186,20 @@ export default function KitaplarPage() {
         ) : (
           <>
             <section style={{ marginBottom: 36 }}>
-              <SectionHead title={t("kitaplar.mostRead")} />
+              <SectionHead
+                title={t("kitaplar.mostRead")}
+                onClick={() => setSort("populer")}
+                active={sort === "populer"}
+              />
               <BookRail items={popular} readIds={readIds} onOpen={(id) => router.push(`/kitap/${id}`)} />
             </section>
             {rest.length > 0 && (
               <section>
-                <SectionHead title={t("kitaplar.mostLiked")} />
+                <SectionHead
+                  title={t("kitaplar.mostLiked")}
+                  onClick={() => setSort("puan")}
+                  active={sort === "puan"}
+                />
                 <BookRail items={visibleRest} readIds={readIds} onOpen={(id) => router.push(`/kitap/${id}`)} />
                 {visibleCount < rest.length && (
                   <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>

@@ -3,10 +3,12 @@
 @import "../styles/tokens/spacing.css";
 @import "../styles/tokens/base.css";
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: light;
-  }
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 /* Auth Split Layout */

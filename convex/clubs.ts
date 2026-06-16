@@ -1,4 +1,5 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, MutationCtx } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 import { v } from "convex/values";
 
 export const getClub = query({
@@ -213,6 +214,139 @@ export const archiveClubBook = mutation({
 
     await ctx.db.insert("clubArchive", { clubId, bookId, startedAt, finishedAt });
     await ctx.db.patch(clubId, { activeBookId: undefined });
+  },
+});
+
+// ── Ayın kitabı anketi ─────────────────────────────────────────────
+
+async function assertLeader(ctx: MutationCtx, clubId: Id<"clubs">, userId: Id<"users">) {
+  const club = await ctx.db.get(clubId);
+  if (!club) throw new Error("Kulüp bulunamadı.");
+  if (club.leaderId !== userId) throw new Error("Bu işlem için yetkiniz yok.");
+  return club;
+}
+
+export const createPoll = mutation({
+  args: {
+    clubId: v.id("clubs"),
+    userId: v.id("users"),
+    question: v.string(),
+    bookIds: v.array(v.id("books")),
+  },
+  handler: async (ctx, { clubId, userId, question, bookIds }) => {
+    await assertLeader(ctx, clubId, userId);
+    if (bookIds.length < 2) throw new Error("Anket için en az iki kitap ekleyin.");
+
+    const existingOpen = await ctx.db
+      .query("clubPolls")
+      .withIndex("by_club", (q) => q.eq("clubId", clubId))
+      .filter((q) => q.eq(q.field("status"), "open"))
+      .first();
+    if (existingOpen) throw new Error("Bu kulüpte zaten açık bir anket var.");
+
+    return ctx.db.insert("clubPolls", {
+      clubId,
+      question: question.trim() || "Ayın kitabı hangisi olsun?",
+      bookIds,
+      status: "open",
+      createdBy: userId,
+      createdAt: Date.now(),
+    });
+  },
+});
+
+export const getActivePoll = query({
+  args: { clubId: v.id("clubs"), userId: v.optional(v.id("users")) },
+  handler: async (ctx, { clubId, userId }) => {
+    const poll = await ctx.db
+      .query("clubPolls")
+      .withIndex("by_club", (q) => q.eq("clubId", clubId))
+      .filter((q) => q.eq(q.field("status"), "open"))
+      .first();
+    if (!poll) return null;
+
+    const votes = await ctx.db
+      .query("clubPollVotes")
+      .withIndex("by_poll", (q) => q.eq("pollId", poll._id))
+      .collect();
+
+    const counts = new Map<string, number>();
+    for (const vote of votes) counts.set(vote.bookId, (counts.get(vote.bookId) ?? 0) + 1);
+    const myVote = userId ? votes.find((vote) => vote.userId === userId)?.bookId ?? null : null;
+
+    const options = await Promise.all(
+      poll.bookIds.map(async (bookId) => {
+        const book = await ctx.db.get(bookId);
+        return { bookId, book, votes: counts.get(bookId) ?? 0 };
+      })
+    );
+
+    return { ...poll, options, totalVotes: votes.length, myVote };
+  },
+});
+
+export const voteOnPoll = mutation({
+  args: {
+    pollId: v.id("clubPolls"),
+    userId: v.id("users"),
+    bookId: v.id("books"),
+  },
+  handler: async (ctx, { pollId, userId, bookId }) => {
+    const poll = await ctx.db.get(pollId);
+    if (!poll || poll.status !== "open") throw new Error("Anket kapalı.");
+    if (!poll.bookIds.includes(bookId)) throw new Error("Geçersiz seçenek.");
+
+    const membership = await ctx.db
+      .query("clubMembers")
+      .withIndex("by_club_user", (q) => q.eq("clubId", poll.clubId).eq("userId", userId))
+      .unique();
+    if (!membership || membership.status !== "active") throw new Error("Oy vermek için kulübe üye olun.");
+
+    const existing = await ctx.db
+      .query("clubPollVotes")
+      .withIndex("by_poll_user", (q) => q.eq("pollId", pollId).eq("userId", userId))
+      .unique();
+    if (existing) {
+      await ctx.db.patch(existing._id, { bookId, createdAt: Date.now() });
+    } else {
+      await ctx.db.insert("clubPollVotes", { pollId, userId, bookId, createdAt: Date.now() });
+    }
+  },
+});
+
+export const closePoll = mutation({
+  args: {
+    pollId: v.id("clubPolls"),
+    userId: v.id("users"),
+    setAsActiveBook: v.optional(v.boolean()),
+  },
+  handler: async (ctx, { pollId, userId, setAsActiveBook }) => {
+    const poll = await ctx.db.get(pollId);
+    if (!poll) throw new Error("Anket bulunamadı.");
+    await assertLeader(ctx, poll.clubId, userId);
+
+    const votes = await ctx.db
+      .query("clubPollVotes")
+      .withIndex("by_poll", (q) => q.eq("pollId", pollId))
+      .collect();
+    const counts = new Map<string, number>();
+    for (const vote of votes) counts.set(vote.bookId, (counts.get(vote.bookId) ?? 0) + 1);
+
+    let winnerBookId: Id<"books"> | undefined;
+    let best = -1;
+    for (const bookId of poll.bookIds) {
+      const c = counts.get(bookId) ?? 0;
+      if (c > best) {
+        best = c;
+        winnerBookId = bookId;
+      }
+    }
+
+    await ctx.db.patch(pollId, { status: "closed", closedAt: Date.now(), winnerBookId });
+    if (setAsActiveBook && winnerBookId) {
+      await ctx.db.patch(poll.clubId, { activeBookId: winnerBookId });
+    }
+    return { winnerBookId };
   },
 });
 

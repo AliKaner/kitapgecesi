@@ -93,6 +93,23 @@ export function MobileNav() {
             </Link>
           );
         })}
+        <button
+          aria-label={t("nav.menu")}
+          onClick={() => setDrawerOpen(true)}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            height: "100%",
+            border: "none",
+            background: "transparent",
+            color: drawerOpen ? "var(--accent)" : "var(--text-secondary)",
+            cursor: "pointer",
+          } as CSSProperties}
+        >
+          <Icon name="menu" size={24} strokeWidth={drawerOpen ? 2 : 1.75} />
+        </button>
       </nav>
 
       {drawerOpen && (

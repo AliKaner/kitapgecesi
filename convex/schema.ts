@@ -236,6 +236,27 @@ export default defineSchema({
     finishedAt: v.number(),
   }).index("by_club", ["clubId"]),
 
+  // Ayın kitabı anketi — lider aday kitaplarla bir anket başlatır, üyeler oy verir.
+  clubPolls: defineTable({
+    clubId: v.id("clubs"),
+    question: v.string(),
+    bookIds: v.array(v.id("books")),
+    status: v.union(v.literal("open"), v.literal("closed")),
+    createdBy: v.id("users"),
+    createdAt: v.number(),
+    closedAt: v.optional(v.number()),
+    winnerBookId: v.optional(v.id("books")),
+  }).index("by_club", ["clubId"]),
+
+  clubPollVotes: defineTable({
+    pollId: v.id("clubPolls"),
+    userId: v.id("users"),
+    bookId: v.id("books"),
+    createdAt: v.number(),
+  })
+    .index("by_poll", ["pollId"])
+    .index("by_poll_user", ["pollId", "userId"]),
+
   // LİSTELER
   lists: defineTable({
     title: v.string(),

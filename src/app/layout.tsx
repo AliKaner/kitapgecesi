@@ -57,7 +57,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className={`${inter.variable} ${instrumentSerif.variable}`}>
+    <html lang="tr" className={`${inter.variable} ${instrumentSerif.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("kg_theme_mode")==="dark"){document.documentElement.setAttribute("data-theme","dark")}}catch(e){}`,
+          }}
+        />
+      </head>
       <body>
         <ConvexClientProvider>
           <AuthProvider>
