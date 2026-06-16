@@ -22,7 +22,6 @@ type CoverStackProps = {
 const COVER_W = 100;
 const COVER_H = 160;
 const STEP_X = 28;
-const STEP_Y = 12;
 
 const CoverStack = (props: CoverStackProps) => {
   const visible = props.books.filter((b): b is Doc<"books"> => !!b).slice(0, 5);
@@ -34,15 +33,16 @@ const CoverStack = (props: CoverStackProps) => {
     );
   }
   return (
-    <div style={{ position: "relative", width: "100%", height: COVER_H + STEP_Y * (visible.length - 1) }}>
+    <div style={{ position: "relative", width: "100%", height: COVER_H }}>
       {visible.map((b, i) => (
         <div
           key={b._id}
           style={{
             position: "absolute",
             left: i * STEP_X,
-            top: i * STEP_Y,
-            // First book stays on top; later ones cascade down and behind.
+            top: 0,
+            // Books sit on the same baseline, fanned only sideways.
+            // First book stays on top; later ones tuck behind to the right.
             zIndex: visible.length - i,
           }}
         >
@@ -87,8 +87,8 @@ const ListCard = (props: ListCardProps) => {
       onClick={onClick}
       style={{
         position: "relative",
-        width: 290,
-        height: 260,
+        width: "100%",
+        height: 240,
         overflow: "hidden",
         cursor: "pointer",
       } as React.CSSProperties}
@@ -250,7 +250,7 @@ export default function ListelerPage() {
 
       {tab === "Listelerim" && (
         <>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 290px)", gap: 16, justifyContent: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(248px, 1fr))", gap: 16 }}>
             {visibleLists.map((l) => (
               <ListCard
                 key={l._id}
