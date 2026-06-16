@@ -25,6 +25,14 @@ export function MobileNav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const unreadCount = useQuery(api.notifications.getUnreadCount, user ? { userId: user._id } : "skip");
 
+  // Her gezinmede (alt menü sekmesi dahil) çekmece kapansın — mobilde sidebar
+  // hiçbir zaman açık takılı kalmasın. Render sırasında ayarlanır (effect yok).
+  const [prevPath, setPrevPath] = useState(pathname);
+  if (pathname !== prevPath) {
+    setPrevPath(pathname);
+    if (drawerOpen) setDrawerOpen(false);
+  }
+
   useEffect(() => {
     if (!drawerOpen) return;
     const prevOverflow = document.body.style.overflow;

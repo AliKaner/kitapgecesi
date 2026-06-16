@@ -1,6 +1,7 @@
 "use client";
 
 import { CSSProperties, useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Icon } from "@/components/ui/Icon";
@@ -32,8 +33,7 @@ export default function OnkayitPage() {
       } as CSSProperties}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 32 }}>
-        <Icon name="book" size={28} color="var(--kg-sage)" />
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: 18, fontWeight: 600, letterSpacing: "0.04em" }}>KİTAPGECESİ</span>
+        <Image src="/logo.png" alt="KitapGecesi" width={89} height={40} priority style={{ height: 32, width: "auto", filter: "brightness(0) invert(1)" }} />
       </div>
 
       <h1

@@ -265,7 +265,7 @@ const tr = {
   "auth.inviteOnlyHeadline": "Okumanın en keyifli, topluluk hali.",
   "auth.inviteOnlySubtitle": "Kitaplarınızı takip edin, okuma kulüplerine katılın ve diğer kitapseverlerle buluşun. Okuma alışkanlığınızı toplulukla birlikte büyütün.",
   "auth.inviteOnlyBadge": "Sadece Davet Kodu İle",
-  "auth.inviteOnlyNotice": "KitapGecesi şu an kapalı beta aşamasındadır. Kayıtlar yalnızca davet kodu ile yapılabilmektedir. Üye olmak için geçerli bir davet koduna ihtiyacınız vardır.",
+  "auth.inviteOnlyNotice": "KitapGecesi'ye katılım davet kodu ile. Bunu bir sınırlama olsun diye değil; daha güvenli, saygılı ve toksisiteden uzak bir okuma topluluğu kurmak için yapıyoruz. Üye olmak için geçerli bir davet koduna ihtiyacın var.",
 
   // Sağ panel (ContextRail)
   "common.all": "Tümü",

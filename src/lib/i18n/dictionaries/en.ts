@@ -267,7 +267,7 @@ const en: Record<keyof typeof tr, string> = {
   "auth.inviteOnlyHeadline": "The most delightful, community way of reading.",
   "auth.inviteOnlySubtitle": "Track your books, join reading clubs, and meet other book lovers. Grow your reading habits with the community.",
   "auth.inviteOnlyBadge": "Invite Only",
-  "auth.inviteOnlyNotice": "KitapGecesi is currently in closed beta and only accepts members with an invite code. A valid invite code is required to register.",
+  "auth.inviteOnlyNotice": "KitapGecesi is invite-only — not as a limitation, but to build a safer, more respectful reading community free from toxicity. You'll need a valid invite code to join.",
 
   // Right rail (ContextRail)
   "common.all": "All",

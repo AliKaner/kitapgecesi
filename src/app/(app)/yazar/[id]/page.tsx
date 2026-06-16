@@ -106,9 +106,9 @@ export default function YazarDetayPage() {
 
       <section>
         <SectionHead title={t("yazar.books")} />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 124px)", gap: "22px 20px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 118px)", gap: "22px 12px" }}>
           {books?.map((b) => (
-            <BookCard key={b._id} cover={b.coverUrl || undefined} title={b.title} author={b.author} width={124} onClick={() => router.push(`/kitap/${b._id}`)} />
+            <BookCard key={b._id} cover={b.coverUrl || undefined} title={b.title} author={b.author} width={118} onClick={() => router.push(`/kitap/${b._id}`)} />
           ))}
         </div>
       </section>
