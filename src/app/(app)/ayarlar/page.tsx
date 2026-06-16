@@ -16,7 +16,7 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
 import { useTheme } from "@/lib/theme/ThemeProvider";
 
-const SWATCHES = ["#5B913B", "#27272A", "#C0432F", "#2A6FDB", "#C8881F"];
+const SWATCHES = ["#5B913B", "#27272A", "#C0432F", "#2A6FDB", "#C8881F", "#FF007F"];
 
 function Row({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
   return (

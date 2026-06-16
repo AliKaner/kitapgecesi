@@ -2,8 +2,12 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const getUserLists = query({
-  args: { creatorId: v.id("users"), includePrivate: v.boolean() },
-  handler: async (ctx, { creatorId, includePrivate }) => {
+  args: {
+    creatorId: v.id("users"),
+    includePrivate: v.boolean(),
+    currentUserId: v.optional(v.id("users")),
+  },
+  handler: async (ctx, { creatorId, includePrivate, currentUserId }) => {
     const lists = await ctx.db
       .query("lists")
       .withIndex("by_creator", (q) => q.eq("creatorId", creatorId))
@@ -20,7 +24,7 @@ export const getUserLists = query({
           .query("listBooks")
           .withIndex("by_list", (q) => q.eq("listId", list._id))
           .order("asc")
-          .take(4)
+          .take(5)
           .then((rows) =>
             Promise.all(rows.map((r) => ctx.db.get(r.bookId)))
           );
@@ -31,7 +35,21 @@ export const getUserLists = query({
           )
           .collect()
           .then((r) => r.length);
-        return { ...list, previewBooks: books.filter(Boolean), likeCount };
+
+        const isLiked = currentUserId
+          ? await ctx.db
+              .query("likes")
+              .withIndex("by_user_target", (q) =>
+                q
+                  .eq("userId", currentUserId)
+                  .eq("targetType", "list")
+                  .eq("targetId", list._id)
+              )
+              .unique()
+              .then((r) => !!r)
+          : false;
+
+        return { ...list, previewBooks: books.filter(Boolean), likeCount, isLiked };
       })
     );
   },

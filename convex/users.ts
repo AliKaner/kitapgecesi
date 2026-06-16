@@ -129,9 +129,10 @@ export const setReadingGoal = mutation({
   args: {
     userId: v.id("users"),
     readingGoal: v.optional(v.number()),
+    readingPageGoal: v.optional(v.number()),
   },
-  handler: async (ctx, { userId, readingGoal }) => {
-    await ctx.db.patch(userId, { readingGoal });
+  handler: async (ctx, { userId, readingGoal, readingPageGoal }) => {
+    await ctx.db.patch(userId, { readingGoal, readingPageGoal });
   },
 });
 
@@ -139,9 +140,12 @@ export const getReadingGoalStats = query({
   args: { userId: v.id("users") },
   handler: async (ctx, { userId }) => {
     const user = await ctx.db.get(userId);
-    if (!user || !user.readingGoal) return null;
+    if (!user || (!user.readingGoal && !user.readingPageGoal)) return null;
 
-    const yearStart = new Date(new Date().getFullYear(), 0, 1).getTime();
+    const now = new Date();
+    const yearStart = new Date(now.getFullYear(), 0, 1).getTime();
+    const yearEnd = new Date(now.getFullYear() + 1, 0, 1).getTime();
+    const daysRemaining = Math.max(1, Math.ceil((yearEnd - now.getTime()) / 86400000));
 
     const userBooks = await ctx.db
       .query("userBooks")
@@ -178,17 +182,26 @@ export const getReadingGoalStats = query({
     const reviews = yearPosts.filter((p) => p.type === "okuma").length;
     const quotes = yearPosts.filter((p) => p.type === "alinti").length;
 
-    const target = user.readingGoal;
-    const pct = Math.min(100, Math.round((done / target) * 100));
+    const target = user.readingGoal ?? null;
+    const pageTarget = user.readingPageGoal ?? null;
+    const pct = target ? Math.min(100, Math.round((done / target) * 100)) : 0;
+    const pagePct = pageTarget ? Math.min(100, Math.round((pages / pageTarget) * 100)) : 0;
+    const dailyBooks = target ? Math.ceil(Math.max(0, target - done) / daysRemaining) : null;
+    const dailyPages = pageTarget ? Math.ceil(Math.max(0, pageTarget - pages) / daysRemaining) : null;
 
     return {
       target,
       done,
       pages,
+      pageTarget,
+      pagePct,
       reviews,
       quotes,
       pct,
-      year: new Date().getFullYear(),
+      daysRemaining,
+      dailyBooks,
+      dailyPages,
+      year: now.getFullYear(),
       doneBooks,
     };
   },

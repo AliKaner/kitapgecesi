@@ -47,7 +47,11 @@ export function IconButton({
         justifyContent: "center",
         border: variant === "outline" ? "1px solid var(--border-default)" : "none",
         borderRadius: "10px",
-        background: hover ? "var(--surface-sunken)" : "transparent",
+        background: hover
+          ? "var(--surface-sunken)"
+          : variant === "outline"
+            ? "var(--surface-card)"
+            : "transparent",
         color: tint,
         cursor: "pointer",
         transition: "background var(--dur-fast) var(--ease-soft), color var(--dur-fast)",

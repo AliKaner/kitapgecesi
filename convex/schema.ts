@@ -21,6 +21,7 @@ export default defineSchema({
     themeColor: v.optional(v.string()),
     locale: v.optional(v.union(v.literal("tr"), v.literal("en"))),
     readingGoal: v.optional(v.number()),
+    readingPageGoal: v.optional(v.number()),
     roleBadges: v.optional(
       v.array(v.union(v.literal("founder"), v.literal("vip"), v.literal("admin"), v.literal("yazar")))
     ),
@@ -180,8 +181,13 @@ export default defineSchema({
       v.literal("time"),
       v.literal("bookshelf"),
       v.literal("favorites"),
+      v.literal("favoriteBook"),
       v.literal("author"),
       v.literal("quote"),
+      v.literal("text"),
+      v.literal("image"),
+      v.literal("clubs"),
+      v.literal("favoriteClub"),
       v.literal("list")
     ),
     order: v.number(),

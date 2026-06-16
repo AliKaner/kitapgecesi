@@ -89,14 +89,14 @@ function ReadingGoal() {
         <div>
           <div style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em" }}>{t("contextRail.yearlyGoal")}</div>
           <div style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 2 }}>
-            {t("contextRail.goalSubtitle", { year: goal.year, target: goal.target })}
+            {t("contextRail.goalSubtitle", { year: goal.year ?? new Date().getFullYear(), target: goal.target ?? 0 })}
           </div>
         </div>
         <GoalRing pct={goal.pct} />
       </div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 6, margin: "4px 0 16px" }}>
         <span style={{ fontFamily: "var(--font-serif)", fontSize: 34, lineHeight: 1 }}>{goal.done}</span>
-        <span style={{ fontSize: 15, color: "var(--text-secondary)" }}>{t("contextRail.ofTarget", { target: goal.target })}</span>
+        <span style={{ fontSize: 15, color: "var(--text-secondary)" }}>{t("contextRail.ofTarget", { target: goal.target ?? 0 })}</span>
       </div>
 
       <div style={{ 

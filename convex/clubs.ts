@@ -26,6 +26,24 @@ export const listClubs = query({
   },
 });
 
+export const getUserClubs = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    const memberships = await ctx.db
+      .query("clubMembers")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("status"), "active"))
+      .collect();
+    const clubs = await Promise.all(
+      memberships.map(async (m) => {
+        const club = await ctx.db.get(m.clubId);
+        return club ? { ...club, role: m.role } : null;
+      })
+    );
+    return clubs.filter((c): c is NonNullable<typeof c> => c !== null);
+  },
+});
+
 export const getMembership = query({
   args: { clubId: v.id("clubs"), userId: v.id("users") },
   handler: async (ctx, { clubId, userId }) => {
