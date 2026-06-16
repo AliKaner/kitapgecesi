@@ -144,6 +144,8 @@ const tr = {
   "liste.fields.ranked": "Sıralı liste",
   "liste.searchBooks": "Kitap ara",
   "liste.searchPlaceholder": "Kitap adı veya yazar...",
+  "liste.bookCount": "{count} kitap",
+  "liste.readProgress": "{read}/{total} kitap okundu",
   "liste.create": "Listeyi Oluştur",
 
   // Kulüpler

@@ -1,20 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
 import { IconButton } from "@/components/ui/IconButton";
-import { BookCard } from "@/components/book/BookCard";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
 
 function formatCount(n: number) {
   return n.toLocaleString("tr-TR");
+}
+
+function PropTag({ label }: { label: string }) {
+  return (
+    <span
+      style={{
+        fontSize: "var(--fs-body-3)",
+        fontWeight: "var(--fw-medium)" as unknown as number,
+        color: "var(--accent)",
+        background: "var(--accent-tint)",
+        padding: "2px 8px",
+        borderRadius: "var(--radius-pill)",
+      }}
+    >
+      {label}
+    </span>
+  );
 }
 
 export default function ListeDetayPage() {
@@ -28,10 +45,22 @@ export default function ListeDetayPage() {
   const list = useQuery(api.lists.getList, { listId });
   const comments = useQuery(api.lists.getListComments, { listId });
   const isLiked = useQuery(api.posts.getIsLiked, user ? { userId: user._id, targetType: "list", targetId: listId } : "skip");
+  const library = useQuery(api.library.getUserLibrary, user ? { userId: user._id, status: "read" } : "skip");
+  const readIds = useMemo(() => new Set((library ?? []).map((e) => e.bookId)), [library]);
 
   const likeTarget = useMutation(api.posts.likeTarget);
   const addListComment = useMutation(api.lists.addListComment);
   const cloneList = useMutation(api.lists.cloneList);
+
+  const handleShare = () => {
+    const url = `${window.location.origin}/listeler/${listId}`;
+    if (navigator.share) {
+      navigator.share({ title: list?.title ?? t("nav.listeler"), url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url);
+      alert(t("common.saved"));
+    }
+  };
 
   if (list === undefined) return null;
   if (list === null) {
@@ -39,6 +68,9 @@ export default function ListeDetayPage() {
   }
 
   const isOwner = user?._id === list.creatorId;
+  const total = list.books.length;
+  const readCount = list.books.filter((b) => readIds.has(b._id)).length;
+  const readPct = total > 0 ? Math.round((readCount / total) * 100) : 0;
 
   return (
     <>
@@ -62,52 +94,130 @@ export default function ListeDetayPage() {
         {t("nav.listeler")}
       </button>
 
-      <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 38, lineHeight: 1.1, marginBottom: 8 }}>{list.title}</h1>
-      {list.description && <p style={{ color: "var(--text-secondary)", marginBottom: 14 }}>{list.description}</p>}
+      <Card style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 32 }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+            {list.isRanked && <PropTag label={t("liste.fields.ranked")} />}
+            {list.isPrivate && <PropTag label={t("liste.fields.private")} />}
+            <span style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" }}>{t("liste.bookCount", { count: total })}</span>
+          </div>
+          <h1 style={{ fontFamily: "var(--font-serif)", fontSize: 34, lineHeight: 1.1, marginBottom: 6 }}>{list.title}</h1>
+          {list.description && <p style={{ color: "var(--text-secondary)" }}>{list.description}</p>}
+        </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
-        <Avatar src={list.creator?.profileImageUrl} name={list.creator?.name} size="sm" />
-        <span style={{ fontSize: "var(--fs-body-2)", color: "var(--text-secondary)" }}>{list.creator?.name}</span>
-        <div style={{ flex: 1 }} />
-        <IconButton
-          icon="heart"
-          count={formatCount(list.likeCount)}
-          active={!!isLiked}
-          label={t("common.like")}
-          onClick={() => user && likeTarget({ userId: user._id, targetType: "list", targetId: listId })}
-        />
-        {!isOwner && (
-          <Button
-            variant="menu"
-            size="sm"
-            icon="repeat"
-            onClick={async () => {
-              if (!user) return;
-              const newId = await cloneList({ listId, userId: user._id });
-              router.push(`/listeler/${newId}`);
-            }}
-          >
-            {t("liste.clone")}
-          </Button>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <Avatar src={list.creator?.profileImageUrl} name={list.creator?.name} size="sm" />
+          <span style={{ fontSize: "var(--fs-body-2)", color: "var(--text-secondary)" }}>{list.creator?.name}</span>
+        </div>
+
+        {user && total > 0 && (
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+              <span style={{ fontSize: "var(--fs-body-2)", color: "var(--text-primary)" }}>{t("liste.readProgress", { read: readCount, total })}</span>
+              <span style={{ fontSize: "var(--fs-body-2)", fontWeight: "var(--fw-semibold)" as unknown as number, color: "var(--accent)" }}>%{readPct}</span>
+            </div>
+            <div style={{ height: 8, borderRadius: "var(--radius-pill)", background: "var(--surface-sunken)", overflow: "hidden" }}>
+              <div style={{ height: "100%", width: `${readPct}%`, background: "var(--accent)", borderRadius: "var(--radius-pill)", transition: "width var(--dur-base) var(--ease-out)" }} />
+            </div>
+          </div>
         )}
-      </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 36 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 4, borderTop: "1px solid var(--border-default)" }}>
+          <IconButton
+            icon="heart"
+            count={formatCount(list.likeCount)}
+            active={!!isLiked}
+            label={t("common.like")}
+            onClick={() => user && likeTarget({ userId: user._id, targetType: "list", targetId: listId })}
+          />
+          <IconButton icon="share" variant="outline" size={36} label={t("common.share")} onClick={handleShare} />
+          <div style={{ flex: 1 }} />
+          {!isOwner && (
+            <Button
+              variant="menu"
+              size="sm"
+              icon="repeat"
+              onClick={async () => {
+                if (!user) return;
+                const newId = await cloneList({ listId, userId: user._id });
+                router.push(`/listeler/${newId}`);
+              }}
+            >
+              {t("liste.clone")}
+            </Button>
+          )}
+        </div>
+      </Card>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+          gap: "20px 14px",
+          marginBottom: 36,
+        }}
+      >
         {list.books.map((b, i) => (
-          <div key={b._id} style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div
+            key={b._id}
+            onClick={() => router.push(`/kitap/${b._id}`)}
+            style={{ cursor: "pointer", display: "flex", flexDirection: "column", gap: 8, position: "relative" }}
+          >
             {list.isRanked && (
-              <span style={{ fontFamily: "var(--font-serif)", fontSize: 22, color: "var(--text-secondary)", width: 28, textAlign: "right" }}>{i + 1}</span>
+              <span
+                style={{
+                  position: "absolute",
+                  top: 4,
+                  left: 4,
+                  zIndex: 1,
+                  minWidth: 22,
+                  height: 22,
+                  padding: "0 6px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "var(--radius-pill)",
+                  background: "var(--accent)",
+                  color: "var(--text-on-accent)",
+                  fontSize: "var(--fs-body-3)",
+                  fontWeight: "var(--fw-semibold)" as unknown as number,
+                }}
+              >
+                {i + 1}
+              </span>
             )}
-            <BookCard
-              layout="row"
-              cover={b.coverUrl || undefined}
-              title={b.title}
-              author={b.author}
-              pages={b.totalPages}
-              width={70}
-              onClick={() => router.push(`/kitap/${b._id}`)}
-              style={{ flex: 1 }}
-            />
+            <div
+              style={{
+                width: "100%",
+                aspectRatio: "2 / 3",
+                borderRadius: "var(--radius-sm)",
+                overflow: "hidden",
+                background: "var(--bg-book-image)",
+                boxShadow: "var(--shadow-book)",
+              }}
+            >
+              {b.coverUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={b.coverUrl} alt={b.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "var(--text-secondary)", opacity: 0.5 }}>
+                  <Icon name="book" size={24} />
+                </span>
+              )}
+            </div>
+            <div
+              style={{
+                fontSize: "var(--fs-body-3)",
+                color: "var(--text-primary)",
+                lineHeight: 1.3,
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
+              {b.title}
+            </div>
           </div>
         ))}
       </div>

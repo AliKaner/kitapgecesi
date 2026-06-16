@@ -22,16 +22,31 @@ interface PickedBook {
   coverUrl?: string;
 }
 
-function BookRow({ number, book, action }: { number: number; book: PickedBook; action: React.ReactNode }) {
+function BookRow({
+  number,
+  book,
+  action,
+  added,
+  variant = "result",
+}: {
+  number: number;
+  book: PickedBook;
+  action: React.ReactNode;
+  added?: boolean;
+  variant?: "result" | "picked";
+}) {
+  const picked = variant === "picked";
   return (
     <div
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 12,
-        padding: "8px 10px",
+        gap: picked ? 14 : 12,
+        padding: picked ? "10px 4px" : "8px 10px",
         borderRadius: "var(--radius-md)",
-        background: "var(--surface-sunken)",
+        background: picked ? "transparent" : added ? "var(--accent-tint)" : "var(--surface-sunken)",
+        border: picked ? "none" : `1px solid ${added ? "var(--accent)" : "transparent"}`,
+        borderBottom: picked ? "1px solid var(--border-default)" : undefined,
       }}
     >
       <span
@@ -39,18 +54,18 @@ function BookRow({ number, book, action }: { number: number; book: PickedBook; a
           width: 24,
           flex: "none",
           textAlign: "center",
-          fontSize: "var(--fs-body-2)",
-          fontWeight: "var(--fw-medium)",
-          color: "var(--text-secondary)",
+          fontSize: picked ? "var(--fs-body-1)" : "var(--fs-body-2)",
+          fontWeight: picked ? ("var(--fw-semibold)" as unknown as number) : "var(--fw-medium)",
+          color: picked ? "var(--text-primary)" : "var(--text-secondary)",
           fontVariantNumeric: "tabular-nums",
         } as CSSProperties}
       >
         {number}
       </span>
-      <BookCover src={book.coverUrl || undefined} title={book.title} width={40} />
+      <BookCover src={book.coverUrl || undefined} title={book.title} width={picked ? 56 : 40} />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: "var(--fs-body-2)", color: "var(--text-primary)" }}>{book.title}</div>
-        <div style={{ fontSize: "var(--fs-body-3)", color: "var(--text-secondary)" }}>{book.author}</div>
+        <div style={{ fontSize: picked ? "var(--fs-body-1)" : "var(--fs-body-2)", fontWeight: picked ? ("var(--fw-medium)" as unknown as number) : undefined, color: "var(--text-primary)" }}>{book.title}</div>
+        <div style={{ fontSize: picked ? "var(--fs-body-2)" : "var(--fs-body-3)", color: "var(--text-secondary)" }}>{book.author}</div>
       </div>
       {action}
     </div>
@@ -107,11 +122,29 @@ export default function YeniListePage() {
         <Input label={t("liste.searchBooks")} icon="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("liste.searchPlaceholder")} />
         {results && results.length > 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 280, overflowY: "auto" }}>
-            {results.map((b, i) => (
-              <div key={b._id} onClick={() => addBook(b)} style={{ cursor: "pointer" }}>
-                <BookRow number={i + 1} book={b} action={<Icon name="plus" size={16} />} />
-              </div>
-            ))}
+            {results.map((b, i) => {
+              const added = picked.some((p) => p._id === b._id);
+              return (
+                <div
+                  key={b._id}
+                  onClick={() => addBook(b)}
+                  style={{ cursor: added ? "default" : "pointer" }}
+                >
+                  <BookRow
+                    number={i + 1}
+                    book={b}
+                    added={added}
+                    action={
+                      added ? (
+                        <Icon name="check" size={16} color="var(--accent)" />
+                      ) : (
+                        <Icon name="plus" size={16} color="var(--text-secondary)" />
+                      )
+                    }
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
         {picked.length > 0 && (
@@ -121,6 +154,7 @@ export default function YeniListePage() {
                 key={b._id}
                 number={i + 1}
                 book={b}
+                variant="picked"
                 action={
                   <button
                     type="button"

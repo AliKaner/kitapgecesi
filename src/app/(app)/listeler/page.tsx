@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { CompactFilter } from "@/components/ui/CompactFilter";
 import { BookCover } from "@/components/book/BookCover";
+import { Icon } from "@/components/ui/Icon";
 import { IconButton } from "@/components/ui/IconButton";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useT } from "@/lib/i18n/I18nProvider";
@@ -18,54 +19,43 @@ type CoverStackProps = {
   books: (Doc<"books"> | null)[];
 };
 
+const COVER_W = 100;
+const COVER_H = 160;
+const STEP_X = 28;
+const STEP_Y = 12;
+
 const CoverStack = (props: CoverStackProps) => {
-  const books = props.books;
-  const slots = [0, 1, 2, 3, 4];
+  const visible = props.books.filter((b): b is Doc<"books"> => !!b).slice(0, 5);
+  if (visible.length === 0) {
+    return (
+      <div style={{ height: COVER_H, display: "flex", alignItems: "center", color: "var(--text-secondary)", fontSize: "var(--fs-body-3)" }}>
+        Empty Collection
+      </div>
+    );
+  }
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: 140,
-        width: "100%",
-        background: "var(--surface-sunken)",
-        borderRadius: "var(--radius-md)",
-        overflow: "hidden",
-        padding: "12px 16px",
-        position: "relative",
-      }}
-    >
-      {slots.map((i) => {
-        const b = books[i];
-        if (!b) return null;
-        return (
-          <div
-            key={b._id}
-            style={{
-              marginLeft: i === 0 ? 0 : -28,
-              zIndex: i,
-              position: "relative",
-            }}
-          >
-            <BookCover
-              src={b.coverUrl || undefined}
-              title={b.title}
-              width={68}
-              ratio={1.5}
-              shadow={true}
-              style={{
-                border: "1px solid rgba(0,0,0,0.08)",
-              }}
-            />
-          </div>
-        );
-      })}
-      {books.length === 0 && (
-        <div style={{ color: "var(--text-secondary)", fontSize: "var(--fs-body-3)" }}>
-          Empty Collection
+    <div style={{ position: "relative", width: "100%", height: COVER_H + STEP_Y * (visible.length - 1) }}>
+      {visible.map((b, i) => (
+        <div
+          key={b._id}
+          style={{
+            position: "absolute",
+            left: i * STEP_X,
+            top: i * STEP_Y,
+            // First book stays on top; later ones cascade down and behind.
+            zIndex: visible.length - i,
+          }}
+        >
+          <BookCover
+            src={b.coverUrl || undefined}
+            title={b.title}
+            width={COVER_W}
+            ratio={COVER_H / COVER_W}
+            shadow
+            style={{ border: "1px solid rgba(0,0,0,0.08)" }}
+          />
         </div>
-      )}
+      ))}
     </div>
   );
 };
@@ -75,6 +65,7 @@ type ListType = {
   title: string;
   description: string;
   previewBooks: (Doc<"books"> | null)[];
+  bookCount: number;
   likeCount: number;
   isLiked?: boolean;
 };
@@ -92,85 +83,79 @@ const ListCard = (props: ListCardProps) => {
   return (
     <Card
       hover
-      padding={12}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        cursor: "pointer",
-        height: "100%",
-        justifyContent: "space-between",
-      } as React.CSSProperties}
+      padding={0}
       onClick={onClick}
+      style={{
+        position: "relative",
+        width: 290,
+        height: 260,
+        overflow: "hidden",
+        cursor: "pointer",
+      } as React.CSSProperties}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ position: "absolute", top: 18, left: 18, right: 18 }}>
         <CoverStack books={list.previewBooks as Doc<"books">[]} />
-        <div style={{ padding: "0 4px" }}>
-          <h3
-            style={{
-              fontSize: "var(--fs-body-1)",
-              fontWeight: "var(--fw-semibold)" as unknown as number,
-              color: "var(--text-primary)",
-              lineHeight: 1.3,
-              display: "-webkit-box",
-              WebkitLineClamp: 1,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            } as React.CSSProperties}
-          >
-            {list.title}
-          </h3>
-          {list.description ? (
-            <p
-              style={{
-                color: "var(--text-secondary)",
-                fontSize: "var(--fs-body-3)",
-                lineHeight: 1.4,
-                marginTop: 4,
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-                minHeight: 34,
-              } as React.CSSProperties}
-            >
-              {list.description}
-            </p>
-          ) : (
-            <div style={{ minHeight: 38 }} />
-          )}
-        </div>
       </div>
+
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginTop: 12,
-          padding: "0 4px",
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          padding: "34px 16px 14px",
+          background: "linear-gradient(to bottom, transparent, var(--surface-card) 42%)",
         }}
       >
-        <IconButton
-          icon="heart"
-          variant="outline"
-          count={list.likeCount}
-          active={list.isLiked}
-          onClick={onLike}
-          size={36}
-          label={t("common.like")}
+        <h3
           style={{
-            borderColor: "var(--border-default)",
-          }}
-        />
-        <IconButton
-          icon="share"
-          variant="outline"
-          onClick={onShare}
-          size={36}
-          label={t("common.share")}
-          style={{
-            borderColor: "var(--border-default)",
-          }}
-        />
+            fontSize: "var(--fs-body-1)",
+            fontWeight: "var(--fw-semibold)" as unknown as number,
+            color: "var(--text-primary)",
+            lineHeight: 1.3,
+            display: "-webkit-box",
+            WebkitLineClamp: 1,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          } as React.CSSProperties}
+        >
+          {list.title}
+        </h3>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 8 }}>
+          <button
+            type="button"
+            onClick={onLike}
+            aria-label={t("common.like")}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 5,
+              border: "none",
+              background: "none",
+              padding: 0,
+              cursor: "pointer",
+              color: list.isLiked ? "var(--accent)" : "var(--text-secondary)",
+              fontSize: "var(--fs-body-3)",
+              fontVariantNumeric: "tabular-nums",
+            } as React.CSSProperties}
+          >
+            <Icon name="heart" size={16} fill={list.isLiked} />
+            {list.likeCount}
+          </button>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5, color: "var(--text-secondary)", fontSize: "var(--fs-body-3)" }}>
+            <Icon name="book" size={16} />
+            {t("liste.bookCount", { count: list.bookCount })}
+          </span>
+          <div style={{ flex: 1 }} />
+          <IconButton
+            icon="share"
+            variant="outline"
+            onClick={onShare}
+            size={32}
+            label={t("common.share")}
+            style={{ borderColor: "var(--border-default)" }}
+          />
+        </div>
       </div>
     </Card>
   );
@@ -265,7 +250,7 @@ export default function ListelerPage() {
 
       {tab === "Listelerim" && (
         <>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, 290px)", gap: 16, justifyContent: "center" }}>
             {visibleLists.map((l) => (
               <ListCard
                 key={l._id}

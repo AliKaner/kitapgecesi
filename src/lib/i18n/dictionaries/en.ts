@@ -146,6 +146,8 @@ const en: Record<keyof typeof tr, string> = {
   "liste.fields.ranked": "Ranked list",
   "liste.searchBooks": "Search books",
   "liste.searchPlaceholder": "Book title or author...",
+  "liste.bookCount": "{count} books",
+  "liste.readProgress": "{read}/{total} books read",
   "liste.create": "Create List",
 
   // Clubs

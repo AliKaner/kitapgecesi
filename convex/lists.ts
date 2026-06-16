@@ -20,14 +20,13 @@ export const getUserLists = query({
 
     return Promise.all(
       filtered.map(async (list) => {
-        const books = await ctx.db
+        const bookRows = await ctx.db
           .query("listBooks")
           .withIndex("by_list", (q) => q.eq("listId", list._id))
           .order("asc")
-          .take(5)
-          .then((rows) =>
-            Promise.all(rows.map((r) => ctx.db.get(r.bookId)))
-          );
+          .collect();
+        const books = await Promise.all(bookRows.slice(0, 5).map((r) => ctx.db.get(r.bookId)));
+        const bookCount = bookRows.length;
         const likeCount = await ctx.db
           .query("likes")
           .withIndex("by_target", (q) =>
@@ -49,7 +48,7 @@ export const getUserLists = query({
               .then((r) => !!r)
           : false;
 
-        return { ...list, previewBooks: books.filter(Boolean), likeCount, isLiked };
+        return { ...list, previewBooks: books.filter(Boolean), bookCount, likeCount, isLiked };
       })
     );
   },
