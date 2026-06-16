@@ -1,7 +1,7 @@
 "use client";
 
-import { CSSProperties, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { CSSProperties, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { ScreenTitle, SectionHead } from "@/components/layout/Screen";
@@ -73,15 +73,33 @@ function BookRail({ items, readIds, onOpen }: { items: BookWithRating[]; readIds
 
 export default function KitaplarPage() {
   const { t } = useT();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const urlGenre = searchParams.get("genre") || "";
+
   const [sort, setSort] = useState("yeni");
-  const [genre, setGenre] = useState("");
+  const [genre, setGenre] = useState(urlGenre);
   const [year, setYear] = useState("");
   const [readFilter, setReadFilter] = useState("all");
   const [search, setSearch] = useState("");
-  const router = useRouter();
   const { user } = useAuth();
   const books = useQuery(api.books.listBooksWithRatings, {});
   const library = useQuery(api.library.getUserLibrary, user ? { userId: user._id, status: "read" } : "skip");
+
+  useEffect(() => {
+    setGenre(urlGenre);
+  }, [urlGenre]);
+
+  const handleGenreChange = (newGenre: string) => {
+    setGenre(newGenre);
+    const params = new URLSearchParams(window.location.search);
+    if (newGenre) {
+      params.set("genre", newGenre);
+    } else {
+      params.delete("genre");
+    }
+    router.replace(`/kitaplar?${params.toString()}`);
+  };
 
   const readIds = useMemo(() => new Set((library ?? []).map((e) => e.bookId)), [library]);
 
@@ -145,7 +163,7 @@ export default function KitaplarPage() {
           selects={[
             {
               value: genre,
-              onChange: setGenre,
+              onChange: handleGenreChange,
               icon: "book",
               ariaLabel: t("kitaplar.allGenres"),
               options: [{ value: "", label: t("kitaplar.allGenres") }, ...GENRES.map((g) => ({ value: g, label: g }))],

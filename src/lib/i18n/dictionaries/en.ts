@@ -272,6 +272,7 @@ const en: Record<keyof typeof tr, string> = {
   // Right rail (ContextRail)
   "common.all": "All",
   "contextRail.searchPlaceholder": "Search",
+  "contextRail.bookGenres": "Book Genres",
   "contextRail.yearlyGoal": "Yearly Reading Goal",
   "contextRail.goalSubtitle": "{year} · {target} books",
   "readingGoal.promptTitle": "Yearly Reading Goal",

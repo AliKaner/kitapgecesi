@@ -270,6 +270,7 @@ const tr = {
   // Sağ panel (ContextRail)
   "common.all": "Tümü",
   "contextRail.searchPlaceholder": "Arama",
+  "contextRail.bookGenres": "Kitap Türleri",
   "contextRail.yearlyGoal": "Yıllık Kitap Hedefi",
   "contextRail.goalSubtitle": "{year} · {target} kitap",
   "readingGoal.promptTitle": "Yıllık Okuma Hedefi",

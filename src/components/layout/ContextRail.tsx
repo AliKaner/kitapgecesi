@@ -317,6 +317,181 @@ function BookShelf() {
   );
 }
 
+type BookGenresProps = {};
+
+const BookGenres = (props: BookGenresProps) => {
+  const _props = props;
+  const router = useRouter();
+  const { t } = useT();
+
+  const GENRES_LIST = [
+    {
+      name: "Edebiyat",
+      bg: "#FFF5F0",
+      color: "#E0532B",
+      icon: (
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+          <line x1="16" y1="8" x2="2" y2="22" />
+          <line x1="17.5" y1="15" x2="9" y2="15" />
+        </svg>
+      ),
+    },
+    {
+      name: "Roman",
+      bg: "#F0F5FF",
+      color: "#2F54EB",
+      icon: (
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="5" y="3" width="14" height="18" rx="2" />
+          <path d="M9 3v18" />
+          <rect x="12" y="6" width="4" height="6" rx="0.5" />
+        </svg>
+      ),
+    },
+    {
+      name: "Psikoloji",
+      bg: "#F6FFED",
+      color: "#52C41A",
+      icon: (
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M4 14.5A2.5 2.5 0 0 1 6.5 12H20" />
+          <path d="M4 9.5A2.5 2.5 0 0 1 6.5 7H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+      ),
+    },
+    {
+      name: "Duygu ve Düşünce",
+      bg: "#E6F7FF",
+      color: "#1890FF",
+      icon: (
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="5" y="3" width="14" height="18" rx="2" />
+          <path d="M9 3v18" />
+          <path d="M14 8.5c.8.8.8 2 0 2.8L12 13.5l-2-2.2c-.8-.8-.8-2 0-2.8s2-.8 2.8 0z" />
+        </svg>
+      ),
+    },
+    {
+      name: "Felsefe",
+      bg: "#FFF0F6",
+      color: "#EB2F96",
+      icon: (
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="5" y="3" width="14" height="18" rx="2" />
+          <path d="M9 3v18" />
+          <circle cx="11.5" cy="10" r="1.5" />
+          <circle cx="14.5" cy="10" r="1.5" />
+          <path d="M10 10h1.5m1.5 0H13" />
+        </svg>
+      ),
+    },
+    {
+      name: "Tarih",
+      bg: "#FFFBE6",
+      color: "#876400",
+      icon: (
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="5" y="3" width="14" height="18" rx="2" />
+          <path d="M9 3v18" />
+          <line x1="11" y1="8" x2="11" y2="14" />
+          <line x1="13" y1="8" x2="13" y2="14" />
+          <line x1="15" y1="8" x2="15" y2="14" />
+          <line x1="10.5" y1="8" x2="15.5" y2="8" />
+          <line x1="10.5" y1="14" x2="15.5" y2="14" />
+        </svg>
+      ),
+    },
+    {
+      name: "Bilim",
+      bg: "#FFF1F0",
+      color: "#F5222D",
+      icon: (
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="5" y="3" width="14" height="18" rx="2" />
+          <path d="M9 3v18" />
+          <ellipse cx="13" cy="10" rx="3.5" ry="1.2" transform="rotate(30 13 10)" />
+          <ellipse cx="13" cy="10" rx="3.5" ry="1.2" transform="rotate(-30 13 10)" />
+        </svg>
+      ),
+    },
+    {
+      name: "Tasavvuf",
+      bg: "#FCF8E3",
+      color: "#AD8B00",
+      icon: (
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="5" y="3" width="14" height="18" rx="2" />
+          <path d="M9 3v18" />
+          <path d="M13 7l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" />
+        </svg>
+      ),
+    },
+  ];
+
+  return (
+    <Card padding={20}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text-primary)" }}>
+          <line x1="8" x2="21" y1="6" y2="6" />
+          <line x1="8" x2="21" y1="12" y2="12" />
+          <line x1="8" x2="21" y1="18" y2="18" />
+          <line x1="3" x2="3.01" y1="6" y2="6" />
+          <line x1="3" x2="3.01" y1="12" y2="12" />
+          <line x1="3" x2="3.01" y1="18" y2="18" />
+        </svg>
+        <span style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.01em" }}>
+          {t("contextRail.bookGenres")}
+        </span>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {GENRES_LIST.map((g) => (
+          <div
+            key={g.name}
+            onClick={() => router.push(`/kitaplar?genre=${g.name}`)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              cursor: "pointer",
+              padding: "6px 8px",
+              borderRadius: "8px",
+              transition: "background var(--dur-fast) var(--ease-soft)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "var(--surface-sunken)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+            }}
+          >
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: "8px",
+                background: g.bg,
+                color: g.color,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flex: "none",
+              }}
+            >
+              {g.icon}
+            </div>
+            <span style={{ fontSize: "var(--fs-body-2)", color: "var(--text-primary)", fontWeight: 500 }}>
+              {g.name}
+            </span>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+};
+
 export function ContextRail() {
   const { t } = useT();
   return (
@@ -339,6 +514,7 @@ export function ContextRail() {
       <BookOfMonth />
       <PopularBooks />
       <BookShelf />
+      <BookGenres />
       <ReadingGoal />
     </aside>
   );
